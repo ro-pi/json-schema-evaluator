@@ -32,7 +32,7 @@ $schema = json_decode('{
 }');
 
 $schema = json_decode('{
-    "type": "object"
+    "minLength": 3
 }');
 
 $instance = json_decode('{
@@ -62,7 +62,7 @@ $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluat
 
 $runtimeConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig();
 
-for ($i = 0; $i < 10000; $i++) {
+for ($i = 0; $i < 30000; $i++) {
     $evaluator->evaluate($instance, $staticContext, $runtimeConfig);
 }
 
@@ -75,7 +75,7 @@ $time = microtime(true);
 
 $validator = new \Opis\JsonSchema\Validator();
 
-for ($i = 0; $i < 10000; $i++) {
+for ($i = 0; $i < 30000; $i++) {
     $validator->validate($instance, $schema);
 }
 
