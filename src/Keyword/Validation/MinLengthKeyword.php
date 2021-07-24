@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+
+namespace Ropi\JsonSchemaEvaluator\Keyword\Validation;
+
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
+use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
+
+class MinLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
+{
+    /**
+     * @throws StaticKeywordAnalysisException
+     */
+    public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
+    {
+        if (!is_int($keywordValue) || $keywordValue < 0) {
+            throw new InvalidKeywordValueException(
+                'The value of "%s" must be a non-negative integer',
+                $this,
+                $context
+            );
+        }
+
+        if (!$keywordValue) {
+            // Remove keyword if 0 (same as default behavior)
+            unset($context->getSchema()->{$this->getName()});
+        }
+    }
+
+    public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
+    {
+        $instance = $context->getInstance();
+        if (!is_string($instance)) {
+            return null;
+        }
+
+        $result = $context->createResultForKeyword($this);
+        $instanceLength = mb_strlen($instance, 'UTF-8');
+
+        if ($instanceLength < $keywordValue) {
+            $result->setError(
+                'At least '
+                . $keywordValue
+                . ' characters are required, but there are only '
+                . $instanceLength
+            );
+
+            return $result;
+        }
+
+        return $result;
+    }
+}

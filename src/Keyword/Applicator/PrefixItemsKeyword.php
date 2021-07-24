@@ -1,0 +1,83 @@
+<?php
+declare(strict_types=1);
+
+namespace Ropi\JsonSchemaEvaluator\Keyword\Applicator;
+
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
+use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
+
+class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterface
+{
+    /**
+     * @throws StaticKeywordAnalysisException
+     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     */
+    public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
+    {
+        if (!is_array($keywordValue) || !$keywordValue) {
+            throw new InvalidKeywordValueException(
+                'The "%s" must be a non-empty array',
+                $this,
+                $context
+            );
+        }
+
+        foreach ($keywordValue as $prefixItemSchemaKey => $prefixItemSchema) {
+            $context->pushSchema(keywordLocationFragment: (string) $prefixItemSchemaKey);
+
+            if (!is_object($prefixItemSchema) && !is_bool($prefixItemSchema)) {
+                throw new InvalidKeywordValueException(
+                    'The array elements of "%s" must be valid JSON Schemas',
+                    $this,
+                    $context
+                );
+            }
+
+            $context->setSchema($prefixItemSchema);
+            $context->getDraft()->evaluateStatic($context);
+
+            $context->popSchema();
+        }
+    }
+
+    public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
+    {
+        $instance = $context->getInstance();
+        if (!is_array($instance)) {
+            return null;
+        }
+
+        $result = $context->createResultForKeyword($this);
+
+        $instanceKeys = array_keys($instance);
+
+        foreach ($keywordValue as $prefixItemsKey => $prefixItemSchema) {
+            if (!array_key_exists($prefixItemsKey, $instanceKeys)) {
+                break;
+            }
+
+            $instanceKey = $instanceKeys[$prefixItemsKey];
+
+            $context->pushSchema($prefixItemSchema, (string) $prefixItemsKey);
+            $context->pushInstance($instance[$instanceKey], (string) $instanceKey);
+
+            if (!$context->getDraft()->evaluate($context)) {
+                $result->setValid(false);
+            }
+
+            $context->popInstance();
+            $context->popSchema();
+        }
+
+        if ($result->getValid()) {
+            $result->setAnnotation(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
+        }
+
+        return $result;
+    }
+}

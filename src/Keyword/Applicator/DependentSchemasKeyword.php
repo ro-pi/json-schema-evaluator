@@ -1,0 +1,90 @@
+<?php
+declare(strict_types=1);
+
+namespace Ropi\JsonSchemaEvaluator\Keyword\Applicator;
+
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
+use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
+use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
+
+class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordInterface
+{
+    /**
+     * @throws StaticKeywordAnalysisException
+     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     */
+    public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
+    {
+        if (!is_object($keywordValue)) {
+            throw new InvalidKeywordValueException(
+                'The value of "%s" must be an object',
+                $this,
+                $context
+            );
+        }
+
+        foreach ($keywordValue as $dependencyPropertyName => $dependentSchema) {
+            $context->pushSchema(keywordLocationFragment: (string) $dependencyPropertyName);
+
+            if (!is_object($dependentSchema) && !is_bool($dependentSchema)) {
+                throw new InvalidKeywordValueException(
+                    'The property "'
+                    . $dependencyPropertyName
+                    . '" in "%s" object must be a valid JSON Schema',
+                    $this,
+                    $context
+                );
+            }
+
+            $context->pushSchema($dependentSchema);
+            $context->getDraft()->evaluateStatic($context);
+            $context->popSchema();
+
+            $context->popSchema();
+        }
+    }
+
+    public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
+    {
+        $instance = $context->getInstance();
+        if (!is_object($instance)) {
+            return null;
+        }
+
+        $result = $context->createResultForKeyword($this);
+
+        foreach ($keywordValue as $dependencyPropertyName => $dependentSchema) {
+            $propertyExists = property_exists($instance, $dependencyPropertyName);
+
+            if (!$propertyExists) {
+                if (!$context->getConfig()->getEvaluateMutations()) {
+                    continue;
+                }
+
+                if (!$context->getDraft()->schemaHasMutationKeywords($dependentSchema)) {
+                    continue;
+                }
+
+                $instance->$dependencyPropertyName = null;
+            }
+
+            $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string) $dependencyPropertyName);
+
+            if ($propertyExists) {
+                if (!$context->getDraft()->evaluate($context)) {
+                    $result->setValid(false);
+                }
+            } else {
+                $context->getDraft()->evaluate(clone $context, true);
+            }
+
+            $context->popSchema();
+        }
+
+        return $result;
+    }
+}

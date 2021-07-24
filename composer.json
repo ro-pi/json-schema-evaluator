@@ -1,0 +1,42 @@
+{
+    "name": "ropi/json-schema-validator",
+    "type": "library",
+    "description": "JSON Schema Validator",
+    "keywords": [
+        "json",
+        "schema",
+        "validator"
+    ],
+    "homepage": "https://www.robertpiplica.de",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Robert Piplica",
+            "email": "mail@robertpiplica.de"
+        }
+    ],
+    "require": {
+        "ext-bcmath": "*",
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*",
+        "php": ">=8.0.0",
+        "guzzlehttp/psr7": "^2.0",
+        "symfony/polyfill-intl-idn": "^1.23"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "suggest": {
+        "ext-idn": "Allows better performance for IDN validations"
+    },
+    "autoload": {
+        "psr-4": { 
+            "Ropi\\JsonSchemaEvaluator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ropi\\JsonSchemaEvaluator\\Tests\\": "tests/"
+        }
+    }
+}

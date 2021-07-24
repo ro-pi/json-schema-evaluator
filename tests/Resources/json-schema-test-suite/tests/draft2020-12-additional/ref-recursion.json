@@ -1,0 +1,31 @@
+[
+    {
+        "description": "infinite recursion should throw exception without result",
+        "schema": {
+            "$defs": {
+                "int": { "$ref": "#/$defs/int" }
+            },
+            "allOf": [
+                {
+                    "properties": {
+                        "foo": {
+                            "$ref": "#/$defs/int"
+                        }
+                    }
+                },
+                {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/int"
+                    }
+                }
+            ]
+        },
+        "tests": [
+            {
+                "description": "no result",
+                "data": { "foo": 1 },
+                "valid": null
+            }
+        ]
+    }
+]
