@@ -1,0 +1,83 @@
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$schema = json_decode('{
+    "type": "object",
+    "properties": {
+        "firstname": {
+            "type": "string"
+        },
+        "lastname": {
+            "type": "string"
+        },
+        "addresses": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "street": {
+                        "type": "string"
+                    },
+                    "zip": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}');
+
+$schema = json_decode('{
+    "type": "object"
+}');
+
+$instance = json_decode('{
+    "firstname": "Robert",
+    "lastname": "Piplica",
+    "addresses": [
+        {
+            "street": "Münchener Str. 29a",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
+            "zip": "82131",
+            "city": "Gauting"
+        }
+    ]
+}');
+
+$evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
+
+$time = microtime(true);
+
+$staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
+    new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
+));
+
+$runtimeConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig();
+
+for ($i = 0; $i < 10000; $i++) {
+    $evaluator->evaluate($instance, $staticContext, $runtimeConfig);
+}
+
+echo microtime(true) - $time;
+echo PHP_EOL;
+
+
+
+$time = microtime(true);
+
+$validator = new \Opis\JsonSchema\Validator();
+
+for ($i = 0; $i < 10000; $i++) {
+    $validator->validate($instance, $schema);
+}
+
+echo microtime(true) - $time;
+
