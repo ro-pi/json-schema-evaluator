@@ -54,11 +54,11 @@ $instance = json_decode('{
 
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
-$time = microtime(true);
-
 $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
     new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
 ));
+
+$time = microtime(true);
 
 $runtimeConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig();
 
