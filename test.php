@@ -60,10 +60,8 @@ $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluat
 
 $time = microtime(true);
 
-$runtimeConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig();
-
 for ($i = 0; $i < 30000; $i++) {
-    $evaluator->evaluate($instance, $staticContext, $runtimeConfig);
+    $evaluator->evaluate($instance, $staticContext);
 }
 
 echo microtime(true) - $time;
