@@ -31,10 +31,6 @@ $schema = json_decode('{
     }
 }');
 
-$schema = json_decode('{
-    "minLength": 3
-}');
-
 $instance = json_decode('{
     "firstname": "Robert",
     "lastname": "Piplica",
@@ -52,7 +48,13 @@ $instance = json_decode('{
     ]
 }');
 
-$instance = "yolo";
+$schema = json_decode('{
+    "type": "string",
+    "minLength": 5,
+    "maxLength": 8
+}');
+
+$instance = "yolomo";
 
 $oTime = microtime(true);
 
@@ -88,9 +90,9 @@ $rTime = microtime(true) - $rTime;
 
 echo 'ROPI (total time): ';
 echo $rTime + $sTime;
-echo ' (' . round(100 - (100 / $oTime * ($rTime + $sTime)), 2) . '%)';
+echo ' (' . round($oTime / ($rTime + $sTime), 2) . ' times faster)';
 echo PHP_EOL;
 echo 'ROPI (runtime)   : ';
 echo $rTime;
-echo ' (' . round(100 - (100 / $oTime * $rTime), 2) . '%)';
+echo ' (' . round($oTime / $rTime, 2) . ' times faster)';
 
