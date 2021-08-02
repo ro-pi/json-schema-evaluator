@@ -18,6 +18,7 @@ class StaticEvaluationContext
         private StaticEvaluationConfig $config
     ) {
         $this->draft = $this->config->getDefaultDraft();
+
         $this->schemaStack[0] = [
             'schema' => $schema,
             'keywordLocation' => '',
