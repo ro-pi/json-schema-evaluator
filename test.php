@@ -52,6 +52,8 @@ $instance = json_decode('{
     ]
 }');
 
+$instance = "yolo";
+
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
