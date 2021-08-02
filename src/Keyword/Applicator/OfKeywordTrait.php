@@ -57,7 +57,6 @@ trait OfKeywordTrait
                 $numMatches++;
             }
 
-            // TODO: Klonen loswerden mit Hilfe von lastResultNumber und dann entsprechend nur Zugriff auf Results > lastResultNumber zugreifen?
             $context->adoptResultsFromContext($intermediateContext);
         }
 
