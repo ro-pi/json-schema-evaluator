@@ -54,30 +54,43 @@ $instance = json_decode('{
 
 $instance = "yolo";
 
+$oTime = microtime(true);
+
+$validator = new \Opis\JsonSchema\Validator();
+
+for ($i = 0; $i < 100000; $i++) {
+    $validator->validate($instance, $schema);
+}
+
+$oTime = microtime(true) - $oTime;
+
+echo 'OPIS (total time): ';
+echo $oTime;
+echo PHP_EOL;
+
+
+
+$sTime = microtime(true);
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
     new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
 ));
 
-$time = microtime(true);
+$sTime = microtime(true) - $sTime;
+$rTime = microtime(true);
 
-for ($i = 0; $i < 30000; $i++) {
+for ($i = 0; $i < 100000; $i++) {
     $evaluator->evaluate($instance, $staticContext);
 }
 
-echo microtime(true) - $time;
+$rTime = microtime(true) - $rTime;
+
+echo 'ROPI (total time): ';
+echo $rTime + $sTime;
+echo ' (' . round(100 - (100 / $oTime * ($rTime + $sTime)), 2) . '%)';
 echo PHP_EOL;
-
-
-
-$time = microtime(true);
-
-$validator = new \Opis\JsonSchema\Validator();
-
-for ($i = 0; $i < 30000; $i++) {
-    $validator->validate($instance, $schema);
-}
-
-echo microtime(true) - $time;
+echo 'ROPI (runtime)   : ';
+echo $rTime;
+echo ' (' . round(100 - (100 / $oTime * $rTime), 2) . '%)';
 
