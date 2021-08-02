@@ -4,14 +4,13 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\Draft\DraftInterface;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 
 trait EvaluationContextTrait
 {
     private DraftInterface $draft;
 
     /**
-     * @var SchemaStackEntry[]
+     * @var array[]
      */
     private array $schemaStack = [];
     private int $schemaStackPointer = 0;
@@ -52,12 +51,12 @@ trait EvaluationContextTrait
             $keywordLocation = $this->getKeywordLocation() . '/' . $keywordLocationFragment;
         }
 
-        $this->schemaStack[++$this->schemaStackPointer] = new SchemaStackEntry(
-            $schema,
-            $keywordLocation,
-            $schemaKeywordLocation,
-            $baseUri
-        );
+        $this->schemaStack[++$this->schemaStackPointer] = [
+            'schema' => $schema,
+            'keywordLocation' => $keywordLocation,
+            'schemaKeywordLocation' => $schemaKeywordLocation,
+            'baseUri' => $baseUri
+        ];
     }
 
     public function setSchema(object|bool $schema): void
@@ -69,7 +68,7 @@ trait EvaluationContextTrait
             );
         }
 
-        $this->schemaStack[$this->schemaStackPointer]->schema = $schema;
+        $this->schemaStack[$this->schemaStackPointer]['schema'] = $schema;
     }
 
     public function popSchema(): void
@@ -87,17 +86,17 @@ trait EvaluationContextTrait
 
     public function getSchema(): object|bool
     {
-        return $this->schemaStack[$this->schemaStackPointer]->schema;
+        return $this->schemaStack[$this->schemaStackPointer]['schema'];
     }
 
     public function getRootSchema(): object|bool
     {
-        return $this->schemaStack[0]->schema;
+        return $this->schemaStack[0]['schema'];
     }
 
     public function getKeywordLocation(int $length = 0): string
     {
-        $location = $this->schemaStack[$this->schemaStackPointer]->keywordLocation;
+        $location = $this->schemaStack[$this->schemaStackPointer]['keywordLocation'];
 
         if ($length === 0) {
             return $location;
@@ -108,7 +107,7 @@ trait EvaluationContextTrait
 
     public function getSchemaKeywordLocation(int $length = 0): string
     {
-        $location = $this->schemaStack[$this->schemaStackPointer]->schemaKeywordLocation;
+        $location = $this->schemaStack[$this->schemaStackPointer]['schemaKeywordLocation'];
 
         if ($length === 0) {
             return $location;
@@ -125,17 +124,17 @@ trait EvaluationContextTrait
             $stackIndex = $this->schemaStackPointer + $stackIndex;
         }
 
-        $this->schemaStack[$stackIndex]->baseUri = $baseUri;
+        $this->schemaStack[$stackIndex]['baseUri'] = $baseUri;
     }
 
     public function getBaseUri(): string
     {
-        return $this->schemaStack[$this->schemaStackPointer]->baseUri;
+        return $this->schemaStack[$this->schemaStackPointer]['baseUri'];
     }
 
     public function getAbsoluteKeywordLocation(): ?string
     {
-        $baseUri = $this->schemaStack[$this->schemaStackPointer]->baseUri;
+        $baseUri = $this->schemaStack[$this->schemaStackPointer]['baseUri'];
         if (!$baseUri) {
             return null;
         }

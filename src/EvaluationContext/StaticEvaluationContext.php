@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 
 class StaticEvaluationContext
 {
@@ -19,7 +18,12 @@ class StaticEvaluationContext
         private StaticEvaluationConfig $config
     ) {
         $this->draft = $this->config->getDefaultDraft();
-        $this->schemaStack[0] = new SchemaStackEntry($schema, '', '', '');
+        $this->schemaStack[0] = [
+            'schema' => $schema,
+            'keywordLocation' => '',
+            'schemaKeywordLocation' => '',
+            'baseUri' => '',
+        ];
 
         if (is_object($schema)) {
             $this->registerSchema('', $schema, '');

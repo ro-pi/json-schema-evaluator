@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\InstanceStackEntry;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class RuntimeEvaluationContext
@@ -13,7 +11,7 @@ class RuntimeEvaluationContext
     use EvaluationContextTrait;
 
     /**
-     * @var InstanceStackEntry[]
+     * @var array[]
      */
     private array $instanceStack = [];
     private int $instanceStackPointer = 0;
@@ -32,8 +30,18 @@ class RuntimeEvaluationContext
         private RuntimeEvaluationConfig $config,
         private StaticEvaluationContext $staticEvaluationContext
     ) {
-        $this->schemaStack[0] = new SchemaStackEntry($schema, '', '', '');
-        $this->instanceStack[0] = new InstanceStackEntry($instance, '');
+        $this->schemaStack[0] = [
+            'schema' => $schema,
+            'keywordLocation' => '',
+            'schemaKeywordLocation' => '',
+            'baseUri' => '',
+        ];
+
+        $this->instanceStack[0] = [
+            'instance' => &$instance,
+            'instanceLocation' => ''
+        ];
+
         $this->draft = $staticEvaluationContext->getConfig()->getDefaultDraft();
     }
 
@@ -55,7 +63,10 @@ class RuntimeEvaluationContext
             $instanceLocation = $this->getInstanceLocation() . '/' . $instanceLocationFragment;
         }
 
-        $this->instanceStack[++$this->instanceStackPointer] = new InstanceStackEntry($instance, $instanceLocation);
+        $this->instanceStack[++$this->instanceStackPointer] = [
+            'instance' => &$instance,
+            'instanceLocation' => $instanceLocation
+        ];
     }
 
     public function popInstance(): void
@@ -73,12 +84,12 @@ class RuntimeEvaluationContext
 
     public function getInstanceLocation(): string
     {
-        return $this->instanceStack[$this->instanceStackPointer]->instanceLocation;
+        return $this->instanceStack[$this->instanceStackPointer]['instanceLocation'];
     }
 
     public function &getInstance(): mixed
     {
-        return $this->instanceStack[$this->instanceStackPointer]->instance;
+        return $this->instanceStack[$this->instanceStackPointer]['instance'];
     }
 
     public function createResultForKeyword(KeywordInterface $keyword): RuntimeEvaluationResult
@@ -181,7 +192,7 @@ class RuntimeEvaluationContext
     public function getMostOuterDynamicAnchorUri(string $dynamicAnchor): ?string
     {
         foreach ($this->schemaStack as $stackEntry) {
-            $dynamicAnchorUri = $stackEntry->baseUri . '#' . $dynamicAnchor;
+            $dynamicAnchorUri = $stackEntry['baseUri'] . '#' . $dynamicAnchor;
             if ($this->staticEvaluationContext->hasDynamicAnchorUri($dynamicAnchorUri)) {
                 return $dynamicAnchorUri;
             }
