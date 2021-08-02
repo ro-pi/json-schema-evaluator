@@ -7,8 +7,6 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriNormalizer;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
-use Ropi\JsonSchemaEvaluator\Draft\Exception\DuplicateKeywordPriorityException;
-use Ropi\JsonSchemaEvaluator\Draft\Exception\KeywordRegisterException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
@@ -42,26 +40,10 @@ abstract class AbstractDraft implements DraftInterface
         return static::VOCABULARIES;
     }
 
-    /**
-     * @throws KeywordRegisterException
-     */
     public function registerKeyword(KeywordInterface $keyword): void
     {
         if (!$keyword->hasPriority()) {
             $keyword->setPriority($this->priority += 1000);
-        }
-
-        foreach ($this->keywords as $registeredKeyword) {
-            if ($registeredKeyword->getPriority() === $keyword->getPriority()) {
-                throw new DuplicateKeywordPriorityException(
-                    'Can not register keyword "'
-                    . $keyword->getName()
-                    . '", because it has the same priority as keyword "'
-                    . $registeredKeyword->getPriority()
-                    . '"',
-                    1627924514
-                );
-            }
         }
 
         $this->keywords[$keyword->getName()] = $keyword;
