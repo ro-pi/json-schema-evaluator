@@ -17,9 +17,7 @@ class RuntimeEvaluationContext
     private int $instanceStackPointer = 0;
 
     /**
-     * Results indexed by instance location and keyword name
-     *
-     * @var RuntimeEvaluationResult[][][]
+     * @var RuntimeEvaluationResult[]
      */
     private array $results = [];
     private int $lastResultNumber = 0;
@@ -102,7 +100,7 @@ class RuntimeEvaluationContext
             $this->getAbsoluteKeywordLocation()
         );
 
-        $this->results[$this->getInstanceLocation()][$keyword->getName()][] = $result;
+        $this->results[] = $result;
 
         return $result;
     }
@@ -114,7 +112,19 @@ class RuntimeEvaluationContext
 
     public function getResultsByKeywordName(string $keywordName): array
     {
-        return $this->results[$this->getInstanceLocation()][$keywordName] ?? [];
+        $results = [];
+        $currentInstanceLocation = $this->getInstanceLocation();
+
+        foreach ($this->results as $result) {
+            if (
+                $result->getInstanceLocation() === $currentInstanceLocation
+                && $result->getKeyword()->getName() === $keywordName
+            ) {
+                $results[] = $result;
+            }
+        }
+
+        return $results;
     }
 
     public function getLastResultByKeywordName(string $keywordName): ?RuntimeEvaluationResult
@@ -147,44 +157,21 @@ class RuntimeEvaluationContext
      */
     public function getResults(): array
     {
-        $flatten = [];
-
-        foreach ($this->results as $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    $flatten[] = $result;
-                }
-            }
-        }
-
-        return $flatten;
-    }
-
-    public function getIndexedResults(): array
-    {
         return $this->results;
     }
 
     public function adoptResultsFromContext(RuntimeEvaluationContext $context): void
     {
-        foreach ($context->getIndexedResults() as $location => $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $keywordName => $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    $this->results[$location][$keywordName][] = $result;
-                }
-            }
+        foreach ($context->getResults() as $result) {
+            $this->results[] = $result;
         }
     }
 
     public function suppressAnnotations(?int $after = null): void
     {
-        foreach ($this->results as $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    if ($result->getNumber() > $after) {
-                        $result->suppressAnnotation();
-                    }
-                }
+        foreach ($this->results as $result) {
+            if ($result->getNumber() > $after) {
+                $result->suppressAnnotation();
             }
         }
     }

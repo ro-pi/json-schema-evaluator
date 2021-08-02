@@ -55,6 +55,7 @@ trait OfKeywordTrait
                 $numMatches++;
             }
 
+            // TODO: Possible without adopt?
             $context->adoptResultsFromContext($intermediateContext);
         }
 
