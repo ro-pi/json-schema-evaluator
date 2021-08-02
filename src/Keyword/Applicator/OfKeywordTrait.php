@@ -48,6 +48,8 @@ trait OfKeywordTrait
         $numMatches = 0;
 
         foreach ($keywordValue as $ofSchemaKey => $ofSchema) {
+            // Clone context without results (@see RuntimeEvaluationContext::__clone()),
+            // to avoid accessing results of cousins
             $intermediateContext = clone $context;
             $intermediateContext->pushSchema(schema: $ofSchema, keywordLocationFragment: (string) $ofSchemaKey);
 
@@ -55,7 +57,6 @@ trait OfKeywordTrait
                 $numMatches++;
             }
 
-            // TODO: Possible without adopt?
             $context->adoptResultsFromContext($intermediateContext);
         }
 
