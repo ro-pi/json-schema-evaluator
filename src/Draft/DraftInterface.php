@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\Draft;
 
 use Psr\Http\Message\UriInterface;
+use Ropi\JsonSchemaEvaluator\Draft\Exception\KeywordRegisterException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
@@ -12,6 +13,9 @@ use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
 
 interface DraftInterface
 {
+    /**
+     * @throws KeywordRegisterException
+     */
     function registerKeyword(KeywordInterface $keyword): void;
     function getKeywordByName(string $name): KeywordInterface;
     function schemaHasMutationKeywords(object|bool $schema): bool;

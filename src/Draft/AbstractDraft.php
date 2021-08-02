@@ -7,6 +7,8 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriNormalizer;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
+use Ropi\JsonSchemaEvaluator\Draft\Exception\DuplicateKeywordPriorityException;
+use Ropi\JsonSchemaEvaluator\Draft\Exception\KeywordRegisterException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
@@ -19,6 +21,9 @@ use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
 
 abstract class AbstractDraft implements DraftInterface
 {
+    /**
+     * @var KeywordInterface[]
+     */
     private array $keywords = [];
     private int $priority = 0;
 
@@ -37,10 +42,26 @@ abstract class AbstractDraft implements DraftInterface
         return static::VOCABULARIES;
     }
 
+    /**
+     * @throws KeywordRegisterException
+     */
     public function registerKeyword(KeywordInterface $keyword): void
     {
         if (!$keyword->hasPriority()) {
             $keyword->setPriority($this->priority += 1000);
+        }
+
+        foreach ($this->keywords as $registeredKeyword) {
+            if ($registeredKeyword->getPriority() === $keyword->getPriority()) {
+                throw new DuplicateKeywordPriorityException(
+                    'Can not register keyword "'
+                    . $keyword->getName()
+                    . '", because it has the same priority as keyword "'
+                    . $registeredKeyword->getPriority()
+                    . '"',
+                    1627924514
+                );
+            }
         }
 
         $this->keywords[$keyword->getName()] = $keyword;
@@ -85,24 +106,22 @@ abstract class AbstractDraft implements DraftInterface
             );
         }
 
-        /** @var StaticKeywordInterface[][] $prioritizedKeywords */
+        /** @var StaticKeywordInterface[] $prioritizedKeywords */
         $prioritizedKeywords = [];
 
         foreach ($schema as $keywordName => $keywordValue) {
             $keyword = $context->getDraft()->getKeywordByName($keywordName);
             if ($keyword instanceof StaticKeywordInterface) {
-                $prioritizedKeywords[$keyword->getPriority()][] = $keyword;
+                $prioritizedKeywords[$keyword->getPriority()] = $keyword;
             }
         }
 
         ksort($prioritizedKeywords);
 
-        foreach ($prioritizedKeywords as $keywords) {
-            foreach ($keywords as $keyword) {
-                $context->pushSchema(keywordLocationFragment: $keyword->getName());
-                $keyword->evaluateStatic($schema->{$keyword->getName()}, $context);
-                $context->popSchema();
-            }
+        foreach ($prioritizedKeywords as $keyword) {
+            $context->pushSchema(keywordLocationFragment: $keyword->getName());
+            $keyword->evaluateStatic($schema->{$keyword->getName()}, $context);
+            $context->popSchema();
         }
     }
 
@@ -117,7 +136,7 @@ abstract class AbstractDraft implements DraftInterface
             return $schema;
         }
 
-        /** @var KeywordInterface[][] $prioritizedKeywords */
+        /** @var KeywordInterface[] $prioritizedKeywords */
         $prioritizedKeywords = [];
 
         foreach ($schema as $keywordName => $keywordValue) {
@@ -127,7 +146,7 @@ abstract class AbstractDraft implements DraftInterface
                 continue;
             }
 
-            $prioritizedKeywords[$keyword->getPriority()][] = $keyword;
+            $prioritizedKeywords[$keyword->getPriority()] = $keyword;
         }
 
         ksort($prioritizedKeywords);
@@ -136,20 +155,18 @@ abstract class AbstractDraft implements DraftInterface
         $shortCircuit = $context->getConfig()->getShortCircuit();
         $valid = true;
 
-        foreach ($prioritizedKeywords as $keywords) {
-            foreach ($keywords as $keyword) {
-                $context->pushSchema(keywordLocationFragment: $keyword->getName());
+        foreach ($prioritizedKeywords as $keyword) {
+            $context->pushSchema(keywordLocationFragment: $keyword->getName());
 
-                $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
-                if ($evaluationResult && !$evaluationResult->getValid()) {
-                    $valid = false;
-                }
+            $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
+            if ($evaluationResult && !$evaluationResult->getValid()) {
+                $valid = false;
+            }
 
-                $context->popSchema();
+            $context->popSchema();
 
-                if ($shortCircuit && !$valid) {
-                    break 2;
-                }
+            if ($shortCircuit && !$valid) {
+                break;
             }
         }
 
