@@ -22,7 +22,7 @@ class RuntimeEvaluationContext
      * @var RuntimeEvaluationResult[][][]
      */
     private array $results = [];
-    private int $lastResultNumber = 1;
+    private int $lastResultNumber = 0;
 
     public function __construct(
         object|bool $schema,
@@ -95,7 +95,7 @@ class RuntimeEvaluationContext
     public function createResultForKeyword(KeywordInterface $keyword): RuntimeEvaluationResult
     {
         $result = new RuntimeEvaluationResult(
-            $this->lastResultNumber++,
+            ++$this->lastResultNumber,
             $keyword,
             $this->getKeywordLocation(),
             $this->getInstanceLocation(),
