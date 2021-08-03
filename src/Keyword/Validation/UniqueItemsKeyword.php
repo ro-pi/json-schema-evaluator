@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterface
+class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     public function getName(): string
     {
@@ -29,11 +30,6 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 $this,
                 $context
             );
-        }
-
-        if (!$keywordValue) {
-            // Remove keyword if false for faster evaluation
-            unset($context->getSchema()->{$this->getName()});
         }
     }
 

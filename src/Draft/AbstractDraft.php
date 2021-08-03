@@ -12,6 +12,7 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\UnknownKeyword;
 use Ropi\JsonSchemaEvaluator\Type\BigNumber;
@@ -123,7 +124,7 @@ abstract class AbstractDraft implements DraftInterface
             $name = $keyword->getName();
 
             if (
-                !property_exists($schema, $name) // Check for keywords removed by static analysis
+                !$keyword instanceof RuntimeKeywordInterface
                 || ($mutationsOnly && !$keyword instanceof MutationKeywordInterface)
             ) {
                 continue;

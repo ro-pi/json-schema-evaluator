@@ -6,7 +6,7 @@ namespace Ropi\JsonSchemaEvaluator\Keyword;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 
-class UnknownKeyword extends AbstractKeyword implements KeywordInterface
+class UnknownKeyword extends AbstractKeyword implements RuntimeKeywordInterface
 {
     private string $name;
 

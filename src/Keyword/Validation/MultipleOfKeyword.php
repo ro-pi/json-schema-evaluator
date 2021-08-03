@@ -9,10 +9,11 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
 
-class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterface
+class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     public function getName(): string
     {
@@ -35,11 +36,6 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
         }
 
         $keywordValue = $number;
-
-        if ($keywordValue->equals($context->getDraft()->createBigNumber(1))) {
-            // Remove keyword if 1 (same as default behavior)
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult

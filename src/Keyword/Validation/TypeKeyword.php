@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
+class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     public const SUPPORTED_TYPES = [
         'object' => 'object',
@@ -64,15 +65,15 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
         }
 
         $keywordValue = $types;
-
-        if (!$keywordValue) {
-            // Remove keyword if false (same as default behavior)
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        if (!$keywordValue) {
+            //Ignore keyword also if empty or false (same as default behavior)
+            return null;
+        }
+
         $instanceType = $this->detectType($context->getInstance(), $context);
 
         $result = $context->createResultForKeyword($this);

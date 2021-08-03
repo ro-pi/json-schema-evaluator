@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Ropi\JsonSchemaEvaluator\Keyword\ReservedLocation;
 
-use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
@@ -44,13 +42,5 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 );
             }
         }
-
-        // Remove vocabulary keyword from schema for faster evaluation
-        unset($context->getSchema()->{$this->getName()});
-    }
-
-    public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
-    {
-        return $context->createResultForKeyword($this);
     }
 }

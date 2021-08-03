@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface
+class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     protected const PATTERN_URI_TEMPLATE = <<<'REGEX'
 /^((([\x{21}\x{23}\x{24}\x{26}\x{28}-\x{3B}\x{3D}\x{3F}-\x{5B}\x{5D}\x{5F}\x{61}-\x{7A}\x{7E}]|([\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}])|([\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}])|(%[A-F0-9][A-F0-9])))|(\{(((\+|#)|(\.|\/|;|\?|&)|(\=|,|\!|@|\|)))?([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?(,([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?)*\}))*$/iu

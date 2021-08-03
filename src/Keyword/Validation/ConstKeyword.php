@@ -6,9 +6,9 @@ namespace Ropi\JsonSchemaEvaluator\Keyword\Validation;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
-use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 
-class ConstKeyword extends AbstractKeyword implements KeywordInterface
+class ConstKeyword extends AbstractKeyword implements RuntimeKeywordInterface
 {
     public function getName(): string
     {

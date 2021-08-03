@@ -49,7 +49,8 @@ $instance = json_decode('{
 }');
 
 $schema = json_decode('{
-    "minLength": 5
+    "minLength": 5,
+    "maxLength": 10
 }');
 
 $instance = "yolomo";
