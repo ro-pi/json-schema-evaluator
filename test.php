@@ -4,31 +4,45 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $schema = json_decode('{
     "type": "object",
+    "required": ["firstname", "lastname", "addresses"],
     "properties": {
+        "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999999
+        },
         "firstname": {
             "type": "string",
-            "minLength": 2
+            "minLength": 2,
+            "maxLength": 50
         },
         "lastname": {
             "type": "string",
-            "minLength": 2
+            "minLength": 2,
+            "maxLength": 50
         },
         "addresses": {
             "type": "array",
+            "minItems": 1,
+            "maxItems": 30,
             "items": {
                 "type": "object",
+                "required": ["street", "zip", "city"],
                 "properties": {
                     "street": {
                         "type": "string",
-                        "minLength": 2
+                        "minLength": 2,
+                        "maxLength": 50
                     },
                     "zip": {
                         "type": "string",
-                        "minLength": 2
+                        "minLength": 2,
+                        "maxLength": 50
                     },
                     "city": {
                         "type": "string",
-                        "minLength": 2
+                        "minLength": 2,
+                        "maxLength": 50
                     }
                 }
             }
@@ -39,9 +53,35 @@ $schema = json_decode('{
 $instance = json_decode('{
     "firstname": "Robert",
     "lastname": "Piplica",
+    "id": 13,
     "addresses": [
         {
             "street": "Münchener Str. 29a",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
+            "zip": "82131",
+            "city": "Gauting"
+        },
+        {
+            "street": "Julius-Haerlin-Str. 7",
             "zip": "82131",
             "city": "Gauting"
         },
@@ -57,7 +97,7 @@ $oTime = microtime(true);
 
 $validator = new \Opis\JsonSchema\Validator();
 
-for ($i = 0; $i < 100000; $i++) {
+for ($i = 0; $i < 10000; $i++) {
     $validator->validate($instance, $schema);
 }
 
@@ -78,7 +118,7 @@ $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluat
 
 $sTime = microtime(true) - $sTime;
 $rTime = microtime(true);
-for ($i = 0; $i < 100000; $i++) {
+for ($i = 0; $i < 10000; $i++) {
     $evaluator->evaluate($instance, $staticContext);
 }
 

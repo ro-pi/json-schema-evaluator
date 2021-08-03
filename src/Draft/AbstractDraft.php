@@ -215,12 +215,14 @@ abstract class AbstractDraft implements DraftInterface
             return clone $value;
         }
 
-        if (!is_int($value) && !is_float($value) && (!$acceptNumericStrings || !is_string($value))) {
-            return null;
-        }
-
-        if (!is_numeric($value)) {
-            return null;
+        if (!is_int($value) && !is_float($value)) {
+            if ($acceptNumericStrings) {
+                if (!is_string($value) || !is_numeric($value)) {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
         try {
