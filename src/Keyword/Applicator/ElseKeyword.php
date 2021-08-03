@@ -34,7 +34,7 @@ class ElseKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -48,7 +48,7 @@ class ElseKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         $result = $context->createResultForKeyword($this);
         $context->pushSchema($keywordValue);
 
-        if (!$context->getDraft()->evaluate($context)) {
+        if (!$context->draft->evaluate($context)) {
             $result->setValid(false);
         }
 

@@ -34,7 +34,7 @@ class IfKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -43,7 +43,7 @@ class IfKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
         $context->pushSchema($keywordValue);
 
         $result = $context->createResultForKeyword($this);
-        $result->setEvaluationResult($context->getDraft()->evaluate($context));
+        $result->setEvaluationResult($context->draft->evaluate($context));
 
         $context->popSchema();
 

@@ -39,7 +39,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             );
         }
 
-        $uri = $context->getDraft()->createUri($keywordValue);
+        $uri = $context->draft->createUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
                 'The value of "%s" must be a valid URI reference',
@@ -48,7 +48,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             );
         }
 
-        $resolvedUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $uri);
+        $resolvedUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
         $config = $context->config;
@@ -71,7 +71,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             }
 
             $context->pushSchema(schema: $remoteSchema, baseUri: (string) $normalizedUri);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
             $context->popSchema();
         }
 
@@ -88,7 +88,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
 
         if ($fragment && str_starts_with($fragment, '/')) {
             $referencedSchema = $this->dereferenceSchema($uriComponents[0], $context);
-            $referencedSchema = $context->getDraft()->dereferenceJsonPointer($referencedSchema, $fragment);
+            $referencedSchema = $context->draft->dereferenceJsonPointer($referencedSchema, $fragment);
             if ($referencedSchema === null) {
                 throw new KeywordRuntimeEvaluationException(
                     'Can not dereference JSON pointer "' . $fragment . '"',
@@ -120,7 +120,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         );
 
         $result->setValid(
-            $context->getDraft()->evaluate($context)
+            $context->draft->evaluate($context)
         );
 
         $context->popSchema();
@@ -151,9 +151,9 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
     {
         if (is_object($schemaPart)) {
             if (isset($schemaPart->{'$id'}) && is_string($schemaPart->{'$id'})) {
-                $idUri = $context->getDraft()->createUri($schemaPart->{'$id'});
+                $idUri = $context->draft->createUri($schemaPart->{'$id'});
                 if ($idUri) {
-                    $idUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $idUri);
+                    $idUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $idUri);
                     if ((string) $idUri == (string) $uri) {
                         return true;
                     }

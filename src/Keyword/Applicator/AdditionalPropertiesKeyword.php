@@ -34,7 +34,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -80,7 +80,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $context->pushSchema($keywordValue);
             $context->pushInstance($propertyValue, (string) $propertyName);
 
-            if (!$context->getDraft()->evaluate($context)) {
+            if (!$context->draft->evaluate($context)) {
                 $result->setValid(false);
             }
 

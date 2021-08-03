@@ -24,7 +24,7 @@ class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordIn
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->getDraft()->createBigNumber($keywordValue, $context->config->acceptNumericStrings);
+        $number = $context->draft->createBigNumber($keywordValue, $context->config->acceptNumericStrings);
 
         if (!$number) {
             throw new InvalidKeywordValueException(
@@ -39,7 +39,7 @@ class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordIn
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->getDraft()->createBigNumber(
+        $instanceNumber = $context->draft->createBigNumber(
             $context->getCurrentInstance(),
             $context->staticEvaluationContext->config->acceptNumericStrings
         );

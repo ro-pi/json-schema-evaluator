@@ -291,7 +291,7 @@ abstract class AbstractDraft implements DraftInterface
         $prioritizedKeywords = [];
 
         foreach ($schema as $keywordName => $keywordValue) {
-            $keyword = $context->getDraft()->getKeywordByName($keywordName);
+            $keyword = $context->draft->getKeywordByName($keywordName);
             $prioritizedKeywords[$keyword->getPriority()] = $keyword;
         }
 

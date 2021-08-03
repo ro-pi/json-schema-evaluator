@@ -45,7 +45,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
             }
 
             $context->setCurrentSchema($patternPropertySchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
 
             $context->popSchema();
         }
@@ -77,7 +77,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 $context->pushSchema(schema: $patternPropertySchema, keywordLocationFragment: (string) $pattern);
                 $context->pushInstance($propertyValue, (string) $propertyName);
 
-                if (!$context->getDraft()->evaluate($context)) {
+                if (!$context->draft->evaluate($context)) {
                     $result->setValid(false);
                 }
 

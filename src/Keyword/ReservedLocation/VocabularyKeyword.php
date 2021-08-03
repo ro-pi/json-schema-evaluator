@@ -30,12 +30,12 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
         }
 
         foreach ($keywordValue as $vocabulary => $required) {
-            if ($required && !$context->getDraft()->supportsVocabulary($vocabulary)) {
+            if ($required && !$context->draft->supportsVocabulary($vocabulary)) {
                 throw new StaticKeywordAnalysisException(
                     'The value of "%s" indicates that the vocabulary "'
                     . $vocabulary
                     . '" is required, but that vocabulary is not supported by this implementation of draft "'
-                    . $context->getDraft()->getUri()
+                    . $context->draft->getUri()
                     . '"',
                     $this,
                     $context

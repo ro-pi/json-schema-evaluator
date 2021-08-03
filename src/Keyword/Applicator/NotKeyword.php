@@ -34,7 +34,7 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -45,7 +45,7 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $intermediateSchema = clone $context;
         $intermediateSchema->pushSchema($keywordValue);
 
-        if ($context->getDraft()->evaluate($intermediateSchema)) {
+        if ($context->draft->evaluate($intermediateSchema)) {
             $result->setError('Value matches schema, but should not');
         }
 

@@ -34,7 +34,7 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface,
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -54,7 +54,7 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface,
             $context->pushSchema($keywordValue);
             $context->pushInstance($instanceValue, (string) $instanceIndex);
 
-            $valid = $context->getDraft()->evaluate($context);
+            $valid = $context->draft->evaluate($context);
 
             $context->popInstance();
             $context->popSchema();

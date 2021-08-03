@@ -34,7 +34,7 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -51,7 +51,7 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
             $context->pushSchema($keywordValue);
             $context->pushInstance($propertyName, (string) $propertyName);
 
-            if (!$context->getDraft()->evaluate($context)) {
+            if (!$context->draft->evaluate($context)) {
                 $result->setValid(false);
             }
 

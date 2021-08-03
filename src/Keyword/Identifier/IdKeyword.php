@@ -32,7 +32,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
             );
         }
 
-        $uri = $context->getDraft()->createUri($keywordValue);
+        $uri = $context->draft->createUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
                 'The value of "%s" must be a valid URI reference',
@@ -49,7 +49,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
             );
         }
 
-        $resolvedUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $uri);
+        $resolvedUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
         if ($context->hasSchema((string) $normalizedUri)) {

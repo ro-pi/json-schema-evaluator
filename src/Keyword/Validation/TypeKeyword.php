@@ -105,8 +105,8 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         return match (true) {
             is_object($instance) => 'object',
             is_array($instance) => 'array',
-            $context->getDraft()->createBigNumber($instance, $acceptNumericStrings)?->isInteger() => 'integer',
-            $context->getDraft()->valueIsNumeric($instance) => 'number',
+            $context->draft->createBigNumber($instance, $acceptNumericStrings)?->isInteger() => 'integer',
+            $context->draft->valueIsNumeric($instance) => 'number',
             is_string($instance) => 'string',
             is_bool($instance) => 'boolean',
             ($instance === null) => 'null',

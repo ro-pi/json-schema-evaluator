@@ -47,7 +47,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             }
 
             $context->setCurrentSchema($propertySchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
 
             $context->popSchema();
         }
@@ -72,7 +72,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
                     continue;
                 }
 
-                if (!$context->getDraft()->schemaHasMutationKeywords($propertySchema)) {
+                if (!$context->draft->schemaHasMutationKeywords($propertySchema)) {
                     continue;
                 }
 
@@ -83,11 +83,11 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $context->pushInstance($instance->$propertyName, (string) $propertyName);
 
             if ($propertyExists) {
-                if (!$context->getDraft()->evaluate($context)) {
+                if (!$context->draft->evaluate($context)) {
                     $result->setValid(false);
                 }
             } else {
-                $context->getDraft()->evaluate(clone $context, true);
+                $context->draft->evaluate(clone $context, true);
             }
 
             $context->popInstance();

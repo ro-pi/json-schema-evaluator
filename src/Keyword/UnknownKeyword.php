@@ -41,7 +41,7 @@ class UnknownKeyword extends AbstractKeyword implements RuntimeKeywordInterface
     protected function evaluateStaticObject(object &$keywordValue, $context): void
     {
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 

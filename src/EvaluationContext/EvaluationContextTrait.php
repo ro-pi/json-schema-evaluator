@@ -7,24 +7,13 @@ use Ropi\JsonSchemaEvaluator\Draft\DraftInterface;
 
 trait EvaluationContextTrait
 {
-    private DraftInterface $draft;
+    public DraftInterface $draft;
 
     /**
      * @var array[]
      */
     private array $schemaStack = [];
     private int $schemaStackPointer = 0;
-
-    public function setDraft(DraftInterface $draft): self
-    {
-        $this->draft = $draft;
-        return $this;
-    }
-
-    public function getDraft(): DraftInterface
-    {
-        return $this->draft;
-    }
 
     public function pushSchema(
         object|bool|null $schema = null,

@@ -44,7 +44,7 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        $anchorUri = $context->getDraft()->createUri($context->getCurrentBaseUri())->withFragment($keywordValue);
+        $anchorUri = $context->draft->createUri($context->getCurrentBaseUri())->withFragment($keywordValue);
 
         if ($context->hasSchema((string) $anchorUri)) {
             throw new StaticKeywordAnalysisException(

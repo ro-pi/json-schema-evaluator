@@ -35,7 +35,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -72,7 +72,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
             $context->pushSchema($keywordValue);
             $context->pushInstance($instance);
 
-            if (!$context->getDraft()->evaluate($context)) {
+            if (!$context->draft->evaluate($context)) {
                 $result->setValid(false);
             }
 

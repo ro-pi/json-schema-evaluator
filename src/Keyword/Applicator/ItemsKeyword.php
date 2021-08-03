@@ -34,7 +34,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
@@ -58,7 +58,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             $context->pushSchema($keywordValue);
             $context->pushInstance($instance[$instanceIndex], (string) $instanceIndex);
 
-            if (!$context->getDraft()->evaluate($context)) {
+            if (!$context->draft->evaluate($context)) {
                 $result->setValid(false);
             }
 

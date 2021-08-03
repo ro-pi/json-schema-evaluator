@@ -37,7 +37,7 @@ trait OfKeywordTrait
             }
 
             $context->setCurrentSchema($schema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
 
             $context->popSchema();
         }
@@ -53,7 +53,7 @@ trait OfKeywordTrait
             $intermediateContext = clone $context;
             $intermediateContext->pushSchema(schema: $ofSchema, keywordLocationFragment: (string) $ofSchemaKey);
 
-            if ($context->getDraft()->evaluate($intermediateContext)) {
+            if ($context->draft->evaluate($intermediateContext)) {
                 $numMatches++;
             }
 

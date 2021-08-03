@@ -47,7 +47,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             }
 
             $context->pushSchema($dependentSchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
             $context->popSchema();
 
             $context->popSchema();
@@ -71,7 +71,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
                     continue;
                 }
 
-                if (!$context->getDraft()->schemaHasMutationKeywords($dependentSchema)) {
+                if (!$context->draft->schemaHasMutationKeywords($dependentSchema)) {
                     continue;
                 }
 
@@ -81,11 +81,11 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string) $dependencyPropertyName);
 
             if ($propertyExists) {
-                if (!$context->getDraft()->evaluate($context)) {
+                if (!$context->draft->evaluate($context)) {
                     $result->setValid(false);
                 }
             } else {
-                $context->getDraft()->evaluate(clone $context, true);
+                $context->draft->evaluate(clone $context, true);
             }
 
             $context->popSchema();

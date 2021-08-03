@@ -55,7 +55,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         foreach ($instance as $instanceKey => $instanceValue) {
             if (is_array($instanceValue) || is_object($instanceValue)) {
                 foreach ($complexItems as $complexItem) {
-                    if ($context->getDraft()->valuesAreEqual($instanceValue, $complexItem)) {
+                    if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
                         if ($shortCircuit) {
                             $result->setError(
                                 'Item at position '

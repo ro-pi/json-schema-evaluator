@@ -51,14 +51,12 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        $context->setDraft($draft);
+        $context->draft = $draft;
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $context->setDraft(
-            $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue)
-        );
+        $context->draft = $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue);
 
         return $context->createResultForKeyword($this);
     }

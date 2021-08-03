@@ -38,7 +38,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         $result = $context->createResultForKeyword($this);
 
         foreach ($keywordValue as $enumElement) {
-            if ($context->getDraft()->valuesAreEqual($context->getCurrentInstance(), $enumElement)) {
+            if ($context->draft->valuesAreEqual($context->getCurrentInstance(), $enumElement)) {
                 return $result;
             }
         }
