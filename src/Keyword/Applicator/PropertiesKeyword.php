@@ -92,7 +92,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -102,7 +102,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $evaluatedProperties[$propertyName] = $propertyName;
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($evaluatedProperties);
         }
 

@@ -64,7 +64,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -72,7 +72,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             }
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation(true);
         }
 

@@ -99,7 +99,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -107,7 +107,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             }
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation(true);
         }
 

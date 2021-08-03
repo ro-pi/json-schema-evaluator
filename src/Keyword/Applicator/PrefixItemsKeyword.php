@@ -78,7 +78,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -86,7 +86,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             }
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
         }
 

@@ -107,8 +107,8 @@ class RuntimeEvaluationContext
 
         foreach ($this->results as $result) {
             if (
-                $result->getInstanceLocation() === $currentInstanceLocation
-                && $result->getKeyword()->getName() === $keywordName
+                $result->instanceLocation === $currentInstanceLocation
+                && $result->keyword->getName() === $keywordName
             ) {
                 $results[] = $result;
             }
@@ -134,7 +134,7 @@ class RuntimeEvaluationContext
         $results = $this->getResultsByKeywordName($keywordName);
 
         foreach (array_reverse($results) as $result) {
-            if ($result->getKeywordLocation() === $keywordLocation) {
+            if ($result->keywordLocation === $keywordLocation) {
                 return $result;
             }
         }
@@ -160,7 +160,7 @@ class RuntimeEvaluationContext
     public function suppressAnnotations(?int $after = null): void
     {
         foreach ($this->results as $result) {
-            if ($result->getNumber() > $after) {
+            if ($result->number > $after) {
                 $result->suppressAnnotation();
             }
         }

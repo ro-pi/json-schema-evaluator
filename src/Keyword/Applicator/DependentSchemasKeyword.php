@@ -89,7 +89,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;

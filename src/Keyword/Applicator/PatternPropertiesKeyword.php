@@ -83,7 +83,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 $context->popSchema();
 
                 if (!$valid) {
-                    $result->setValid(false);
+                    $result->valid = false;
 
                     if ($context->config->shortCircuit) {
                         break 2;
@@ -94,7 +94,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
             }
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($matchedPropertyNames);
         }
 

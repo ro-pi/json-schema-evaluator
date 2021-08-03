@@ -119,9 +119,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             schemaLocation: (string) $context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
         );
 
-        $result->setValid(
-            $context->draft->evaluate($context)
-        );
+        $result->valid = $context->draft->evaluate($context);
 
         $context->popSchema();
 

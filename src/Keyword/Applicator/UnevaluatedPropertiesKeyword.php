@@ -75,7 +75,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -85,7 +85,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $evaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($evaluatedPropertyNames);
         }
 

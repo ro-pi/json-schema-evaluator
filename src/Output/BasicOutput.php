@@ -42,16 +42,16 @@ class BasicOutput extends AbstractOutput
     protected function createOutputUnit(RuntimeEvaluationResult $result): object
     {
         $outputUnit = new \stdClass();
-        $outputUnit->valid = $result->getValid();
-        $outputUnit->keywordLocation = $result->getKeywordLocation();
+        $outputUnit->valid = $result->valid;
+        $outputUnit->keywordLocation = $result->keywordLocation;
 
-        $absoluteKeywordLocation = $result->getAbsoluteKeywordLocation();
+        $absoluteKeywordLocation = $result->absoluteKeywordLocation;
         if ($absoluteKeywordLocation !== null) {
             $outputUnit->absoluteKeywordLocation = $absoluteKeywordLocation;
         }
 
-        $outputUnit->instanceLocation = $result->getInstanceLocation();
-        $outputUnit->keywordName = $result->getKeyword()->getName();
+        $outputUnit->instanceLocation = $result->instanceLocation;
+        $outputUnit->keywordName = $result->keyword->getName();
 
         return $outputUnit;
     }

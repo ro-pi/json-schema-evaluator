@@ -57,7 +57,7 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;

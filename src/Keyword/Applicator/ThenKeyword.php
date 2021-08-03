@@ -48,9 +48,7 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         $result = $context->createResultForKeyword($this);
         $context->pushSchema($keywordValue);
 
-        if (!$context->draft->evaluate($context)) {
-            $result->setValid(false);
-        }
+        $result->valid = $context->draft->evaluate($context);
 
         $context->popSchema();
 

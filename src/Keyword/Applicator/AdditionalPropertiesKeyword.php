@@ -86,7 +86,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $context->popSchema();
 
             if (!$valid) {
-                $result->setValid(false);
+                $result->valid = false;
 
                 if ($context->config->shortCircuit) {
                     break;
@@ -96,7 +96,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $additionalEvaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($additionalEvaluatedPropertyNames);
         }
 
