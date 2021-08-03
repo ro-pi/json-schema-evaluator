@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'maxProperties';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

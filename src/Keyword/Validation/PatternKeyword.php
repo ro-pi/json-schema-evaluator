@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'pattern';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

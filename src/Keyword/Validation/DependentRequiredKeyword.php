@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'dependentRequired';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

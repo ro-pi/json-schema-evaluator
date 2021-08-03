@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class WriteOnlyKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'writeOnly';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

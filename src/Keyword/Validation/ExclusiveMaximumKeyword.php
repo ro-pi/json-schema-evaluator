@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ExclusiveMaximumKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'exclusiveMaximum';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

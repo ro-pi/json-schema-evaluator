@@ -10,6 +10,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class ConstKeyword extends AbstractKeyword implements KeywordInterface
 {
+    public function getName(): string
+    {
+        return 'const';
+    }
+
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $result = $context->createResultForKeyword($this);

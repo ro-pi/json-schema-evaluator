@@ -14,6 +14,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInterface, MutationKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentEncoding';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

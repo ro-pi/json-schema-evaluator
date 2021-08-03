@@ -14,6 +14,11 @@ class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
     use OfKeywordTrait;
 
+    public function getName(): string
+    {
+        return 'oneOf';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException

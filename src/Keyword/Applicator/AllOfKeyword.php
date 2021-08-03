@@ -14,6 +14,11 @@ class AllOfKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
     use OfKeywordTrait;
 
+    public function getName(): string
+    {
+        return 'allOf';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException

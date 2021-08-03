@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentSchema';
+    }
+
     /**
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException

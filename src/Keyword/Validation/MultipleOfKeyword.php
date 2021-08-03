@@ -14,6 +14,11 @@ use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
 
 class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'multipleOf';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

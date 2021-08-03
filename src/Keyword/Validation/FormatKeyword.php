@@ -70,6 +70,11 @@ REGEX;
         "\u{30fb}" => '/[\p{Katakana}\p{Hiragana}\p{Han}]/u', # KATAKANA MIDDLE DOT
     ];
 
+    public function getName(): string
+    {
+        return 'format';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

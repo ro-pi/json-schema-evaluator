@@ -14,6 +14,11 @@ class AnyOfKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
     use OfKeywordTrait;
 
+    public function getName(): string
+    {
+        return 'anyOf';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException

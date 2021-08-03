@@ -23,6 +23,11 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
         'integer' => 'integer'
     ];
 
+    public function getName(): string
+    {
+        return 'type';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

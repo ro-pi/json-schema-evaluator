@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ContentMediaTypeKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentMediaType';
+    }
+
     protected const PATTERN_MIME_TYPE_FORMAT = <<<'REGEX'
 /[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+\/[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+/i
 REGEX;

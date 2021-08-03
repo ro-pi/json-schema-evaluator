@@ -7,10 +7,7 @@ abstract class AbstractKeyword implements KeywordInterface
 {
     private ?int $priority = null;
 
-    public function getName(): string
-    {
-        return lcfirst(substr(preg_replace('@.*\\\\@', '', get_class($this)), 0, -7));
-    }
+    abstract public function getName(): string;
 
     public function setPriority(int $priority): void
     {

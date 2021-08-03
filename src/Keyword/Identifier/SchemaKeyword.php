@@ -13,7 +13,6 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
-
     public function getName(): string
     {
         return '$schema';

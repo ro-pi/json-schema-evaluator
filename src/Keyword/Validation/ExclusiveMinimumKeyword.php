@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'exclusiveMinimum';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */

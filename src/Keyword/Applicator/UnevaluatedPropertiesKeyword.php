@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'unevaluatedProperties';
+    }
+
     /**
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException

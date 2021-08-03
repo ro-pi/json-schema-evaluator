@@ -10,6 +10,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
 
 class DefaultKeyword extends AbstractKeyword implements MutationKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'default';
+    }
+
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $instance =& $context->getInstance();

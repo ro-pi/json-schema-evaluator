@@ -13,6 +13,10 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class NotKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'not';
+    }
 
     /**
      * @throws StaticKeywordAnalysisException

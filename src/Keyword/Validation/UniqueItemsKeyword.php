@@ -13,6 +13,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'uniqueItems';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
