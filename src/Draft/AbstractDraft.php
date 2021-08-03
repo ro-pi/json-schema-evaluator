@@ -131,7 +131,7 @@ abstract class AbstractDraft implements DraftInterface
 
             $context->pushSchema(keywordLocationFragment: $name);
 
-            $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
+            $evaluationResult = $keyword->evaluate($schema->{$name}, $context);
             if ($evaluationResult && !$evaluationResult->getValid()) {
                 $valid = false;
             }
