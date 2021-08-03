@@ -102,10 +102,13 @@ trait EvaluationContextTrait
         return implode('/', array_slice(explode('/', $location), 0, $length));
     }
 
-    public function setCurrentBaseUri(string $baseUri): void
+    public function setCurrentBaseUri(string $baseUri, bool $withPrevious = true): void
     {
         $this->schemaStack[$this->schemaStackPointer]['baseUri'] = $baseUri;
-        $this->schemaStack[$this->schemaStackPointer - 1]['baseUri'] = $baseUri; // Also apply to previous context
+
+        if ($withPrevious) {
+            $this->schemaStack[$this->schemaStackPointer - 1]['baseUri'] = $baseUri;
+        }
     }
 
     public function getCurrentBaseUri(): string
