@@ -46,11 +46,6 @@ class StaticEvaluationConfig
         $this->schemaPool = $schemaPool ?? new SchemaPool();
     }
 
-    public function getSupportedDrafts(): array
-    {
-        return $this->supportedDrafts;
-    }
-
     public function getSupportedDraftByUri(string $uri): ?DraftInterface
     {
         return $this->supportedDrafts[$uri] ?? null;
