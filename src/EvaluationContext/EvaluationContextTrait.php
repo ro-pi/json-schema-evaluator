@@ -78,7 +78,6 @@ trait EvaluationContextTrait
             );
         }
 
-        array_pop($this->schemaStack);
         $this->schemaStackPointer--;
     }
 
