@@ -120,14 +120,16 @@ abstract class AbstractDraft implements DraftInterface
         $valid = true;
 
         foreach ($context->getStaticEvaluationContext()->getPrioritizedSchemaKeywords($schema) as $keyword) {
+            $name = $keyword->getName();
+
             if (
-                !property_exists($schema, $keyword->getName()) // Check for keywords removed by static analysis
+                !property_exists($schema, $name) // Check for keywords removed by static analysis
                 || ($mutationsOnly && !$keyword instanceof MutationKeywordInterface)
             ) {
                 continue;
             }
 
-            $context->pushSchema(keywordLocationFragment: $keyword->getName());
+            $context->pushSchema(keywordLocationFragment: $name);
 
             $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
             if ($evaluationResult && !$evaluationResult->getValid()) {
