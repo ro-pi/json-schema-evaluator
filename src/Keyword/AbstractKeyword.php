@@ -7,8 +7,6 @@ abstract class AbstractKeyword implements KeywordInterface
 {
     private ?int $priority = null;
 
-    abstract public function getName(): string;
-
     public function setPriority(int $priority): void
     {
         $this->priority = $priority;
