@@ -15,7 +15,7 @@ class DynamicRefKeyword extends RefKeyword
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $hasBookend  = $context->getStaticEvaluationContext()->hasDynamicAnchorUri($keywordValue);
+        $hasBookend  = $context->staticEvaluationContext->hasDynamicAnchorUri($keywordValue);
 
         if ($hasBookend) {
             $uriComponents = explode('#', $keywordValue, 2);

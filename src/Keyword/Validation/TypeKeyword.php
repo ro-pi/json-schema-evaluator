@@ -100,7 +100,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     protected function detectType(mixed $instance, RuntimeEvaluationContext $context): string
     {
-        $acceptNumericStrings = $context->getStaticEvaluationContext()->getConfig()->getAcceptNumericStrings();
+        $acceptNumericStrings = $context->staticEvaluationContext->config->acceptNumericStrings;
 
         return match (true) {
             is_object($instance) => 'object',

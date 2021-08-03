@@ -57,7 +57,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
         $result = $context->createResultForKeyword($this);
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
+        $shortCircuit = $context->config->shortCircuit;
         $missingProperties = [];
 
         foreach ($keywordValue as $requiredProperty) {

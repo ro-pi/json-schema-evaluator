@@ -117,10 +117,10 @@ abstract class AbstractDraft implements DraftInterface
         }
 
         $lastResultNumber = $context->getLastResultNumber();
-        $shortCircuit = $context->getConfig()->getShortCircuit();
+        $shortCircuit = $context->config->shortCircuit;
         $valid = true;
 
-        foreach ($context->getStaticEvaluationContext()->getPrioritizedSchemaKeywords($schema) as $keyword) {
+        foreach ($context->staticEvaluationContext->getPrioritizedSchemaKeywords($schema) as $keyword) {
             $name = $keyword->getName();
 
             if (

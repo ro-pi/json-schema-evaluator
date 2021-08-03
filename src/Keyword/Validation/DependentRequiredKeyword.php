@@ -74,7 +74,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
         $result = $context->createResultForKeyword($this);
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
+        $shortCircuit = $context->config->shortCircuit;
         $missingProperties = [];
 
         foreach ($keywordValue as $dependencyPropertyName => $requiredProperties) {

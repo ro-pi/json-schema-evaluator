@@ -53,7 +53,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->getConfig()->getEvaluateMutations()) {
+        if ($context->config->evaluateMutations) {
             if ($this->shouldParseInstance($contentMediaType)) {
                 $parseError = null;
                 set_error_handler(static function(int $severity, string $error) use(&$parseError) {
@@ -90,7 +90,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
 
     protected function parseInstance(RuntimeEvaluationContext $context): object|array|null
     {
-        $flags = $context->getStaticEvaluationContext()->getConfig()->getAcceptNumericStrings()
+        $flags = $context->staticEvaluationContext->config->acceptNumericStrings
                  ? JSON_BIGINT_AS_STRING
                  : 0;
 

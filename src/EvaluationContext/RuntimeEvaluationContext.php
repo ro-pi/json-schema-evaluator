@@ -25,8 +25,8 @@ class RuntimeEvaluationContext
     public function __construct(
         object|bool $schema,
         mixed &$instance,
-        private RuntimeEvaluationConfig $config,
-        private StaticEvaluationContext $staticEvaluationContext
+        public /*readonly*/ RuntimeEvaluationConfig $config,
+        public /*readonly*/ StaticEvaluationContext $staticEvaluationContext
     ) {
         $this->schemaStack[0] = [
             'schema' => $schema,
@@ -40,17 +40,7 @@ class RuntimeEvaluationContext
             'instanceLocation' => ''
         ];
 
-        $this->draft = $staticEvaluationContext->getConfig()->getDefaultDraft();
-    }
-
-    public function getConfig(): RuntimeEvaluationConfig
-    {
-        return $this->config;
-    }
-
-    public function getStaticEvaluationContext(): StaticEvaluationContext
-    {
-        return $this->staticEvaluationContext;
+        $this->draft = $staticEvaluationContext->config->defaultDraft;
     }
 
     public function pushInstance(mixed &$instance, string $instanceLocationFragment = null): void

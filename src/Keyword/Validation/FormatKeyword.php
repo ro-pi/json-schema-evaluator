@@ -124,7 +124,7 @@ REGEX;
 
         $result->setAnnotation($valid);
 
-        if ($context->getConfig()->getAssertFormat() && !$valid) {
+        if ($context->config->assertFormat && !$valid) {
             $result->setError(
                 $instance
                 . ' is not a valid '

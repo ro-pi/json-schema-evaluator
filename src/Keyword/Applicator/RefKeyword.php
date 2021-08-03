@@ -51,16 +51,15 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $resolvedUri = $context->getDraft()->resolveUri($context->getBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
-        $config = $context->getConfig();
-        $schemaPool = $config->getSchemaPool();
+        $config = $context->config;
 
         if (
             !$context->hasSchema((string) $normalizedUri)
             && !$this->scanSchemaForId($context->getRootSchema(), $normalizedUri, $context))
         {
-            $remoteSchema = $schemaPool->getSchemaByUri((string) $normalizedUri);
+            $remoteSchema = $config->schemaPool->getSchemaByUri((string) $normalizedUri);
             if (!$remoteSchema) {
-                $remoteSchema = $schemaPool->fetchRemoteSchema((string) $normalizedUri);
+                $remoteSchema = $config->schemaPool->fetchRemoteSchema((string) $normalizedUri);
             }
 
             if (!isset($remoteSchema->{'$id'})) {
@@ -117,7 +116,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $context->pushSchema(
             schema: $referencedSchema,
             baseUri: $uriComponents[0],
-            schemaLocation: (string) $context->getStaticEvaluationContext()->getSchemaLocationByUri($keywordValue)
+            schemaLocation: (string) $context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
         );
 
         $result->setValid(
@@ -136,7 +135,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
      */
     protected function dereferenceSchema(string $schemaUri, RuntimeEvaluationContext $context): object
     {
-        $referencedSchema = $context->getStaticEvaluationContext()->getSchemaByUri($schemaUri);
+        $referencedSchema = $context->staticEvaluationContext->getSchemaByUri($schemaUri);
         if (!$referencedSchema) {
             throw new KeywordRuntimeEvaluationException(
                 'Failed to dereference schema URI "' . $schemaUri . '"',

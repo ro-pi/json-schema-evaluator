@@ -16,9 +16,9 @@ class StaticEvaluationContext
 
     public function __construct(
         object|bool $schema,
-        private StaticEvaluationConfig $config
+        public /*readonly*/ StaticEvaluationConfig $config
     ) {
-        $this->draft = $this->config->getDefaultDraft();
+        $this->draft = $this->config->defaultDraft;
         $this->prioritizedSchemaKeywords = new \WeakMap();
 
         $this->schemaStack[0] = [
@@ -31,11 +31,6 @@ class StaticEvaluationContext
         if (is_object($schema)) {
             $this->registerSchema('', $schema, '');
         }
-    }
-
-    public function getConfig(): StaticEvaluationConfig
-    {
-        return $this->config;
     }
 
     public function registerPrioritizedSchemaKeywords(object $schema, array $prioritizedKeywords): void

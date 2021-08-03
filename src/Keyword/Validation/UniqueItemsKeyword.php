@@ -46,7 +46,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return $result;
         }
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
+        $shortCircuit = $context->config->shortCircuit;
 
         $scalarItems = [];
         $complexItems = [];

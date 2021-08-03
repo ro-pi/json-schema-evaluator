@@ -40,7 +40,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        $draft = $context->getConfig()->getSupportedDraftByUri($keywordValue);
+        $draft = $context->config->getSupportedDraftByUri($keywordValue);
         if (!$draft) {
             throw new StaticKeywordAnalysisException(
                 'The dialect "'
@@ -57,7 +57,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $context->setDraft(
-            $context->getStaticEvaluationContext()->getConfig()->getSupportedDraftByUri($keywordValue)
+            $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue)
         );
 
         return $context->createResultForKeyword($this);

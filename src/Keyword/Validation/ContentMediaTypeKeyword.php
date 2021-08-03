@@ -56,7 +56,7 @@ REGEX;
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->getConfig()->getAssertContentMediaTypeEncoding()) {
+        if ($context->config->assertContentMediaTypeEncoding) {
             $stream = fopen('php://memory','r+');
             fwrite($stream, $instance);
             rewind($stream);

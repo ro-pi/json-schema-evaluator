@@ -26,7 +26,7 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
     {
         $context = new StaticEvaluationContext($jsonSchema, $config);
 
-        $config->getDefaultDraft()->evaluateStatic($context);
+        $config->defaultDraft->evaluateStatic($context);
 
         return $context;
     }
@@ -51,7 +51,7 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
             $staticEvaluationContext
         );
 
-        $valid = $staticEvaluationContext->getConfig()->getDefaultDraft()->evaluate($context);
+        $valid = $staticEvaluationContext->config->defaultDraft->evaluate($context);
         $results = $context->getResults();
 
         return $valid;
