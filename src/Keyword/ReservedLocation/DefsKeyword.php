@@ -41,7 +41,7 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
                 );
             }
 
-            $context->setSchema($schema);
+            $context->setCurrentSchema($schema);
             $context->getDraft()->evaluateStatic($context);
 
             $context->popSchema();

@@ -35,7 +35,7 @@ class MaxLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }

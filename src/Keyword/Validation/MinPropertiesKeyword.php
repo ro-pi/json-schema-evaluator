@@ -35,7 +35,7 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance) || !$keywordValue) {
             // Ignore keyword also if 0 (same as default behavior)
             return null;

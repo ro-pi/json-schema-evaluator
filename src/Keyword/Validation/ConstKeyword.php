@@ -19,7 +19,7 @@ class ConstKeyword extends AbstractKeyword implements RuntimeKeywordInterface
     {
         $result = $context->createResultForKeyword($this);
 
-        if (!$context->getDraft()->valuesAreEqual($context->getInstance(), $keywordValue)) {
+        if (!$context->getDraft()->valuesAreEqual($context->getCurrentInstance(), $keywordValue)) {
             $result->setError('Value not allowed');
             return $result;
         }

@@ -49,7 +49,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
             );
         }
 
-        $resolvedUri = $context->getDraft()->resolveUri($context->getBaseUri(), $uri);
+        $resolvedUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
         if ($context->hasSchema((string) $normalizedUri)) {
@@ -62,20 +62,20 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
 
         $context->registerSchema(
             (string) $normalizedUri,
-            $context->getSchema(),
-            $context->getSchemaKeywordLocation(-1)
+            $context->getCurrentSchema(),
+            $context->getCurrentSchemaKeywordLocation(-1)
         );
 
-        $context->setBaseUri((string) $normalizedUri);
-        $context->setBaseUri((string) $normalizedUri, -1);
+        $context->setCurrentBaseUri((string) $normalizedUri);
+        $context->setCurrentBaseUri((string) $normalizedUri, -1);
 
         $keywordValue = (string) $normalizedUri;
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $context->setBaseUri($keywordValue);
-        $context->setBaseUri($keywordValue, -1);
+        $context->setCurrentBaseUri($keywordValue);
+        $context->setCurrentBaseUri($keywordValue, -1);
 
         return $context->createResultForKeyword($this);
     }

@@ -48,7 +48,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             );
         }
 
-        $resolvedUri = $context->getDraft()->resolveUri($context->getBaseUri(), $uri);
+        $resolvedUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
         $config = $context->config;
@@ -66,7 +66,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
                 $context->registerSchema(
                     (string) $normalizedUri,
                     $remoteSchema,
-                    $context->getSchemaKeywordLocation(-1)
+                    $context->getCurrentSchemaKeywordLocation(-1)
                 );
             }
 
@@ -100,7 +100,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             $referencedSchema = $this->dereferenceSchema($keywordValue, $context);
         }
 
-        $schemaInstanceLocationHash = spl_object_hash($context->getSchema()) . ':' . $context->getInstanceLocation();
+        $schemaInstanceLocationHash = spl_object_hash($context->getCurrentSchema()) . ':' . $context->getCurrentInstanceLocation();
         if (isset($this->processedSchemaInstanceLocations[$schemaInstanceLocationHash])) {
             throw new KeywordRuntimeEvaluationException(
                 '"%s" causes an infinite recursion',
@@ -153,7 +153,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             if (isset($schemaPart->{'$id'}) && is_string($schemaPart->{'$id'})) {
                 $idUri = $context->getDraft()->createUri($schemaPart->{'$id'});
                 if ($idUri) {
-                    $idUri = $context->getDraft()->resolveUri($context->getBaseUri(), $idUri);
+                    $idUri = $context->getDraft()->resolveUri($context->getCurrentBaseUri(), $idUri);
                     if ((string) $idUri == (string) $uri) {
                         return true;
                     }

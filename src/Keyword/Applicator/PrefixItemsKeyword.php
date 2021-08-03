@@ -44,7 +44,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 );
             }
 
-            $context->setSchema($prefixItemSchema);
+            $context->setCurrentSchema($prefixItemSchema);
             $context->getDraft()->evaluateStatic($context);
 
             $context->popSchema();
@@ -53,7 +53,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
         }

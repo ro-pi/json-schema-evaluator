@@ -49,7 +49,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance) || !$keywordValue) {
             //Ignore keyword also if empty (same as default behavior)
             return null;

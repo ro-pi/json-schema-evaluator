@@ -76,7 +76,7 @@ abstract class AbstractDraft implements DraftInterface
      */
     public function evaluateStatic(StaticEvaluationContext $context): void
     {
-        $schema = $context->getSchema();
+        $schema = $context->getCurrentSchema();
 
         if (is_bool($schema)) {
             return;
@@ -110,7 +110,7 @@ abstract class AbstractDraft implements DraftInterface
      */
     public function evaluate(RuntimeEvaluationContext $context, bool $mutationsOnly = false): bool
     {
-        $schema = $context->getSchema();
+        $schema = $context->getCurrentSchema();
 
         if (is_bool($schema)) {
             return $schema;

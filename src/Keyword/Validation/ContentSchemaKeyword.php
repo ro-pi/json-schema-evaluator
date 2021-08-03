@@ -41,12 +41,12 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
 
-        $contentMediaType = $context->getSchema()->{'contentMediaType'} ?? null;
+        $contentMediaType = $context->getCurrentSchema()->{'contentMediaType'} ?? null;
         if (!$contentMediaType) {
             return null;
         }
@@ -94,7 +94,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
                  ? JSON_BIGINT_AS_STRING
                  : 0;
 
-        $parsed = json_decode($context->getInstance(), false, 512, $flags);
+        $parsed = json_decode($context->getCurrentInstance(), false, 512, $flags);
 
         if (!is_object($parsed) && !is_array($parsed)) {
             return null;

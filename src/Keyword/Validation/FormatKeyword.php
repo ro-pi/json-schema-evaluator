@@ -92,7 +92,7 @@ REGEX;
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
@@ -137,98 +137,98 @@ REGEX;
 
     protected function evaluateEmail(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkEmail($context->getInstance());
+        return $this->checkEmail($context->getCurrentInstance());
     }
 
     protected function evaluateIdnEmail(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIdnEmail($context->getInstance());
+        return $this->checkIdnEmail($context->getCurrentInstance());
     }
 
     protected function evaluateRegex(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRegexPattern($context->getInstance());
+        return $this->checkRegexPattern($context->getCurrentInstance());
     }
 
     protected function evaluateIpv4(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIpv4($context->getInstance());
+        return $this->checkIpv4($context->getCurrentInstance());
     }
 
     protected function evaluateIpv6(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIpv6($context->getInstance());
+        return $this->checkIpv6($context->getCurrentInstance());
     }
 
     protected function evaluateIdnHostname(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIdn($context->getInstance());
+        return $this->checkIdn($context->getCurrentInstance());
     }
 
     protected function evaluateHostname(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkHostname($context->getInstance());
+        return $this->checkHostname($context->getCurrentInstance());
     }
 
     protected function evaluateDate(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Date($context->getInstance());
+        return $this->checkRfc3339Date($context->getCurrentInstance());
     }
 
     protected function evaluateDateTime(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Date(substr($context->getInstance(), 0, 10))
-                && $this->checkRfc3339Time(substr($context->getInstance(), 11));
+        return $this->checkRfc3339Date(substr($context->getCurrentInstance(), 0, 10))
+                && $this->checkRfc3339Time(substr($context->getCurrentInstance(), 11));
     }
 
     protected function evaluateTime(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Time($context->getInstance());
+        return $this->checkRfc3339Time($context->getCurrentInstance());
     }
 
     protected function evaluateJsonPointer(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkJsonPointer($context->getInstance(), true);
+        return $this->checkJsonPointer($context->getCurrentInstance(), true);
     }
 
     protected function evaluateRelativeJsonPointer(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkJsonPointer($context->getInstance(), false);
+        return $this->checkJsonPointer($context->getCurrentInstance(), false);
     }
 
     protected function evaluateIri(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), true, true);
+        return $this->checkUri($context->getCurrentInstance(), true, true);
     }
 
     protected function evaluateIriReference(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), false, true);
+        return $this->checkUri($context->getCurrentInstance(), false, true);
     }
 
     protected function evaluateUri(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), true);
+        return $this->checkUri($context->getCurrentInstance(), true);
     }
 
     protected function evaluateUriReference(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), false);
+        return $this->checkUri($context->getCurrentInstance(), false);
     }
 
     protected function evaluateUriTemplate(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUriTemplate($context->getInstance());
+        return $this->checkUriTemplate($context->getCurrentInstance());
     }
 
     protected function evaluateUuid(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUuid($context->getInstance());
+        return $this->checkUuid($context->getCurrentInstance());
     }
 
     protected function evaluateDuration(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkDuration($context->getInstance());
+        return $this->checkDuration($context->getCurrentInstance());
     }
 
     protected function checkUriTemplate(string $uriTemplate): bool

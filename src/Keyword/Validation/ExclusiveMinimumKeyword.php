@@ -40,7 +40,7 @@ class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordIn
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $instanceNumber = $context->getDraft()->createBigNumber(
-            $context->getInstance(),
+            $context->getCurrentInstance(),
             $context->staticEvaluationContext->config->acceptNumericStrings
         );
 
@@ -55,7 +55,7 @@ class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordIn
                 'A number greater than '
                 . $keywordValue
                 . ' required, but was '
-                . $context->getInstance()
+                . $context->getCurrentInstance()
             );
 
             return $result;

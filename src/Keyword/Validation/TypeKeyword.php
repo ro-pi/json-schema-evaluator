@@ -74,7 +74,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             return null;
         }
 
-        $instanceType = $this->detectType($context->getInstance(), $context);
+        $instanceType = $this->detectType($context->getCurrentInstance(), $context);
 
         $result = $context->createResultForKeyword($this);
 

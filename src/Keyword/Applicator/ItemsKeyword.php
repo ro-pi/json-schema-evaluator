@@ -40,7 +40,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
         }

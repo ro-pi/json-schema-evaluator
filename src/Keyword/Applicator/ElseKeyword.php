@@ -40,7 +40,7 @@ class ElseKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $ifResult = $context->getLastResultByKeywordLocation($context->getKeywordLocation(-1) . '/if');
+        $ifResult = $context->getLastResultByKeywordLocation($context->getCurrentKeywordLocation(-1) . '/if');
         if (!$ifResult || $ifResult->getEvaluationResult()) {
             return null;
         }

@@ -17,7 +17,7 @@ class DefaultKeyword extends AbstractKeyword implements MutationKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance =& $context->getInstance();
+        $instance =& $context->getCurrentInstance();
         if ($instance === null && $context->config->evaluateMutations) {
             $instance = $keywordValue;
         }

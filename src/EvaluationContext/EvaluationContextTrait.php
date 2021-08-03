@@ -57,18 +57,6 @@ trait EvaluationContextTrait
         ];
     }
 
-    public function setSchema(object|bool $schema): void
-    {
-        if (!$this->schemaStackPointer) {
-            throw new \RuntimeException(
-                'Setting the root schema is not allowed',
-                1626262970
-            );
-        }
-
-        $this->schemaStack[$this->schemaStackPointer]['schema'] = $schema;
-    }
-
     public function popSchema(): void
     {
         if ($this->schemaStackPointer <= 0) {
@@ -81,7 +69,19 @@ trait EvaluationContextTrait
         $this->schemaStackPointer--;
     }
 
-    public function getSchema(): object|bool
+    public function setCurrentSchema(object|bool $schema): void
+    {
+        if (!$this->schemaStackPointer) {
+            throw new \RuntimeException(
+                'Setting the root schema is not allowed',
+                1626262970
+            );
+        }
+
+        $this->schemaStack[$this->schemaStackPointer]['schema'] = $schema;
+    }
+
+    public function getCurrentSchema(): object|bool
     {
         return $this->schemaStack[$this->schemaStackPointer]['schema'];
     }
@@ -91,7 +91,7 @@ trait EvaluationContextTrait
         return $this->schemaStack[0]['schema'];
     }
 
-    public function getKeywordLocation(int $length = 0): string
+    public function getCurrentKeywordLocation(int $length = 0): string
     {
         $location = $this->schemaStack[$this->schemaStackPointer]['keywordLocation'];
 
@@ -102,7 +102,7 @@ trait EvaluationContextTrait
         return implode('/', array_slice(explode('/', $location), 0, $length));
     }
 
-    public function getSchemaKeywordLocation(int $length = 0): string
+    public function getCurrentSchemaKeywordLocation(int $length = 0): string
     {
         $location = $this->schemaStack[$this->schemaStackPointer]['schemaKeywordLocation'];
 
@@ -113,7 +113,7 @@ trait EvaluationContextTrait
         return implode('/', array_slice(explode('/', $location), 0, $length));
     }
 
-    public function setBaseUri(string $baseUri, ?int $stackIndex = null): void
+    public function setCurrentBaseUri(string $baseUri, ?int $stackIndex = null): void
     {
         if ($stackIndex === null) {
             $stackIndex = $this->schemaStackPointer;
@@ -124,12 +124,12 @@ trait EvaluationContextTrait
         $this->schemaStack[$stackIndex]['baseUri'] = $baseUri;
     }
 
-    public function getBaseUri(): string
+    public function getCurrentBaseUri(): string
     {
         return $this->schemaStack[$this->schemaStackPointer]['baseUri'];
     }
 
-    public function getAbsoluteKeywordLocation(): ?string
+    public function getCurrentAbsoluteKeywordLocation(): ?string
     {
         $baseUri = $this->schemaStack[$this->schemaStackPointer]['baseUri'];
         if (!$baseUri) {
@@ -138,9 +138,9 @@ trait EvaluationContextTrait
 
         if (str_contains($baseUri, '#')) {
             // Base URI is an anchor URI (e.g. http://www.example.com#anchor)
-            return $baseUri . $this->getSchemaKeywordLocation();
+            return $baseUri . $this->getCurrentSchemaKeywordLocation();
         }
 
-        return $baseUri . '#' . $this->getSchemaKeywordLocation();
+        return $baseUri . '#' . $this->getCurrentSchemaKeywordLocation();
     }
 }

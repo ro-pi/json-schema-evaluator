@@ -46,9 +46,9 @@ class RuntimeEvaluationContext
     public function pushInstance(mixed &$instance, string $instanceLocationFragment = null): void
     {
         if ($instanceLocationFragment === null) {
-            $instanceLocation = $this->getInstanceLocation();
+            $instanceLocation = $this->getCurrentInstanceLocation();
         } else {
-            $instanceLocation = $this->getInstanceLocation() . '/' . $instanceLocationFragment;
+            $instanceLocation = $this->getCurrentInstanceLocation() . '/' . $instanceLocationFragment;
         }
 
         $this->instanceStack[++$this->instanceStackPointer] = [
@@ -70,12 +70,12 @@ class RuntimeEvaluationContext
         $this->instanceStackPointer--;
     }
 
-    public function getInstanceLocation(): string
+    public function getCurrentInstanceLocation(): string
     {
         return $this->instanceStack[$this->instanceStackPointer]['instanceLocation'];
     }
 
-    public function &getInstance(): mixed
+    public function &getCurrentInstance(): mixed
     {
         return $this->instanceStack[$this->instanceStackPointer]['instance'];
     }
@@ -85,9 +85,9 @@ class RuntimeEvaluationContext
         $result = new RuntimeEvaluationResult(
             ++$this->lastResultNumber,
             $keyword,
-            $this->getKeywordLocation(),
-            $this->getInstanceLocation(),
-            $this->getAbsoluteKeywordLocation()
+            $this->getCurrentKeywordLocation(),
+            $this->getCurrentInstanceLocation(),
+            $this->getCurrentAbsoluteKeywordLocation()
         );
 
         $this->results[] = $result;
@@ -103,7 +103,7 @@ class RuntimeEvaluationContext
     public function getResultsByKeywordName(string $keywordName): array
     {
         $results = [];
-        $currentInstanceLocation = $this->getInstanceLocation();
+        $currentInstanceLocation = $this->getCurrentInstanceLocation();
 
         foreach ($this->results as $result) {
             if (

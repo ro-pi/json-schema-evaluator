@@ -35,7 +35,7 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance) || $keywordValue === 1) {
             // Ignore keyword also if 1 (same as default behavior)
             return null;

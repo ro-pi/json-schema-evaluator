@@ -36,7 +36,7 @@ trait OfKeywordTrait
                 );
             }
 
-            $context->setSchema($schema);
+            $context->setCurrentSchema($schema);
             $context->getDraft()->evaluateStatic($context);
 
             $context->popSchema();

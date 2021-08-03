@@ -40,7 +40,7 @@ class MaximumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $instanceNumber = $context->getDraft()->createBigNumber(
-            $context->getInstance(),
+            $context->getCurrentInstance(),
             $context->staticEvaluationContext->config->acceptNumericStrings
         );
 
@@ -55,7 +55,7 @@ class MaximumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
                 'A number less than or equal to '
                 . $keywordValue
                 . ' required, but was '
-                . $context->getInstance()
+                . $context->getCurrentInstance()
             );
 
             return $result;

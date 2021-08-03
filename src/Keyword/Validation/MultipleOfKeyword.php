@@ -40,7 +40,7 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->getDraft()->createBigNumber($context->getInstance());
+        $instanceNumber = $context->getDraft()->createBigNumber($context->getCurrentInstance());
         if (!$instanceNumber instanceof BigNumberInterface) {
             return null;
         }
@@ -49,7 +49,7 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
         if (!$instanceNumber->mod($keywordValue)->equals($context->getDraft()->createBigNumber(0))) {
             $result->setError(
-                $context->getInstance()
+                $context->getCurrentInstance()
                 . ' is not a multiple of '
                 . $keywordValue
             );

@@ -44,7 +44,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 );
             }
 
-            $context->setSchema($patternPropertySchema);
+            $context->setCurrentSchema($patternPropertySchema);
             $context->getDraft()->evaluateStatic($context);
 
             $context->popSchema();
@@ -53,7 +53,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }

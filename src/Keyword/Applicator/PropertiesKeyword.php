@@ -46,7 +46,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 );
             }
 
-            $context->setSchema($propertySchema);
+            $context->setCurrentSchema($propertySchema);
             $context->getDraft()->evaluateStatic($context);
 
             $context->popSchema();
@@ -55,7 +55,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }

@@ -45,7 +45,7 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
         array &$results = null
     ): bool {
         $context = new RuntimeEvaluationContext(
-            $staticEvaluationContext->getSchema(),
+            $staticEvaluationContext->getCurrentSchema(),
             $instance,
             $config ?? $this->defaultRuntimeEvaluationConfig,
             $staticEvaluationContext

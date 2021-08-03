@@ -35,7 +35,7 @@ class MinItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance) || !$keywordValue) {
             // Ignore keyword also if 0 (same as default behavior)
             return null;

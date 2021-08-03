@@ -41,7 +41,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }

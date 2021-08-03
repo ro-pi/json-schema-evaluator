@@ -46,7 +46,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance =& $context->getInstance();
+        $instance =& $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
@@ -105,6 +105,6 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
     protected function decodeBase64(RuntimeEvaluationContext $context): ?string
     {
-        return base64_decode($context->getInstance()) ?: null;
+        return base64_decode($context->getCurrentInstance()) ?: null;
     }
 }
