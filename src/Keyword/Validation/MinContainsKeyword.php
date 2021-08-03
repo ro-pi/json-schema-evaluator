@@ -59,7 +59,7 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         if ($containsCount < $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 $keywordValue
                 . ' or more matching elements must be contained, but there are '
                 . $containsCount

@@ -88,7 +88,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             }
         }
 
-        $result->setError(
+        $result->invalidate(
             'Type '
             . $this->arrayToHumanReadableList($keywordValue)
             . ' expected, but is '

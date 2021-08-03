@@ -68,7 +68,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
             if ($decoded) {
                 $instance = $decoded;
             } else {
-                $result->setError(
+                $result->invalidate(
                     $keywordValue . ' decoding failed',
                     $decodingError
                 );

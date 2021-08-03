@@ -161,7 +161,7 @@ class RuntimeEvaluationContext
     {
         foreach ($this->results as $result) {
             if ($result->number > $after) {
-                $result->suppressAnnotation();
+                $result->suppressAnnotation = true;
             }
         }
     }

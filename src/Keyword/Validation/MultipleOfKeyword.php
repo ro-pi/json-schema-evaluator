@@ -48,7 +48,7 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
         $result = $context->createResultForKeyword($this);
 
         if (!$instanceNumber->mod($keywordValue)->equals($context->draft->createBigNumber(0))) {
-            $result->setError(
+            $result->invalidate(
                 $context->getCurrentInstance()
                 . ' is not a multiple of '
                 . $keywordValue

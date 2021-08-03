@@ -45,7 +45,7 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
         $numProperties = count(get_object_vars($instance));
 
         if ($numProperties < $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 $numProperties
                 . ' properties found, but at least '
                 . $keywordValue

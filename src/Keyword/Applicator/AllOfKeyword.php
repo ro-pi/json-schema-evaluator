@@ -35,7 +35,7 @@ class AllOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         $numMatches = $this->evaluateOf($keywordValue, $context);
 
         if ($numMatches !== count($keywordValue)) {
-            $result->setError(
+            $result->invalidate(
                 'Value must match all schemas, but matches only '
                 . $numMatches
             );

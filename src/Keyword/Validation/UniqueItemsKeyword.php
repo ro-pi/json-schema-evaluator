@@ -55,7 +55,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
                         if ($context->config->shortCircuit) {
-                            $result->setError(
+                            $result->invalidate(
                                 'Item at position '
                                 . $instanceKey
                                 . ' is not unique'
@@ -76,7 +76,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
                 if ($context->config->shortCircuit) {
-                    $result->setError(
+                    $result->invalidate(
                         'Item at position '
                         . $instanceKey
                         . ' is not unique'
@@ -92,7 +92,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         if ($duplicateItemPositions) {
-            $result->setError(
+            $result->invalidate(
                 'Items at following positions are not unique: '
                 . implode(', ', $duplicateItemPositions),
                 $duplicateItemPositions

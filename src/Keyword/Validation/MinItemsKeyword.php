@@ -45,7 +45,7 @@ class MinItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
         $instanceCount = count($instance);
 
         if ($instanceCount < $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At least '
                 . $keywordValue
                 . ' items are required, but there are only '

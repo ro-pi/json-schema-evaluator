@@ -8,10 +8,10 @@ use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 class RuntimeEvaluationResult
 {
     public bool $valid = true;
-    private ?string $error = null;
-    private mixed $errorMeta = null;
+    public ?string $error = null;
+    public mixed $errorMeta = null;
     private mixed $annotation = null;
-    private ?bool $suppressAnnotation = false;
+    public ?bool $suppressAnnotation = false;
     private ?bool $evaluationResult = null;
 
     public function __construct(
@@ -39,7 +39,6 @@ class RuntimeEvaluationResult
     public function setAnnotation(mixed $annotation): void
     {
         $this->annotation = $annotation;
-        $this->valid = true;
     }
 
     public function getAnnotation(bool $force = false): mixed
@@ -56,30 +55,10 @@ class RuntimeEvaluationResult
         return $this->getAnnotation($force) !== null;
     }
 
-    public function suppressAnnotation(): void
-    {
-        $this->suppressAnnotation = true;
-    }
-
-    public function setError(string $error, mixed $errorMeta = null): void
+    public function invalidate(string $error, mixed $errorMeta = null): void
     {
         $this->error = $error;
         $this->errorMeta = $errorMeta;
         $this->valid = false;
-    }
-
-    public function getError(): ?string
-    {
-        return $this->error;
-    }
-
-    public function getErrorMeta(): mixed
-    {
-        return $this->errorMeta;
-    }
-
-    public function hasError(): bool
-    {
-        return $this->error !== null;
     }
 }

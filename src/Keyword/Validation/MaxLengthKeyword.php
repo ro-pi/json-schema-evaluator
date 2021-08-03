@@ -44,7 +44,7 @@ class MaxLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
         $instanceLength = mb_strlen($instance, 'UTF-8');
 
         if ($instanceLength > $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At most '
                 . $keywordValue
                 . ' characters are allowed, but there are '

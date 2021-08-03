@@ -125,7 +125,7 @@ REGEX;
         $result->setAnnotation($valid);
 
         if ($context->config->assertFormat && !$valid) {
-            $result->setError(
+            $result->invalidate(
                 $instance
                 . ' is not a valid '
                 . $keywordValue

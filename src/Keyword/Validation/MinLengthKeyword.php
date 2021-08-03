@@ -45,7 +45,7 @@ class MinLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
         $instanceLength = mb_strlen($instance, 'UTF-8');
 
         if ($instanceLength < $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At least '
                 . $keywordValue
                 . ' characters are required, but there are only '

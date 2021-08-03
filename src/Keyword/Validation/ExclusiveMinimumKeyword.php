@@ -51,7 +51,7 @@ class ExclusiveMinimumKeyword extends AbstractKeyword implements StaticKeywordIn
         $result = $context->createResultForKeyword($this);
 
         if ($instanceNumber->lessThanOrEquals($keywordValue)) {
-            $result->setError(
+            $result->invalidate(
                 'A number greater than '
                 . $keywordValue
                 . ' required, but was '

@@ -65,7 +65,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
                 restore_error_handler();
 
                 if ($instance === null) {
-                    $result->setError('Parsing JSON failed', $parseError);
+                    $result->invalidate('Parsing JSON failed', $parseError);
                 }
             }
 

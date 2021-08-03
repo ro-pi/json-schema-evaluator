@@ -44,7 +44,7 @@ class MaxItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
         $instanceCount = count($instance);
 
         if ($instanceCount > $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At most '
                 . $keywordValue
                 . ' items are allowed, but there are '

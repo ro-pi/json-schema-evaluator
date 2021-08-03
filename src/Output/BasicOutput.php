@@ -24,10 +24,10 @@ class BasicOutput extends AbstractOutput
         $formattedResult->valid = $this->getValid();
 
         foreach ($this->results as $result) {
-            if ($result->hasError()) {
+            if ($result->error) {
                 $outputUnit = $this->createOutputUnit($result);
-                $outputUnit->error = $result->getError();
-                $outputUnit->errorMeta = $result->getErrorMeta();
+                $outputUnit->error = $result->error;
+                $outputUnit->errorMeta = $result->errorMeta;
                 $formattedResult->errors[] = $outputUnit;
             }
 

@@ -43,7 +43,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             }
         }
 
-        $result->setError('Value not allowed');
+        $result->invalidate('Value not allowed');
         return $result;
     }
 }

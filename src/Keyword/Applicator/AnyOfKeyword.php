@@ -35,7 +35,7 @@ class AnyOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         $numMatches = $this->evaluateOf($keywordValue, $context);
 
         if (!$numMatches) {
-            $result->setError('Value does not match any schema');
+            $result->invalidate('Value does not match any schema');
         }
 
         return $result;

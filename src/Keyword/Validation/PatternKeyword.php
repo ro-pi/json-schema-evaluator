@@ -44,7 +44,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, 
         $numMatches = preg_match('{' . $keywordValue . '}u', $instance);
 
         if ($numMatches === 0) {
-            $result->setError(
+            $result->invalidate(
                 $instance
                 . ' does not match pattern '
                 . $keywordValue

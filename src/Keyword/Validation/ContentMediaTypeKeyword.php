@@ -64,7 +64,7 @@ REGEX;
             $mimeType = $this->detectMimeType($stream);
 
             if ($mimeType !== $keywordValue) {
-                $result->setError(
+                $result->invalidate(
                     'Mime type '
                     . $keywordValue
                     . ' expected, but is '

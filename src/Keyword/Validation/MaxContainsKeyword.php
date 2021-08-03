@@ -54,7 +54,7 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         if ($containsCount > $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At most '
                 . $keywordValue
                 . ' matched elements must be contained, but there are '

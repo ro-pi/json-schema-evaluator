@@ -46,7 +46,7 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $intermediateSchema->pushSchema($keywordValue);
 
         if ($context->draft->evaluate($intermediateSchema)) {
-            $result->setError('Value matches schema, but should not');
+            $result->invalidate('Value matches schema, but should not');
         }
 
         return $result;

@@ -84,7 +84,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
             foreach ($requiredProperties as $requiredProperty) {
                 if (!property_exists($instance, $requiredProperty)) {
                     if ($context->config->shortCircuit) {
-                        $result->setError(
+                        $result->invalidate(
                             'Dependent required property '
                             . $requiredProperty
                             . ' is missing'
@@ -99,7 +99,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
         }
 
         if ($missingProperties) {
-            $result->setError(
+            $result->invalidate(
                 'Missing dependent required properties: '
                 . implode(', ', $missingProperties),
                 $missingProperties
