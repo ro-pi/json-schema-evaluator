@@ -7,10 +7,7 @@ $schema = json_decode('{
     "required": ["firstname", "lastname", "addresses"],
     "properties": {
         "gender": {
-            "type": "string",
-            "enum": ["m", "w", "d"],
-            "minLength": 1,
-            "maxLength": 1
+            "enum": ["m", "w", "d"]
         },
         "id": {
             "type": "integer",
@@ -31,6 +28,11 @@ $schema = json_decode('{
             "type": "array",
             "minItems": 1,
             "maxItems": 30,
+            "prefixItems": [
+                {
+                    "$ref": "#/properties/addresses/items"
+                }
+            ],
             "items": {
                 "type": "object",
                 "required": ["street", "zip", "city"],
@@ -71,31 +73,6 @@ $instance = json_decode('{
             "street": "Julius-Haerlin-Str. 7",
             "zip": "82131",
             "city": "Gauting"
-        },
-        {
-            "street": "Julius-Haerlin-Str. 7",
-            "zip": "82131",
-            "city": "Gauting"
-        },
-        {
-            "street": "Julius-Haerlin-Str. 7",
-            "zip": "82131",
-            "city": "Gauting"
-        },
-        {
-            "street": "Julius-Haerlin-Str. 7",
-            "zip": "82131",
-            "city": "Gauting"
-        },
-        {
-            "street": "Julius-Haerlin-Str. 7",
-            "zip": "82131",
-            "city": "Gauting"
-        },
-        {
-            "street": "Julius-Haerlin-Str. 7",
-            "zip": "82131",
-            "city": "Gauting"
         }
     ]
 }');
@@ -104,7 +81,7 @@ $oTime = microtime(true);
 
 $validator = new \Opis\JsonSchema\Validator();
 
-for ($i = 0; $i < 10000; $i++) {
+for ($i = 0; $i < 30000; $i++) {
     $validator->validate($instance, $schema);
 }
 
@@ -125,7 +102,7 @@ $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluat
 
 $sTime = microtime(true) - $sTime;
 $rTime = microtime(true);
-for ($i = 0; $i < 10000; $i++) {
+for ($i = 0; $i < 30000; $i++) {
     $evaluator->evaluate($instance, $staticContext);
 }
 
