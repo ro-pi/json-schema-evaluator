@@ -120,16 +120,18 @@ trait EvaluationContextTrait
 
     public function getCurrentAbsoluteKeywordLocation(): ?string
     {
-        $baseUri = $this->schemaStack[$this->schemaStackPointer]['baseUri'];
+        $currentStackEntry = $this->schemaStack[$this->schemaStackPointer];
+
+        $baseUri = $currentStackEntry['baseUri'];
         if (!$baseUri) {
             return null;
         }
 
         if (str_contains($baseUri, '#')) {
             // Base URI is an anchor URI (e.g. http://www.example.com#anchor)
-            return $baseUri . $this->getCurrentSchemaKeywordLocation();
+            return $baseUri . $currentStackEntry['schemaKeywordLocation'];
         }
 
-        return $baseUri . '#' . $this->getCurrentSchemaKeywordLocation();
+        return $baseUri . '#' . $currentStackEntry['schemaKeywordLocation'];
     }
 }
