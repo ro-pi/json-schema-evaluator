@@ -6,28 +6,15 @@ $schema = json_decode('{
     "type": "object",
     "required": ["firstname", "lastname", "addresses"],
     "properties": {
-        "gender": {
-            "enum": ["m", "w", "d"]
-        },
-        "id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 999999
-        },
         "firstname": {
-            "type": "string",
-            "minLength": 2,
             "maxLength": 50
         },
         "lastname": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 50
+            "minLength": 2
         },
         "addresses": {
             "type": "array",
             "minItems": 1,
-            "maxItems": 30,
             "prefixItems": [
                 {
                     "$ref": "#/properties/addresses/items"
@@ -38,19 +25,13 @@ $schema = json_decode('{
                 "required": ["street", "zip", "city"],
                 "properties": {
                     "street": {
-                        "type": "string",
-                        "minLength": 2,
-                        "maxLength": 50
+                        "type": "string"
                     },
                     "zip": {
-                        "type": "string",
-                        "minLength": 2,
-                        "maxLength": 50
+                        "type": "string"
                     },
                     "city": {
-                        "type": "string",
-                        "minLength": 2,
-                        "maxLength": 50
+                        "minLength": 2
                     }
                 }
             }
