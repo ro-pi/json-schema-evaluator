@@ -32,20 +32,21 @@ trait EvaluationContextTrait
         ?string $baseUri = null,
         string $schemaLocation = ''
     ): void {
-        $schema = $schema ?? $this->getSchema();
+        $currentStackEntry = $this->schemaStack[$this->schemaStackPointer];
+        $schema = $schema ?? $currentStackEntry['schema'];
 
         if ($baseUri === null) {
-            $schemaKeywordLocation = $this->getSchemaKeywordLocation();
-            $baseUri = $this->getBaseUri();
+            $schemaKeywordLocation = $currentStackEntry['schemaKeywordLocation'];
+            $baseUri = $currentStackEntry['baseUri'];
         } else {
             $schemaKeywordLocation = $schemaLocation;
         }
 
         if ($keywordLocationFragment) {
             $schemaKeywordLocation .= '/' . $keywordLocationFragment;
-            $keywordLocation = $this->getKeywordLocation() . '/' . $keywordLocationFragment;
+            $keywordLocation = $currentStackEntry['keywordLocation'] . '/' . $keywordLocationFragment;
         } else {
-            $keywordLocation = $this->getKeywordLocation();
+            $keywordLocation = $currentStackEntry['keywordLocation'];
         }
 
         $this->schemaStack[++$this->schemaStackPointer] = [
