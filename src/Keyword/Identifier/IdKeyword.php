@@ -67,7 +67,6 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
         );
 
         $context->setCurrentBaseUri((string) $normalizedUri);
-        $context->setCurrentBaseUri((string) $normalizedUri, -1);
 
         $keywordValue = (string) $normalizedUri;
     }
@@ -75,7 +74,6 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $context->setCurrentBaseUri($keywordValue);
-        $context->setCurrentBaseUri($keywordValue, -1);
 
         return $context->createResultForKeyword($this);
     }

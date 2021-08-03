@@ -85,8 +85,8 @@ class RuntimeEvaluationContext
         $result = new RuntimeEvaluationResult(
             ++$this->lastResultNumber,
             $keyword,
-            $this->getCurrentKeywordLocation(),
-            $this->getCurrentInstanceLocation(),
+            $this->schemaStack[$this->schemaStackPointer]['keywordLocation'],
+            $this->instanceStack[$this->instanceStackPointer]['instanceLocation'],
             $this->getCurrentAbsoluteKeywordLocation()
         );
 

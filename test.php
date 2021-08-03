@@ -49,7 +49,7 @@ $instance = json_decode('{
 }');
 
 $schema = json_decode('{
-    "const": "yolomo"
+    "type": "string"
 }');
 
 $instance = "yolomo";
