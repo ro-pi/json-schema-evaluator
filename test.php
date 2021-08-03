@@ -6,6 +6,12 @@ $schema = json_decode('{
     "type": "object",
     "required": ["firstname", "lastname", "addresses"],
     "properties": {
+        "gender": {
+            "type": "string",
+            "enum": ["m", "w", "d"],
+            "minLength": 1,
+            "maxLength": 1
+        },
         "id": {
             "type": "integer",
             "minimum": 1,
@@ -54,6 +60,7 @@ $instance = json_decode('{
     "firstname": "Robert",
     "lastname": "Piplica",
     "id": 13,
+    "gender": "m",
     "addresses": [
         {
             "street": "Münchener Str. 29a",
