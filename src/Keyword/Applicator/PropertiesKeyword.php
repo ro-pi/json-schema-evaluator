@@ -83,15 +83,21 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $context->pushInstance($instance->$propertyName, (string) $propertyName);
 
             if ($propertyExists) {
-                if (!$context->draft->evaluate($context)) {
-                    $result->setValid(false);
-                }
+                $valid = $context->draft->evaluate($context);
             } else {
-                $context->draft->evaluate(clone $context, true);
+                $valid = $context->draft->evaluate($context, true);
             }
 
             $context->popInstance();
             $context->popSchema();
+
+            if (!$valid) {
+                $result->setValid(false);
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
 
             $evaluatedProperties[$propertyName] = $propertyName;
         }

@@ -46,8 +46,6 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return $result;
         }
 
-        $shortCircuit = $context->config->shortCircuit;
-
         $scalarItems = [];
         $complexItems = [];
         $duplicateItemPositions = [];
@@ -56,7 +54,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             if (is_array($instanceValue) || is_object($instanceValue)) {
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
-                        if ($shortCircuit) {
+                        if ($context->config->shortCircuit) {
                             $result->setError(
                                 'Item at position '
                                 . $instanceKey
@@ -77,7 +75,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
-                if ($shortCircuit) {
+                if ($context->config->shortCircuit) {
                     $result->setError(
                         'Item at position '
                         . $instanceKey

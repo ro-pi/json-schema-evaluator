@@ -81,14 +81,20 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string) $dependencyPropertyName);
 
             if ($propertyExists) {
-                if (!$context->draft->evaluate($context)) {
-                    $result->setValid(false);
-                }
+                $valid = $context->draft->evaluate($context);
             } else {
-                $context->draft->evaluate(clone $context, true);
+                $valid = $context->draft->evaluate($context, true);
             }
 
             $context->popSchema();
+
+            if (!$valid) {
+                $result->setValid(false);
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
         }
 
         return $result;

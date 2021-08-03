@@ -72,12 +72,18 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $context->pushSchema($prefixItemSchema, (string) $prefixItemsKey);
             $context->pushInstance($instance[$instanceKey], (string) $instanceKey);
 
-            if (!$context->draft->evaluate($context)) {
-                $result->setValid(false);
-            }
+            $valid = $context->draft->evaluate($context);
 
             $context->popInstance();
             $context->popSchema();
+
+            if (!$valid) {
+                $result->setValid(false);
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
         }
 
         if ($result->getValid()) {

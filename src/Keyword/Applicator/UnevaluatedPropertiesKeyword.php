@@ -69,12 +69,18 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $context->pushSchema($keywordValue);
             $context->pushInstance($propertyValue, (string) $propertyName);
 
-            if (!$context->draft->evaluate($context)) {;
-                $result->setValid(false);
-            }
+            $valid = $context->draft->evaluate($context);
 
             $context->popInstance();
             $context->popSchema();
+
+            if (!$valid) {
+                $result->setValid(false);
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
 
             $evaluatedPropertyNames[$propertyName] = $propertyName;
         }

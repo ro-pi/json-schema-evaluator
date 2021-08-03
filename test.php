@@ -6,10 +6,12 @@ $schema = json_decode('{
     "type": "object",
     "properties": {
         "firstname": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2
         },
         "lastname": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2
         },
         "addresses": {
             "type": "array",
@@ -17,13 +19,16 @@ $schema = json_decode('{
                 "type": "object",
                 "properties": {
                     "street": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 2
                     },
                     "zip": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 2
                     },
                     "city": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 2
                     }
                 }
             }
@@ -47,12 +52,6 @@ $instance = json_decode('{
         }
     ]
 }');
-
-$schema = json_decode('{
-    "type": "string"
-}');
-
-$instance = "yolomo";
 
 $oTime = microtime(true);
 
@@ -79,7 +78,6 @@ $staticContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluat
 
 $sTime = microtime(true) - $sTime;
 $rTime = microtime(true);
-
 for ($i = 0; $i < 100000; $i++) {
     $evaluator->evaluate($instance, $staticContext);
 }
