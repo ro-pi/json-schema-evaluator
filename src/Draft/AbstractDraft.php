@@ -88,22 +88,19 @@ abstract class AbstractDraft implements DraftInterface
             );
         }
 
-        /** @var StaticKeywordInterface[] $prioritizedKeywords */
-        $prioritizedKeywords = [];
-
-        foreach ($schema as $keywordName => $keywordValue) {
-            $keyword = $context->getDraft()->getKeywordByName($keywordName);
-            if ($keyword instanceof StaticKeywordInterface) {
-                $prioritizedKeywords[$keyword->getPriority()] = $keyword;
-            }
+        if (!$context->hasPrioritizedSchemaKeywords($schema)) {
+            $context->registerPrioritizedSchemaKeywords(
+                $schema,
+                $this->prioritizeSchemaKeywords($schema, $context)
+            );
         }
 
-        ksort($prioritizedKeywords);
-
-        foreach ($prioritizedKeywords as $keyword) {
-            $context->pushSchema(keywordLocationFragment: $keyword->getName());
-            $keyword->evaluateStatic($schema->{$keyword->getName()}, $context);
-            $context->popSchema();
+        foreach ($context->getPrioritizedSchemaKeywords($schema) as $keyword) {
+            if ($keyword instanceof StaticKeywordInterface) {
+                $context->pushSchema(keywordLocationFragment: $keyword->getName());
+                $keyword->evaluateStatic($schema->{$keyword->getName()}, $context);
+                $context->popSchema();
+            }
         }
     }
 
@@ -118,26 +115,18 @@ abstract class AbstractDraft implements DraftInterface
             return $schema;
         }
 
-        /** @var KeywordInterface[] $prioritizedKeywords */
-        $prioritizedKeywords = [];
-
-        foreach ($schema as $keywordName => $keywordValue) {
-            $keyword = $context->getDraft()->getKeywordByName($keywordName);
-
-            if ($mutationsOnly && !$keyword instanceof MutationKeywordInterface) {
-                continue;
-            }
-
-            $prioritizedKeywords[$keyword->getPriority()] = $keyword;
-        }
-
-        ksort($prioritizedKeywords);
-
         $lastResultNumber = $context->getLastResultNumber();
         $shortCircuit = $context->getConfig()->getShortCircuit();
         $valid = true;
 
-        foreach ($prioritizedKeywords as $keyword) {
+        foreach ($context->getStaticEvaluationContext()->getPrioritizedSchemaKeywords($schema) as $keyword) {
+            if (
+                !property_exists($schema, $keyword->getName()) // Check for keywords removed by static analysis
+                || ($mutationsOnly && !$keyword instanceof MutationKeywordInterface)
+            ) {
+                continue;
+            }
+
             $context->pushSchema(keywordLocationFragment: $keyword->getName());
 
             $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
@@ -291,6 +280,21 @@ abstract class AbstractDraft implements DraftInterface
         }
 
         return $value1 === $value2;
+    }
+
+    protected function prioritizeSchemaKeywords(object $schema, StaticEvaluationContext $context): array
+    {
+        /** @var StaticKeywordInterface[] $prioritizedKeywords */
+        $prioritizedKeywords = [];
+
+        foreach ($schema as $keywordName => $keywordValue) {
+            $keyword = $context->getDraft()->getKeywordByName($keywordName);
+            $prioritizedKeywords[$keyword->getPriority()] = $keyword;
+        }
+
+        ksort($prioritizedKeywords);
+
+        return $prioritizedKeywords;
     }
 
     protected function decodeJsonPointerToken(string $fragment): string

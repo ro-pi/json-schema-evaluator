@@ -12,12 +12,14 @@ class StaticEvaluationContext
     private array $schemas = [];
     private array $dynamicAnchors = [];
     private array $schemaLocations = [];
+    private \WeakMap $prioritizedSchemaKeywords;
 
     public function __construct(
         object|bool $schema,
         private StaticEvaluationConfig $config
     ) {
         $this->draft = $this->config->getDefaultDraft();
+        $this->prioritizedSchemaKeywords = new \WeakMap();
 
         $this->schemaStack[0] = [
             'schema' => $schema,
@@ -34,6 +36,21 @@ class StaticEvaluationContext
     public function getConfig(): StaticEvaluationConfig
     {
         return $this->config;
+    }
+
+    public function registerPrioritizedSchemaKeywords(object $schema, array $prioritizedKeywords): void
+    {
+        $this->prioritizedSchemaKeywords[$schema] = $prioritizedKeywords;
+    }
+
+    public function hasPrioritizedSchemaKeywords(object $schema): bool
+    {
+        return isset($this->prioritizedSchemaKeywords[$schema]);
+    }
+
+    public function getPrioritizedSchemaKeywords(object $schema): array
+    {
+        return $this->prioritizedSchemaKeywords[$schema] ?? [];
     }
 
     public function registerSchema(string $uri, object $schema, string $location): void
