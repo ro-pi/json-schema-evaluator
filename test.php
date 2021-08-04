@@ -6,6 +6,9 @@ $schema = json_decode('{
     "type": "object",
     "required": ["firstname", "lastname", "addresses"],
     "properties": {
+        "id": {
+            "const": 13
+        },
         "firstname": {
             "maxLength": 50
         },

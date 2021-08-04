@@ -55,10 +55,10 @@ $valid = $evaluator->evaluate(
 
 foreach ($results as $result) {
     /** @var $result \Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult */
-    if ($result->hasError()) {
-        echo "Error keyword location: '{$result->getKeywordLocation()}'\n";
-        echo "Error instance location: '{$result->getInstanceLocation()}'\n";
-        echo "Error message: {$result->getError()}\n";
+    if ($result->error) {
+        echo "Error keyword location: '{$result->keywordLocation}'\n";
+        echo "Error instance location: '{$result->instanceLocation}'\n";
+        echo "Error message: {$result->error}\n";
     }
 }
 ```
@@ -222,18 +222,23 @@ $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSch
 ));
 ```
 
-## Custom keywords 
-```php 
+## Custom keywords
+```php
 <?php 
 $schema = json_decode('{
     "md5Hash": "098f6bcd4621d373cade4e832627b4f6"
 }');
 
-class Md5HashKeyword extends \Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword
+class Md5HashKeyword extends \Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword implements \Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface
 {
+    public function getName() : string
+    {
+        return "md5Hash";
+    }
+
     public function evaluate(mixed $keywordValue, \Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext $context): ?\Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             // Ignore keyword, because instance is not a string
             return null;
@@ -242,7 +247,7 @@ class Md5HashKeyword extends \Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword
         $result = $context->createResultForKeyword($this);
 
         if (md5($instance) !== $keywordValue) {
-            $result->setError('MD5 hash of "' . $instance . '" does not match ' . $keywordValue);
+            $result->invalidate('MD5 hash of "' . $instance . '" does not match ' . $keywordValue);
         }
 
         return $result;
