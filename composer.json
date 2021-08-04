@@ -9,7 +9,7 @@
         "validator"
     ],
     "homepage": "https://www.robertpiplica.de",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Robert Piplica",
