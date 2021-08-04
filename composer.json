@@ -21,8 +21,7 @@
         "ext-fileinfo": "*",
         "php": ">=8.0.0",
         "guzzlehttp/psr7": "^2.0",
-        "symfony/polyfill-intl-idn": "^1.23",
-        "opis/json-schema": "^2.1"
+        "symfony/polyfill-intl-idn": "^1.23"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"
