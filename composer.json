@@ -1,10 +1,11 @@
 {
-    "name": "ropi/json-schema-validator",
+    "name": "ropi/json-schema-evaluator",
     "type": "library",
-    "description": "JSON Schema Validator",
+    "description": "JSON Schema Evaluator",
     "keywords": [
         "json",
         "schema",
+        "evaluator",
         "validator"
     ],
     "homepage": "https://www.robertpiplica.de",
