@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface
+class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'pattern';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -29,7 +35,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
@@ -38,7 +44,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface
         $numMatches = preg_match('{' . $keywordValue . '}u', $instance);
 
         if ($numMatches === 0) {
-            $result->setError(
+            $result->invalidate(
                 $instance
                 . ' does not match pattern '
                 . $keywordValue

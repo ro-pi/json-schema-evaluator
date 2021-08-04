@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
+class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     public const SUPPORTED_TYPES = [
         'object' => 'object',
@@ -22,6 +23,11 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
         'null' => 'null',
         'integer' => 'integer'
     ];
+
+    public function getName(): string
+    {
+        return 'type';
+    }
 
     /**
      * @throws StaticKeywordAnalysisException
@@ -59,16 +65,16 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
         }
 
         $keywordValue = $types;
-
-        if (!$keywordValue) {
-            // Remove keyword if false (same as default behavior)
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceType = $this->detectType($context->getInstance(), $context);
+        if (!$keywordValue) {
+            //Ignore keyword also if empty or false (same as default behavior)
+            return null;
+        }
+
+        $instanceType = $this->detectType($context->getCurrentInstance(), $context);
 
         $result = $context->createResultForKeyword($this);
 
@@ -82,7 +88,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
             }
         }
 
-        $result->setError(
+        $result->invalidate(
             'Type '
             . $this->arrayToHumanReadableList($keywordValue)
             . ' expected, but is '
@@ -94,13 +100,13 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     protected function detectType(mixed $instance, RuntimeEvaluationContext $context): string
     {
-        $acceptNumericStrings = $context->getStaticEvaluationContext()->getConfig()->getAcceptNumericStrings();
+        $acceptNumericStrings = $context->staticEvaluationContext->config->acceptNumericStrings;
 
         return match (true) {
             is_object($instance) => 'object',
             is_array($instance) => 'array',
-            $context->getDraft()->createBigNumber($instance, $acceptNumericStrings)?->isInteger() => 'integer',
-            $context->getDraft()->valueIsNumeric($instance) => 'number',
+            $context->draft->createBigNumber($instance, $acceptNumericStrings)?->isInteger() => 'integer',
+            $context->draft->valueIsNumeric($instance) => 'number',
             is_string($instance) => 'string',
             is_bool($instance) => 'boolean',
             ($instance === null) => 'null',

@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class ContentMediaTypeKeyword extends AbstractKeyword implements StaticKeywordInterface
+class ContentMediaTypeKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentMediaType';
+    }
+
     protected const PATTERN_MIME_TYPE_FORMAT = <<<'REGEX'
 /[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+\/[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+/i
 REGEX;
@@ -43,14 +49,14 @@ REGEX;
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->getConfig()->getAssertContentMediaTypeEncoding()) {
+        if ($context->config->assertContentMediaTypeEncoding) {
             $stream = fopen('php://memory','r+');
             fwrite($stream, $instance);
             rewind($stream);
@@ -58,7 +64,7 @@ REGEX;
             $mimeType = $this->detectMimeType($stream);
 
             if ($mimeType !== $keywordValue) {
-                $result->setError(
+                $result->invalidate(
                     'Mime type '
                     . $keywordValue
                     . ' expected, but is '

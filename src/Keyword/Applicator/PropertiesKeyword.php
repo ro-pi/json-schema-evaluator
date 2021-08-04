@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
+class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'properties';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
@@ -40,8 +46,8 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 );
             }
 
-            $context->setSchema($propertySchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->setCurrentSchema($propertySchema);
+            $context->draft->evaluateStatic($context);
 
             $context->popSchema();
         }
@@ -49,7 +55,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }
@@ -62,11 +68,11 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $propertyExists = property_exists($instance, $propertyName);
 
             if (!$propertyExists) {
-                if (!$context->getConfig()->getEvaluateMutations()) {
+                if (!$context->config->evaluateMutations) {
                     continue;
                 }
 
-                if (!$context->getDraft()->schemaHasMutationKeywords($propertySchema)) {
+                if (!$context->draft->schemaHasMutationKeywords($propertySchema)) {
                     continue;
                 }
 
@@ -77,20 +83,26 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $context->pushInstance($instance->$propertyName, (string) $propertyName);
 
             if ($propertyExists) {
-                if (!$context->getDraft()->evaluate($context)) {
-                    $result->setValid(false);
-                }
+                $valid = $context->draft->evaluate($context);
             } else {
-                $context->getDraft()->evaluate(clone $context, true);
+                $valid = $context->draft->evaluate($context, true);
             }
 
             $context->popInstance();
             $context->popSchema();
 
+            if (!$valid) {
+                $result->valid = false;
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
+
             $evaluatedProperties[$propertyName] = $propertyName;
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($evaluatedProperties);
         }
 

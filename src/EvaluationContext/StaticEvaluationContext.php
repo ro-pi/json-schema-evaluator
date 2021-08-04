@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 
 class StaticEvaluationContext
 {
@@ -13,22 +12,40 @@ class StaticEvaluationContext
     private array $schemas = [];
     private array $dynamicAnchors = [];
     private array $schemaLocations = [];
+    private \WeakMap $prioritizedSchemaKeywords;
 
     public function __construct(
         object|bool $schema,
-        private StaticEvaluationConfig $config
+        public /*readonly*/ StaticEvaluationConfig $config
     ) {
-        $this->draft = $this->config->getDefaultDraft();
-        $this->schemaStack[0] = new SchemaStackEntry($schema, '', '', '');
+        $this->draft = $this->config->defaultDraft;
+        $this->prioritizedSchemaKeywords = new \WeakMap();
+
+        $this->schemaStack[0] = [
+            'schema' => $schema,
+            'keywordLocation' => '',
+            'schemaKeywordLocation' => '',
+            'baseUri' => '',
+        ];
 
         if (is_object($schema)) {
             $this->registerSchema('', $schema, '');
         }
     }
 
-    public function getConfig(): StaticEvaluationConfig
+    public function registerPrioritizedSchemaKeywords(object $schema, array $prioritizedKeywords): void
     {
-        return $this->config;
+        $this->prioritizedSchemaKeywords[$schema] = $prioritizedKeywords;
+    }
+
+    public function hasPrioritizedSchemaKeywords(object $schema): bool
+    {
+        return isset($this->prioritizedSchemaKeywords[$schema]);
+    }
+
+    public function getPrioritizedSchemaKeywords(object $schema): array
+    {
+        return $this->prioritizedSchemaKeywords[$schema] ?? [];
     }
 
     public function registerSchema(string $uri, object $schema, string $location): void

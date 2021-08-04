@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
+class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'patternProperties';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
@@ -38,8 +44,8 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 );
             }
 
-            $context->setSchema($patternPropertySchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->setCurrentSchema($patternPropertySchema);
+            $context->draft->evaluateStatic($context);
 
             $context->popSchema();
         }
@@ -47,7 +53,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }
@@ -71,18 +77,24 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 $context->pushSchema(schema: $patternPropertySchema, keywordLocationFragment: (string) $pattern);
                 $context->pushInstance($propertyValue, (string) $propertyName);
 
-                if (!$context->getDraft()->evaluate($context)) {
-                    $result->setValid(false);
-                }
+                $valid = $context->draft->evaluate($context);
 
                 $context->popInstance();
                 $context->popSchema();
+
+                if (!$valid) {
+                    $result->valid = false;
+
+                    if ($context->config->shortCircuit) {
+                        break 2;
+                    }
+                }
 
                 $matchedPropertyNames[$propertyName] = $propertyName;
             }
         }
 
-        if ($result->getValid()) {
+        if ($result->valid) {
             $result->setAnnotation($matchedPropertyNames);
         }
 

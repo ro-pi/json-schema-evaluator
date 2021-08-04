@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
+class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'maxProperties';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -29,7 +35,7 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }
@@ -38,7 +44,7 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
         $numProperties = count(get_object_vars($instance));
 
         if ($numProperties > $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 $numProperties
                 . ' properties found, but at most '
                 . $keywordValue

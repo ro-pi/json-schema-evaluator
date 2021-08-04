@@ -9,16 +9,22 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface
+class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'minimum';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->getDraft()->createBigNumber($keywordValue, $context->getConfig()->getAcceptNumericStrings());
+        $number = $context->draft->createBigNumber($keywordValue, $context->config->acceptNumericStrings);
 
         if (!$number) {
             throw new InvalidKeywordValueException(
@@ -33,9 +39,9 @@ class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->getDraft()->createBigNumber(
-            $context->getInstance(),
-            $context->getStaticEvaluationContext()->getConfig()->getAcceptNumericStrings()
+        $instanceNumber = $context->draft->createBigNumber(
+            $context->getCurrentInstance(),
+            $context->staticEvaluationContext->config->acceptNumericStrings
         );
 
         if (!$instanceNumber) {
@@ -45,11 +51,11 @@ class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface
         $result = $context->createResultForKeyword($this);
 
         if ($instanceNumber->lessThan($keywordValue)) {
-            $result->setError(
+            $result->invalidate(
                 'A number greater than or equal to '
                 . $keywordValue
                 . ' required, but was '
-                . $context->getInstance()
+                . $context->getCurrentInstance()
             );
 
             return $result;

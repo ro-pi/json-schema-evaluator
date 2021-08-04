@@ -4,28 +4,16 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\Draft\DraftInterface;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 
 trait EvaluationContextTrait
 {
-    private DraftInterface $draft;
+    public DraftInterface $draft;
 
     /**
-     * @var SchemaStackEntry[]
+     * @var array[]
      */
     private array $schemaStack = [];
     private int $schemaStackPointer = 0;
-
-    public function setDraft(DraftInterface $draft): self
-    {
-        $this->draft = $draft;
-        return $this;
-    }
-
-    public function getDraft(): DraftInterface
-    {
-        return $this->draft;
-    }
 
     public function pushSchema(
         object|bool|null $schema = null,
@@ -33,43 +21,29 @@ trait EvaluationContextTrait
         ?string $baseUri = null,
         string $schemaLocation = ''
     ): void {
+        $currentStackEntry = $this->schemaStack[$this->schemaStackPointer];
+        $schema = $schema ?? $currentStackEntry['schema'];
+
         if ($baseUri === null) {
-            $schemaKeywordLocation = $this->getSchemaKeywordLocation();
-            $baseUri = $this->getBaseUri();
+            $schemaKeywordLocation = $currentStackEntry['schemaKeywordLocation'];
+            $baseUri = $currentStackEntry['baseUri'];
         } else {
             $schemaKeywordLocation = $schemaLocation;
         }
 
         if ($keywordLocationFragment) {
             $schemaKeywordLocation .= '/' . $keywordLocationFragment;
-        }
-
-        $schema = $schema ?? $this->getSchema();
-
-        if ($keywordLocationFragment === null) {
-            $keywordLocation = $this->getKeywordLocation();
+            $keywordLocation = $currentStackEntry['keywordLocation'] . '/' . $keywordLocationFragment;
         } else {
-            $keywordLocation = $this->getKeywordLocation() . '/' . $keywordLocationFragment;
+            $keywordLocation = $currentStackEntry['keywordLocation'];
         }
 
-        $this->schemaStack[++$this->schemaStackPointer] = new SchemaStackEntry(
-            $schema,
-            $keywordLocation,
-            $schemaKeywordLocation,
-            $baseUri
-        );
-    }
-
-    public function setSchema(object|bool $schema): void
-    {
-        if (!$this->schemaStackPointer) {
-            throw new \RuntimeException(
-                'Setting the root schema is not allowed',
-                1626262970
-            );
-        }
-
-        $this->schemaStack[$this->schemaStackPointer]->schema = $schema;
+        $this->schemaStack[++$this->schemaStackPointer] = [
+            'schema' => $schema,
+            'keywordLocation' => $keywordLocation,
+            'schemaKeywordLocation' => $schemaKeywordLocation,
+            'baseUri' => $baseUri
+        ];
     }
 
     public function popSchema(): void
@@ -81,23 +55,34 @@ trait EvaluationContextTrait
             );
         }
 
-        array_pop($this->schemaStack);
         $this->schemaStackPointer--;
     }
 
-    public function getSchema(): object|bool
+    public function setCurrentSchema(object|bool $schema): void
     {
-        return $this->schemaStack[$this->schemaStackPointer]->schema;
+        if (!$this->schemaStackPointer) {
+            throw new \RuntimeException(
+                'Setting the root schema is not allowed',
+                1626262970
+            );
+        }
+
+        $this->schemaStack[$this->schemaStackPointer]['schema'] = $schema;
+    }
+
+    public function getCurrentSchema(): object|bool
+    {
+        return $this->schemaStack[$this->schemaStackPointer]['schema'];
     }
 
     public function getRootSchema(): object|bool
     {
-        return $this->schemaStack[0]->schema;
+        return $this->schemaStack[0]['schema'];
     }
 
-    public function getKeywordLocation(int $length = 0): string
+    public function getCurrentKeywordLocation(int $length = 0): string
     {
-        $location = $this->schemaStack[$this->schemaStackPointer]->keywordLocation;
+        $location = $this->schemaStack[$this->schemaStackPointer]['keywordLocation'];
 
         if ($length === 0) {
             return $location;
@@ -106,9 +91,9 @@ trait EvaluationContextTrait
         return implode('/', array_slice(explode('/', $location), 0, $length));
     }
 
-    public function getSchemaKeywordLocation(int $length = 0): string
+    public function getCurrentSchemaKeywordLocation(int $length = 0): string
     {
-        $location = $this->schemaStack[$this->schemaStackPointer]->schemaKeywordLocation;
+        $location = $this->schemaStack[$this->schemaStackPointer]['schemaKeywordLocation'];
 
         if ($length === 0) {
             return $location;
@@ -117,34 +102,34 @@ trait EvaluationContextTrait
         return implode('/', array_slice(explode('/', $location), 0, $length));
     }
 
-    public function setBaseUri(string $baseUri, ?int $stackIndex = null): void
+    public function setCurrentBaseUri(string $baseUri, bool $withPrevious = true): void
     {
-        if ($stackIndex === null) {
-            $stackIndex = $this->schemaStackPointer;
-        } elseif ($stackIndex < 0) {
-            $stackIndex = $this->schemaStackPointer + $stackIndex;
+        $this->schemaStack[$this->schemaStackPointer]['baseUri'] = $baseUri;
+
+        if ($withPrevious) {
+            $this->schemaStack[$this->schemaStackPointer - 1]['baseUri'] = $baseUri;
         }
-
-        $this->schemaStack[$stackIndex]->baseUri = $baseUri;
     }
 
-    public function getBaseUri(): string
+    public function getCurrentBaseUri(): string
     {
-        return $this->schemaStack[$this->schemaStackPointer]->baseUri;
+        return $this->schemaStack[$this->schemaStackPointer]['baseUri'];
     }
 
-    public function getAbsoluteKeywordLocation(): ?string
+    public function getCurrentAbsoluteKeywordLocation(): ?string
     {
-        $baseUri = $this->schemaStack[$this->schemaStackPointer]->baseUri;
+        $currentStackEntry = $this->schemaStack[$this->schemaStackPointer];
+
+        $baseUri = $currentStackEntry['baseUri'];
         if (!$baseUri) {
             return null;
         }
 
         if (str_contains($baseUri, '#')) {
             // Base URI is an anchor URI (e.g. http://www.example.com#anchor)
-            return $baseUri . $this->getSchemaKeywordLocation();
+            return $baseUri . $currentStackEntry['schemaKeywordLocation'];
         }
 
-        return $baseUri . '#' . $this->getSchemaKeywordLocation();
+        return $baseUri . '#' . $currentStackEntry['schemaKeywordLocation'];
     }
 }

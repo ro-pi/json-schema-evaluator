@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordInterface
+class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'dependentSchemas';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
@@ -41,7 +47,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             }
 
             $context->pushSchema($dependentSchema);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
             $context->popSchema();
 
             $context->popSchema();
@@ -50,7 +56,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }
@@ -61,11 +67,11 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $propertyExists = property_exists($instance, $dependencyPropertyName);
 
             if (!$propertyExists) {
-                if (!$context->getConfig()->getEvaluateMutations()) {
+                if (!$context->config->evaluateMutations) {
                     continue;
                 }
 
-                if (!$context->getDraft()->schemaHasMutationKeywords($dependentSchema)) {
+                if (!$context->draft->schemaHasMutationKeywords($dependentSchema)) {
                     continue;
                 }
 
@@ -75,14 +81,20 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string) $dependencyPropertyName);
 
             if ($propertyExists) {
-                if (!$context->getDraft()->evaluate($context)) {
-                    $result->setValid(false);
-                }
+                $valid = $context->draft->evaluate($context);
             } else {
-                $context->getDraft()->evaluate(clone $context, true);
+                $valid = $context->draft->evaluate($context, true);
             }
 
             $context->popSchema();
+
+            if (!$valid) {
+                $result->valid = false;
+
+                if ($context->config->shortCircuit) {
+                    break;
+                }
+            }
         }
 
         return $result;

@@ -9,7 +9,7 @@ use Ropi\JsonSchemaEvaluator\SchemaPool\SchemaPoolInterface;
 
 class StaticEvaluationConfig
 {
-    private SchemaPoolInterface $schemaPool;
+    public /*readonly*/ SchemaPoolInterface $schemaPool;
 
     /**
      * @var DraftInterface[]
@@ -23,12 +23,12 @@ class StaticEvaluationConfig
      * @param bool $acceptNumericStrings
      */
     public function __construct(
-        private DraftInterface $defaultDraft,
+        public /*readonly*/ DraftInterface $defaultDraft,
         array $supportedDrafts = [],
         ?SchemaPoolInterface $schemaPool = null,
-        private bool $acceptNumericStrings = false,
+        public /*readonly*/ bool $acceptNumericStrings = false,
     ) {
-        $this->addSupportedDraft($this->defaultDraft);
+        $this->supportedDrafts[$this->defaultDraft->getUri()] = $this->defaultDraft;
 
         foreach ($supportedDrafts as $supportedDraft) {
             if (!$supportedDraft instanceof DraftInterface) {
@@ -40,41 +40,14 @@ class StaticEvaluationConfig
                 );
             }
 
-            $this->addSupportedDraft($supportedDraft);
+            $this->supportedDrafts[$supportedDraft->getUri()] = $supportedDraft;
         }
 
-        if (!$schemaPool) {
-            $this->schemaPool = new SchemaPool();
-        }
-    }
-
-    public function getDefaultDraft(): DraftInterface
-    {
-        return $this->defaultDraft;
-    }
-
-    public function getSchemaPool(): SchemaPoolInterface
-    {
-        return $this->schemaPool;
-    }
-
-    public function getAcceptNumericStrings(): bool
-    {
-        return $this->acceptNumericStrings;
-    }
-
-    public function getSupportedDrafts(): array
-    {
-        return $this->supportedDrafts;
+        $this->schemaPool = $schemaPool ?? new SchemaPool();
     }
 
     public function getSupportedDraftByUri(string $uri): ?DraftInterface
     {
         return $this->supportedDrafts[$uri] ?? null;
-    }
-
-    protected function addSupportedDraft(DraftInterface $draft): void
-    {
-        $this->supportedDrafts[$draft->getUri()] = $draft;
     }
 }

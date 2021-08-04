@@ -24,10 +24,10 @@ class BasicOutput extends AbstractOutput
         $formattedResult->valid = $this->getValid();
 
         foreach ($this->results as $result) {
-            if ($result->hasError()) {
+            if ($result->error) {
                 $outputUnit = $this->createOutputUnit($result);
-                $outputUnit->error = $result->getError();
-                $outputUnit->errorMeta = $result->getErrorMeta();
+                $outputUnit->error = $result->error;
+                $outputUnit->errorMeta = $result->errorMeta;
                 $formattedResult->errors[] = $outputUnit;
             }
 
@@ -42,16 +42,16 @@ class BasicOutput extends AbstractOutput
     protected function createOutputUnit(RuntimeEvaluationResult $result): object
     {
         $outputUnit = new \stdClass();
-        $outputUnit->valid = $result->getValid();
-        $outputUnit->keywordLocation = $result->getKeywordLocation();
+        $outputUnit->valid = $result->valid;
+        $outputUnit->keywordLocation = $result->keywordLocation;
 
-        $absoluteKeywordLocation = $result->getAbsoluteKeywordLocation();
+        $absoluteKeywordLocation = $result->absoluteKeywordLocation;
         if ($absoluteKeywordLocation !== null) {
             $outputUnit->absoluteKeywordLocation = $absoluteKeywordLocation;
         }
 
-        $outputUnit->instanceLocation = $result->getInstanceLocation();
-        $outputUnit->keywordName = $result->getKeyword()->getName();
+        $outputUnit->instanceLocation = $result->instanceLocation;
+        $outputUnit->keywordName = $result->keyword->getName();
 
         return $outputUnit;
     }

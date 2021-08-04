@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
+class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentSchema';
+    }
+
     /**
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException
@@ -29,25 +35,25 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
 
-        $contentMediaType = $context->getSchema()->{'contentMediaType'} ?? null;
+        $contentMediaType = $context->getCurrentSchema()->{'contentMediaType'} ?? null;
         if (!$contentMediaType) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->getConfig()->getEvaluateMutations()) {
+        if ($context->config->evaluateMutations) {
             if ($this->shouldParseInstance($contentMediaType)) {
                 $parseError = null;
                 set_error_handler(static function(int $severity, string $error) use(&$parseError) {
@@ -59,16 +65,14 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
                 restore_error_handler();
 
                 if ($instance === null) {
-                    $result->setError('Parsing JSON failed', $parseError);
+                    $result->invalidate('Parsing JSON failed', $parseError);
                 }
             }
 
             $context->pushSchema($keywordValue);
             $context->pushInstance($instance);
 
-            if (!$context->getDraft()->evaluate($context)) {
-                $result->setValid(false);
-            }
+            $result->valid = $context->draft->evaluate($context);
 
             $context->popInstance();
             $context->popSchema();
@@ -84,11 +88,11 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
 
     protected function parseInstance(RuntimeEvaluationContext $context): object|array|null
     {
-        $flags = $context->getStaticEvaluationContext()->getConfig()->getAcceptNumericStrings()
+        $flags = $context->staticEvaluationContext->config->acceptNumericStrings
                  ? JSON_BIGINT_AS_STRING
                  : 0;
 
-        $parsed = json_decode($context->getInstance(), false, 512, $flags);
+        $parsed = json_decode($context->getCurrentInstance(), false, 512, $flags);
 
         if (!is_object($parsed) && !is_array($parsed)) {
             return null;

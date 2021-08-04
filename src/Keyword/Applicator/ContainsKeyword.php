@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface
+class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contains';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
@@ -28,18 +34,18 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
         }
 
-        $currentSchema = $context->getSchema();
+        $currentSchema = $context->getCurrentSchema();
         $result = $context->createResultForKeyword($this);
 
         $matchedIndexes = [];
@@ -48,7 +54,7 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface
             $context->pushSchema($keywordValue);
             $context->pushInstance($instanceValue, (string) $instanceIndex);
 
-            $valid = $context->getDraft()->evaluate($context);
+            $valid = $context->draft->evaluate($context);
 
             $context->popInstance();
             $context->popSchema();
@@ -61,7 +67,7 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface
         if ($matchedIndexes) {
             ksort($matchedIndexes);
         } else if (!isset($currentSchema->minContains) || $currentSchema->minContains > 0) {
-            $result->setError('No item matches schema');
+            $result->invalidate('No item matches schema');
             return $result;
         }
 

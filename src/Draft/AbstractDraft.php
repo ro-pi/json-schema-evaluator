@@ -12,6 +12,7 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\UnknownKeyword;
 use Ropi\JsonSchemaEvaluator\Type\BigNumber;
@@ -19,6 +20,9 @@ use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
 
 abstract class AbstractDraft implements DraftInterface
 {
+    /**
+     * @var KeywordInterface[]
+     */
     private array $keywords = [];
     private int $priority = 0;
 
@@ -72,7 +76,7 @@ abstract class AbstractDraft implements DraftInterface
      */
     public function evaluateStatic(StaticEvaluationContext $context): void
     {
-        $schema = $context->getSchema();
+        $schema = $context->getCurrentSchema();
 
         if (is_bool($schema)) {
             return;
@@ -85,20 +89,15 @@ abstract class AbstractDraft implements DraftInterface
             );
         }
 
-        /** @var StaticKeywordInterface[][] $prioritizedKeywords */
-        $prioritizedKeywords = [];
-
-        foreach ($schema as $keywordName => $keywordValue) {
-            $keyword = $context->getDraft()->getKeywordByName($keywordName);
-            if ($keyword instanceof StaticKeywordInterface) {
-                $prioritizedKeywords[$keyword->getPriority()][] = $keyword;
-            }
+        if (!$context->hasPrioritizedSchemaKeywords($schema)) {
+            $context->registerPrioritizedSchemaKeywords(
+                $schema,
+                $this->prioritizeSchemaKeywords($schema, $context)
+            );
         }
 
-        ksort($prioritizedKeywords);
-
-        foreach ($prioritizedKeywords as $keywords) {
-            foreach ($keywords as $keyword) {
+        foreach ($context->getPrioritizedSchemaKeywords($schema) as $keyword) {
+            if ($keyword instanceof StaticKeywordInterface) {
                 $context->pushSchema(keywordLocationFragment: $keyword->getName());
                 $keyword->evaluateStatic($schema->{$keyword->getName()}, $context);
                 $context->popSchema();
@@ -111,45 +110,37 @@ abstract class AbstractDraft implements DraftInterface
      */
     public function evaluate(RuntimeEvaluationContext $context, bool $mutationsOnly = false): bool
     {
-        $schema = $context->getSchema();
+        $schema = $context->getCurrentSchema();
 
         if (is_bool($schema)) {
             return $schema;
         }
 
-        /** @var KeywordInterface[][] $prioritizedKeywords */
-        $prioritizedKeywords = [];
+        $lastResultNumber = $context->getLastResultNumber();
+        $shortCircuit = $context->config->shortCircuit;
+        $valid = true;
 
-        foreach ($schema as $keywordName => $keywordValue) {
-            $keyword = $context->getDraft()->getKeywordByName($keywordName);
+        foreach ($context->staticEvaluationContext->getPrioritizedSchemaKeywords($schema) as $keyword) {
+            $name = $keyword->getName();
 
-            if ($mutationsOnly && !$keyword instanceof MutationKeywordInterface) {
+            if (
+                !$keyword instanceof RuntimeKeywordInterface
+                || ($mutationsOnly && !$keyword instanceof MutationKeywordInterface)
+            ) {
                 continue;
             }
 
-            $prioritizedKeywords[$keyword->getPriority()][] = $keyword;
-        }
+            $context->pushSchema(keywordLocationFragment: $name);
 
-        ksort($prioritizedKeywords);
+            $evaluationResult = $keyword->evaluate($schema->{$name}, $context);
+            if ($evaluationResult && !$evaluationResult->valid) {
+                $valid = false;
+            }
 
-        $lastResultNumber = $context->getLastResultNumber();
-        $shortCircuit = $context->getConfig()->getShortCircuit();
-        $valid = true;
+            $context->popSchema();
 
-        foreach ($prioritizedKeywords as $keywords) {
-            foreach ($keywords as $keyword) {
-                $context->pushSchema(keywordLocationFragment: $keyword->getName());
-
-                $evaluationResult = $keyword->evaluate($schema->{$keyword->getName()}, $context);
-                if ($evaluationResult && !$evaluationResult->getValid()) {
-                    $valid = false;
-                }
-
-                $context->popSchema();
-
-                if ($shortCircuit && !$valid) {
-                    break 2;
-                }
+            if ($shortCircuit && !$valid) {
+                break;
             }
         }
 
@@ -224,12 +215,14 @@ abstract class AbstractDraft implements DraftInterface
             return clone $value;
         }
 
-        if (!is_int($value) && !is_float($value) && (!$acceptNumericStrings || !is_string($value))) {
-            return null;
-        }
-
-        if (!is_numeric($value)) {
-            return null;
+        if (!is_int($value) && !is_float($value)) {
+            if ($acceptNumericStrings) {
+                if (!is_string($value) || !is_numeric($value)) {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
         try {
@@ -292,6 +285,21 @@ abstract class AbstractDraft implements DraftInterface
         }
 
         return $value1 === $value2;
+    }
+
+    protected function prioritizeSchemaKeywords(object $schema, StaticEvaluationContext $context): array
+    {
+        /** @var StaticKeywordInterface[] $prioritizedKeywords */
+        $prioritizedKeywords = [];
+
+        foreach ($schema as $keywordName => $keywordValue) {
+            $keyword = $context->draft->getKeywordByName($keywordName);
+            $prioritizedKeywords[$keyword->getPriority()] = $keyword;
+        }
+
+        ksort($prioritizedKeywords);
+
+        return $prioritizedKeywords;
     }
 
     protected function decodeJsonPointerToken(string $fragment): string

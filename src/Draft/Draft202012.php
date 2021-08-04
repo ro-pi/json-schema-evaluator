@@ -22,6 +22,7 @@ use Ropi\JsonSchemaEvaluator\Keyword\Applicator\UnevaluatedItemsKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Applicator\UnevaluatedPropertiesKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Identifier\AnchorKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Identifier\DynamicAnchorKeyword;
+use Ropi\JsonSchemaEvaluator\Keyword\ReservedLocation\CommentKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\ReservedLocation\VocabularyKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\ReservedLocation\DefsKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Applicator\DependentSchemasKeyword;
@@ -91,6 +92,7 @@ class Draft202012 extends AbstractDraft
         $this->registerKeyword(new DefsKeyword());
         $this->registerKeyword(new RefKeyword());
         $this->registerKeyword(new DynamicRefKeyword());
+        $this->registerKeyword(new CommentKeyword());
 
         // Content
         $this->registerKeyword(new ContentEncodingKeyword());

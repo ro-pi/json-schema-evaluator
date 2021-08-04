@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface
+class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     protected const PATTERN_URI_TEMPLATE = <<<'REGEX'
 /^((([\x{21}\x{23}\x{24}\x{26}\x{28}-\x{3B}\x{3D}\x{3F}-\x{5B}\x{5D}\x{5F}\x{61}-\x{7A}\x{7E}]|([\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}])|([\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}])|(%[A-F0-9][A-F0-9])))|(\{(((\+|#)|(\.|\/|;|\?|&)|(\=|,|\!|@|\|)))?([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?(,([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?)*\}))*$/iu
@@ -70,6 +71,11 @@ REGEX;
         "\u{30fb}" => '/[\p{Katakana}\p{Hiragana}\p{Han}]/u', # KATAKANA MIDDLE DOT
     ];
 
+    public function getName(): string
+    {
+        return 'format';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -86,7 +92,7 @@ REGEX;
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
@@ -118,8 +124,8 @@ REGEX;
 
         $result->setAnnotation($valid);
 
-        if ($context->getConfig()->getAssertFormat() && !$valid) {
-            $result->setError(
+        if ($context->config->assertFormat && !$valid) {
+            $result->invalidate(
                 $instance
                 . ' is not a valid '
                 . $keywordValue
@@ -131,98 +137,98 @@ REGEX;
 
     protected function evaluateEmail(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkEmail($context->getInstance());
+        return $this->checkEmail($context->getCurrentInstance());
     }
 
     protected function evaluateIdnEmail(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIdnEmail($context->getInstance());
+        return $this->checkIdnEmail($context->getCurrentInstance());
     }
 
     protected function evaluateRegex(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRegexPattern($context->getInstance());
+        return $this->checkRegexPattern($context->getCurrentInstance());
     }
 
     protected function evaluateIpv4(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIpv4($context->getInstance());
+        return $this->checkIpv4($context->getCurrentInstance());
     }
 
     protected function evaluateIpv6(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIpv6($context->getInstance());
+        return $this->checkIpv6($context->getCurrentInstance());
     }
 
     protected function evaluateIdnHostname(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkIdn($context->getInstance());
+        return $this->checkIdn($context->getCurrentInstance());
     }
 
     protected function evaluateHostname(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkHostname($context->getInstance());
+        return $this->checkHostname($context->getCurrentInstance());
     }
 
     protected function evaluateDate(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Date($context->getInstance());
+        return $this->checkRfc3339Date($context->getCurrentInstance());
     }
 
     protected function evaluateDateTime(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Date(substr($context->getInstance(), 0, 10))
-                && $this->checkRfc3339Time(substr($context->getInstance(), 11));
+        return $this->checkRfc3339Date(substr($context->getCurrentInstance(), 0, 10))
+                && $this->checkRfc3339Time(substr($context->getCurrentInstance(), 11));
     }
 
     protected function evaluateTime(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkRfc3339Time($context->getInstance());
+        return $this->checkRfc3339Time($context->getCurrentInstance());
     }
 
     protected function evaluateJsonPointer(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkJsonPointer($context->getInstance(), true);
+        return $this->checkJsonPointer($context->getCurrentInstance(), true);
     }
 
     protected function evaluateRelativeJsonPointer(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkJsonPointer($context->getInstance(), false);
+        return $this->checkJsonPointer($context->getCurrentInstance(), false);
     }
 
     protected function evaluateIri(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), true, true);
+        return $this->checkUri($context->getCurrentInstance(), true, true);
     }
 
     protected function evaluateIriReference(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), false, true);
+        return $this->checkUri($context->getCurrentInstance(), false, true);
     }
 
     protected function evaluateUri(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), true);
+        return $this->checkUri($context->getCurrentInstance(), true);
     }
 
     protected function evaluateUriReference(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUri($context->getInstance(), false);
+        return $this->checkUri($context->getCurrentInstance(), false);
     }
 
     protected function evaluateUriTemplate(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUriTemplate($context->getInstance());
+        return $this->checkUriTemplate($context->getCurrentInstance());
     }
 
     protected function evaluateUuid(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkUuid($context->getInstance());
+        return $this->checkUuid($context->getCurrentInstance());
     }
 
     protected function evaluateDuration(RuntimeEvaluationContext $context): bool
     {
-        return $this->checkDuration($context->getInstance());
+        return $this->checkDuration($context->getCurrentInstance());
     }
 
     protected function checkUriTemplate(string $uriTemplate): bool

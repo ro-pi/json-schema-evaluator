@@ -11,9 +11,10 @@ use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\KeywordRuntimeEvaluationException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
+class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     protected array $processedSchemaInstanceLocations = [];
 
@@ -38,7 +39,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        $uri = $context->getDraft()->createUri($keywordValue);
+        $uri = $context->draft->createUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
                 'The value of "%s" must be a valid URI reference',
@@ -47,31 +48,30 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        $resolvedUri = $context->getDraft()->resolveUri($context->getBaseUri(), $uri);
+        $resolvedUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $uri);
         $normalizedUri = $resolvedUri->withFragment('');
 
-        $config = $context->getConfig();
-        $schemaPool = $config->getSchemaPool();
+        $config = $context->config;
 
         if (
             !$context->hasSchema((string) $normalizedUri)
             && !$this->scanSchemaForId($context->getRootSchema(), $normalizedUri, $context))
         {
-            $remoteSchema = $schemaPool->getSchemaByUri((string) $normalizedUri);
+            $remoteSchema = $config->schemaPool->getSchemaByUri((string) $normalizedUri);
             if (!$remoteSchema) {
-                $remoteSchema = $schemaPool->fetchRemoteSchema((string) $normalizedUri);
+                $remoteSchema = $config->schemaPool->fetchRemoteSchema((string) $normalizedUri);
             }
 
             if (!isset($remoteSchema->{'$id'})) {
                 $context->registerSchema(
                     (string) $normalizedUri,
                     $remoteSchema,
-                    $context->getSchemaKeywordLocation(-1)
+                    $context->getCurrentSchemaKeywordLocation(-1)
                 );
             }
 
             $context->pushSchema(schema: $remoteSchema, baseUri: (string) $normalizedUri);
-            $context->getDraft()->evaluateStatic($context);
+            $context->draft->evaluateStatic($context);
             $context->popSchema();
         }
 
@@ -88,7 +88,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
 
         if ($fragment && str_starts_with($fragment, '/')) {
             $referencedSchema = $this->dereferenceSchema($uriComponents[0], $context);
-            $referencedSchema = $context->getDraft()->dereferenceJsonPointer($referencedSchema, $fragment);
+            $referencedSchema = $context->draft->dereferenceJsonPointer($referencedSchema, $fragment);
             if ($referencedSchema === null) {
                 throw new KeywordRuntimeEvaluationException(
                     'Can not dereference JSON pointer "' . $fragment . '"',
@@ -100,7 +100,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
             $referencedSchema = $this->dereferenceSchema($keywordValue, $context);
         }
 
-        $schemaInstanceLocationHash = spl_object_hash($context->getSchema()) . ':' . $context->getInstanceLocation();
+        $schemaInstanceLocationHash = spl_object_hash($context->getCurrentSchema()) . ':' . $context->getCurrentInstanceLocation();
         if (isset($this->processedSchemaInstanceLocations[$schemaInstanceLocationHash])) {
             throw new KeywordRuntimeEvaluationException(
                 '"%s" causes an infinite recursion',
@@ -116,12 +116,10 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
         $context->pushSchema(
             schema: $referencedSchema,
             baseUri: $uriComponents[0],
-            schemaLocation: (string) $context->getStaticEvaluationContext()->getSchemaLocationByUri($keywordValue)
+            schemaLocation: (string) $context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
         );
 
-        $result->setValid(
-            $context->getDraft()->evaluate($context)
-        );
+        $result->valid = $context->draft->evaluate($context);
 
         $context->popSchema();
 
@@ -135,7 +133,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
      */
     protected function dereferenceSchema(string $schemaUri, RuntimeEvaluationContext $context): object
     {
-        $referencedSchema = $context->getStaticEvaluationContext()->getSchemaByUri($schemaUri);
+        $referencedSchema = $context->staticEvaluationContext->getSchemaByUri($schemaUri);
         if (!$referencedSchema) {
             throw new KeywordRuntimeEvaluationException(
                 'Failed to dereference schema URI "' . $schemaUri . '"',
@@ -151,9 +149,9 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (is_object($schemaPart)) {
             if (isset($schemaPart->{'$id'}) && is_string($schemaPart->{'$id'})) {
-                $idUri = $context->getDraft()->createUri($schemaPart->{'$id'});
+                $idUri = $context->draft->createUri($schemaPart->{'$id'});
                 if ($idUri) {
-                    $idUri = $context->getDraft()->resolveUri($context->getBaseUri(), $idUri);
+                    $idUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $idUri);
                     if ((string) $idUri == (string) $uri) {
                         return true;
                     }

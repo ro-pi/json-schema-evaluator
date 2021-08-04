@@ -9,11 +9,11 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
+class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
-
     public function getName(): string
     {
         return '$schema';
@@ -40,7 +40,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        $draft = $context->getConfig()->getSupportedDraftByUri($keywordValue);
+        $draft = $context->config->getSupportedDraftByUri($keywordValue);
         if (!$draft) {
             throw new StaticKeywordAnalysisException(
                 'The dialect "'
@@ -51,14 +51,12 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        $context->setDraft($draft);
+        $context->draft = $draft;
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $context->setDraft(
-            $context->getStaticEvaluationContext()->getConfig()->getSupportedDraftByUri($keywordValue)
-        );
+        $context->draft = $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue);
 
         return $context->createResultForKeyword($this);
     }

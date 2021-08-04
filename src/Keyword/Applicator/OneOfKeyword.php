@@ -8,11 +8,17 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface
+class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     use OfKeywordTrait;
+
+    public function getName(): string
+    {
+        return 'oneOf';
+    }
 
     /**
      * @throws StaticKeywordAnalysisException
@@ -29,7 +35,7 @@ class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface
         $numMatches = $this->evaluateOf($keywordValue, $context);
 
         if ($numMatches !== 1) {
-            $result->setError(
+            $result->invalidate(
                 'Value must match exactly one schema, but matches '
                 . $numMatches
             );

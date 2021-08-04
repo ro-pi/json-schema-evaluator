@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface
+class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'required';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -39,29 +45,24 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface
 
             $context->popSchema();
         }
-
-        if (!$keywordValue) {
-            // Remove keyword if empty (same as default behavior)
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
-        if (!is_object($instance)) {
+        $instance = $context->getCurrentInstance();
+        if (!is_object($instance) || !$keywordValue) {
+            //Ignore keyword also if empty (same as default behavior)
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
         $missingProperties = [];
 
         foreach ($keywordValue as $requiredProperty) {
             if (!property_exists($instance, $requiredProperty)) {
-                if ($shortCircuit) {
-                    $result->setError(
+                if ($context->config->shortCircuit) {
+                    $result->invalidate(
                         'Required property '
                         . $requiredProperty
                         . ' is missing'
@@ -75,7 +76,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface
         }
 
         if ($missingProperties) {
-            $result->setError(
+            $result->invalidate(
                 'Missing required properties: '
                 . implode(', ', $missingProperties),
                 $missingProperties

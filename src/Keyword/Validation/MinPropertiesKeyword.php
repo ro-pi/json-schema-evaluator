@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface
+class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'minProperties';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -25,17 +31,13 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
                 $context
             );
         }
-
-        if (!$keywordValue) {
-            // Remove keyword if 0 (same as default behavior)
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
-        if (!is_object($instance)) {
+        $instance = $context->getCurrentInstance();
+        if (!is_object($instance) || !$keywordValue) {
+            // Ignore keyword also if 0 (same as default behavior)
             return null;
         }
 
@@ -43,7 +45,7 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
         $numProperties = count(get_object_vars($instance));
 
         if ($numProperties < $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 $numProperties
                 . ' properties found, but at least '
                 . $keywordValue

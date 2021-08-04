@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface
+class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'then';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
@@ -28,13 +34,13 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface
         }
 
         $context->pushSchema($keywordValue);
-        $context->getDraft()->evaluateStatic($context);
+        $context->draft->evaluateStatic($context);
         $context->popSchema();
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $ifResult = $context->getLastResultByKeywordLocation($context->getKeywordLocation(-1) . '/if');
+        $ifResult = $context->getLastResultByKeywordLocation($context->getCurrentKeywordLocation(-1) . '/if');
         if (!$ifResult || !$ifResult->getEvaluationResult()) {
             return null;
         }
@@ -42,9 +48,7 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface
         $result = $context->createResultForKeyword($this);
         $context->pushSchema($keywordValue);
 
-        if (!$context->getDraft()->evaluate($context)) {
-            $result->setValid(false);
-        }
+        $result->valid = $context->draft->evaluate($context);
 
         $context->popSchema();
 

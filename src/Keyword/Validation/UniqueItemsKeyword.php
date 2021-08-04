@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterface
+class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'uniqueItems';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -25,16 +31,11 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 $context
             );
         }
-
-        if (!$keywordValue) {
-            // Remove keyword if false for faster evaluation
-            unset($context->getSchema()->{$this->getName()});
-        }
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
         }
@@ -45,8 +46,6 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return $result;
         }
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
-
         $scalarItems = [];
         $complexItems = [];
         $duplicateItemPositions = [];
@@ -54,9 +53,9 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         foreach ($instance as $instanceKey => $instanceValue) {
             if (is_array($instanceValue) || is_object($instanceValue)) {
                 foreach ($complexItems as $complexItem) {
-                    if ($context->getDraft()->valuesAreEqual($instanceValue, $complexItem)) {
-                        if ($shortCircuit) {
-                            $result->setError(
+                    if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
+                        if ($context->config->shortCircuit) {
+                            $result->invalidate(
                                 'Item at position '
                                 . $instanceKey
                                 . ' is not unique'
@@ -76,8 +75,8 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
-                if ($shortCircuit) {
-                    $result->setError(
+                if ($context->config->shortCircuit) {
+                    $result->invalidate(
                         'Item at position '
                         . $instanceKey
                         . ' is not unique'
@@ -93,7 +92,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         if ($duplicateItemPositions) {
-            $result->setError(
+            $result->invalidate(
                 'Items at following positions are not unique: '
                 . implode(', ', $duplicateItemPositions),
                 $duplicateItemPositions

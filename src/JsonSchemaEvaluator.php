@@ -11,6 +11,13 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 
 class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
 {
+    protected RuntimeEvaluationConfig $defaultRuntimeEvaluationConfig;
+
+    public function __construct()
+    {
+        $this->defaultRuntimeEvaluationConfig = new RuntimeEvaluationConfig();
+    }
+
     /**
      * @throws Draft\Exception\InvalidSchemaException
      * @throws Keyword\Exception\StaticKeywordAnalysisException
@@ -19,7 +26,7 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
     {
         $context = new StaticEvaluationContext($jsonSchema, $config);
 
-        $config->getDefaultDraft()->evaluateStatic($context);
+        $config->defaultDraft->evaluateStatic($context);
 
         return $context;
     }
@@ -37,18 +44,14 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
         ?RuntimeEvaluationConfig $config = null,
         array &$results = null
     ): bool {
-        if (!$config) {
-            $config = new RuntimeEvaluationConfig();
-        }
-
         $context = new RuntimeEvaluationContext(
-            schema: $staticEvaluationContext->getSchema(),
-            instance: $instance,
-            config: $config,
-            staticEvaluationContext: $staticEvaluationContext
+            $staticEvaluationContext->getCurrentSchema(),
+            $instance,
+            $config ?: $this->defaultRuntimeEvaluationConfig,
+            $staticEvaluationContext
         );
 
-        $valid = $staticEvaluationContext->getConfig()->getDefaultDraft()->evaluate($context);
+        $valid = $staticEvaluationContext->config->defaultDraft->evaluate($context);
         $results = $context->getResults();
 
         return $valid;

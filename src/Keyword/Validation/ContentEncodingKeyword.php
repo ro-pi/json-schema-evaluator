@@ -14,6 +14,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInterface, MutationKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'contentEncoding';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -41,14 +46,14 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance =& $context->getInstance();
+        $instance =& $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->getConfig()->getEvaluateMutations()) {
+        if ($context->config->evaluateMutations) {
             $decodingCallable = $this->getDecoderCallableForEncoding($keywordValue);
 
             $decodingError = null;
@@ -63,7 +68,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
             if ($decoded) {
                 $instance = $decoded;
             } else {
-                $result->setError(
+                $result->invalidate(
                     $keywordValue . ' decoding failed',
                     $decodingError
                 );
@@ -100,6 +105,6 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
     protected function decodeBase64(RuntimeEvaluationContext $context): ?string
     {
-        return base64_decode($context->getInstance()) ?: null;
+        return base64_decode($context->getCurrentInstance()) ?: null;
     }
 }

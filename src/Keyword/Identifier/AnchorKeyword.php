@@ -9,9 +9,10 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface
+class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     protected const PATTERN_XML_NC_NAME_US_ASCII = '/[A-Z_][A-Z_0-9\-.]*$/i';
 
@@ -43,7 +44,7 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        $anchorUri = $context->getDraft()->createUri($context->getBaseUri())->withFragment($keywordValue);
+        $anchorUri = $context->draft->createUri($context->getCurrentBaseUri())->withFragment($keywordValue);
 
         if ($context->hasSchema((string) $anchorUri)) {
             throw new StaticKeywordAnalysisException(
@@ -55,8 +56,8 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface
 
         $context->registerSchema(
             (string) $anchorUri,
-            $context->getSchema(),
-            $context->getSchemaKeywordLocation(-1)
+            $context->getCurrentSchema(),
+            $context->getCurrentSchemaKeywordLocation(-1)
         );
 
         $keywordValue = (string) $anchorUri;

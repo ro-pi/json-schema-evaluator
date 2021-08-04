@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordInterface
+class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'dependentRequired';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -61,14 +67,13 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_object($instance)) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        $shortCircuit = $context->getConfig()->getShortCircuit();
         $missingProperties = [];
 
         foreach ($keywordValue as $dependencyPropertyName => $requiredProperties) {
@@ -78,8 +83,8 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
             foreach ($requiredProperties as $requiredProperty) {
                 if (!property_exists($instance, $requiredProperty)) {
-                    if ($shortCircuit) {
-                        $result->setError(
+                    if ($context->config->shortCircuit) {
+                        $result->invalidate(
                             'Dependent required property '
                             . $requiredProperty
                             . ' is missing'
@@ -94,7 +99,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
         }
 
         if ($missingProperties) {
-            $result->setError(
+            $result->invalidate(
                 'Missing dependent required properties: '
                 . implode(', ', $missingProperties),
                 $missingProperties

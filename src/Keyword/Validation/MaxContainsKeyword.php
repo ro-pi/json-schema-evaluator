@@ -9,10 +9,16 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
+use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
-class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterface
+class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    public function getName(): string
+    {
+        return 'maxContains';
+    }
+
     /**
      * @throws StaticKeywordAnalysisException
      */
@@ -29,7 +35,7 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instance = $context->getInstance();
+        $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
         }
@@ -48,7 +54,7 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         if ($containsCount > $keywordValue) {
-            $result->setError(
+            $result->invalidate(
                 'At most '
                 . $keywordValue
                 . ' matched elements must be contained, but there are '

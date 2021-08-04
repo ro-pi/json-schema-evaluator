@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\InstanceStackEntry;
-use Ropi\JsonSchemaEvaluator\EvaluationContext\Struct\SchemaStackEntry;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class RuntimeEvaluationContext
@@ -13,49 +11,50 @@ class RuntimeEvaluationContext
     use EvaluationContextTrait;
 
     /**
-     * @var InstanceStackEntry[]
+     * @var array[]
      */
     private array $instanceStack = [];
     private int $instanceStackPointer = 0;
 
     /**
-     * Results indexed by instance location and keyword name
-     *
-     * @var RuntimeEvaluationResult[][][]
+     * @var RuntimeEvaluationResult[]
      */
     private array $results = [];
-    private int $lastResultNumber = 1;
+    private int $lastResultNumber = 0;
 
     public function __construct(
         object|bool $schema,
         mixed &$instance,
-        private RuntimeEvaluationConfig $config,
-        private StaticEvaluationContext $staticEvaluationContext
+        public /*readonly*/ RuntimeEvaluationConfig $config,
+        public /*readonly*/ StaticEvaluationContext $staticEvaluationContext
     ) {
-        $this->schemaStack[0] = new SchemaStackEntry($schema, '', '', '');
-        $this->instanceStack[0] = new InstanceStackEntry($instance, '');
-        $this->draft = $staticEvaluationContext->getConfig()->getDefaultDraft();
-    }
+        $this->schemaStack[0] = [
+            'schema' => $schema,
+            'keywordLocation' => '',
+            'schemaKeywordLocation' => '',
+            'baseUri' => '',
+        ];
 
-    public function getConfig(): RuntimeEvaluationConfig
-    {
-        return $this->config;
-    }
+        $this->instanceStack[0] = [
+            'instance' => &$instance,
+            'instanceLocation' => ''
+        ];
 
-    public function getStaticEvaluationContext(): StaticEvaluationContext
-    {
-        return $this->staticEvaluationContext;
+        $this->draft = $staticEvaluationContext->config->defaultDraft;
     }
 
     public function pushInstance(mixed &$instance, string $instanceLocationFragment = null): void
     {
         if ($instanceLocationFragment === null) {
-            $instanceLocation = $this->getInstanceLocation();
+            $instanceLocation = $this->getCurrentInstanceLocation();
         } else {
-            $instanceLocation = $this->getInstanceLocation() . '/' . $instanceLocationFragment;
+            $instanceLocation = $this->getCurrentInstanceLocation() . '/' . $instanceLocationFragment;
         }
 
-        $this->instanceStack[++$this->instanceStackPointer] = new InstanceStackEntry($instance, $instanceLocation);
+        $this->instanceStack[++$this->instanceStackPointer] = [
+            'instance' => &$instance,
+            'instanceLocation' => $instanceLocation
+        ];
     }
 
     public function popInstance(): void
@@ -71,27 +70,27 @@ class RuntimeEvaluationContext
         $this->instanceStackPointer--;
     }
 
-    public function getInstanceLocation(): string
+    public function getCurrentInstanceLocation(): string
     {
-        return $this->instanceStack[$this->instanceStackPointer]->instanceLocation;
+        return $this->instanceStack[$this->instanceStackPointer]['instanceLocation'];
     }
 
-    public function &getInstance(): mixed
+    public function &getCurrentInstance(): mixed
     {
-        return $this->instanceStack[$this->instanceStackPointer]->instance;
+        return $this->instanceStack[$this->instanceStackPointer]['instance'];
     }
 
     public function createResultForKeyword(KeywordInterface $keyword): RuntimeEvaluationResult
     {
         $result = new RuntimeEvaluationResult(
-            $this->lastResultNumber++,
+            ++$this->lastResultNumber,
             $keyword,
-            $this->getKeywordLocation(),
-            $this->getInstanceLocation(),
-            $this->getAbsoluteKeywordLocation()
+            $this->schemaStack[$this->schemaStackPointer]['keywordLocation'],
+            $this->instanceStack[$this->instanceStackPointer]['instanceLocation'],
+            $this->getCurrentAbsoluteKeywordLocation()
         );
 
-        $this->results[$this->getInstanceLocation()][$keyword->getName()][] = $result;
+        $this->results[] = $result;
 
         return $result;
     }
@@ -103,7 +102,19 @@ class RuntimeEvaluationContext
 
     public function getResultsByKeywordName(string $keywordName): array
     {
-        return $this->results[$this->getInstanceLocation()][$keywordName] ?? [];
+        $results = [];
+        $currentInstanceLocation = $this->getCurrentInstanceLocation();
+
+        foreach ($this->results as $result) {
+            if (
+                $result->instanceLocation === $currentInstanceLocation
+                && $result->keyword->getName() === $keywordName
+            ) {
+                $results[] = $result;
+            }
+        }
+
+        return $results;
     }
 
     public function getLastResultByKeywordName(string $keywordName): ?RuntimeEvaluationResult
@@ -123,7 +134,7 @@ class RuntimeEvaluationContext
         $results = $this->getResultsByKeywordName($keywordName);
 
         foreach (array_reverse($results) as $result) {
-            if ($result->getKeywordLocation() === $keywordLocation) {
+            if ($result->keywordLocation === $keywordLocation) {
                 return $result;
             }
         }
@@ -136,44 +147,21 @@ class RuntimeEvaluationContext
      */
     public function getResults(): array
     {
-        $flatten = [];
-
-        foreach ($this->results as $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    $flatten[] = $result;
-                }
-            }
-        }
-
-        return $flatten;
-    }
-
-    public function getIndexedResults(): array
-    {
         return $this->results;
     }
 
     public function adoptResultsFromContext(RuntimeEvaluationContext $context): void
     {
-        foreach ($context->getIndexedResults() as $location => $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $keywordName => $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    $this->results[$location][$keywordName][] = $result;
-                }
-            }
+        foreach ($context->getResults() as $result) {
+            $this->results[] = $result;
         }
     }
 
     public function suppressAnnotations(?int $after = null): void
     {
-        foreach ($this->results as $resultsGroupedByLocation) {
-            foreach ($resultsGroupedByLocation as $resultsGroupedByKeywordName) {
-                foreach ($resultsGroupedByKeywordName as $result) {
-                    if ($result->getNumber() > $after) {
-                        $result->suppressAnnotation();
-                    }
-                }
+        foreach ($this->results as $result) {
+            if ($result->number > $after) {
+                $result->suppressAnnotation = true;
             }
         }
     }
@@ -181,7 +169,7 @@ class RuntimeEvaluationContext
     public function getMostOuterDynamicAnchorUri(string $dynamicAnchor): ?string
     {
         foreach ($this->schemaStack as $stackEntry) {
-            $dynamicAnchorUri = $stackEntry->baseUri . '#' . $dynamicAnchor;
+            $dynamicAnchorUri = $stackEntry['baseUri'] . '#' . $dynamicAnchor;
             if ($this->staticEvaluationContext->hasDynamicAnchorUri($dynamicAnchorUri)) {
                 return $dynamicAnchorUri;
             }
