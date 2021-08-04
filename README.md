@@ -20,7 +20,7 @@ Passes all [official JSON schema tests](https://github.com/json-schema-org/JSON-
 The library can be installed from a command line interface by using [composer](https://getcomposer.org/).
 
 ```
-composer require ro-pi/json-schema-evaluator
+composer require ropi/json-schema-evaluator
 ```
 
 ## Basic usage
