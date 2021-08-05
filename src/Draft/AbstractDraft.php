@@ -24,7 +24,7 @@ abstract class AbstractDraft implements DraftInterface
      * @var KeywordInterface[]
      */
     private array $keywords = [];
-    private int $priority = 0;
+    private int $lastPriority = 0;
 
     /**
      * @var string[]
@@ -44,7 +44,7 @@ abstract class AbstractDraft implements DraftInterface
     public function registerKeyword(KeywordInterface $keyword): void
     {
         if (!$keyword->hasPriority()) {
-            $keyword->setPriority($this->priority += 1000);
+            $keyword->setPriority($this->lastPriority += 1000);
         }
 
         $this->keywords[$keyword->getName()] = $keyword;
