@@ -66,7 +66,6 @@ class RuntimeEvaluationContext
             );
         }
 
-        array_pop($this->instanceStack);
         $this->instanceStackPointer--;
     }
 
