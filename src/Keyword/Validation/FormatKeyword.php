@@ -371,7 +371,7 @@ REGEX;
                 return false;
             }
 
-            if ($seconds === '60' && ($hours !== '23' || $minutes !== '59')) {
+            if ($seconds === '60' && !$this->checkRfc3339TimeLeapSecond($rfcTime)) {
                 // Invalid leap second
                 return false;
             }
@@ -399,10 +399,27 @@ REGEX;
                 $normalizedMinutes = abs((int) $minutes - (int) $offsetMinutes) % 60;
             }
 
-            if ($seconds === '60' && ($normalizedHours !== 23 || $normalizedMinutes !== 59)) {
+            if ($seconds === '60' && !$this->checkRfc3339TimeLeapSecond($rfcTime)) {
                 // Invalid leap second
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    protected function checkRfc3339TimeLeapSecond(string $rfcTime): bool
+    {
+        try {
+            $dateTime = (new \DateTime($rfcTime));
+            $dateTime->setTimezone(new \DateTimeZone('UTC'));
+            if ($dateTime->format('His') !== '000000') {
+                // Invalid leap second
+                return false;
+            }
+        } catch (\Exception) {
+            // Invalid leap second
+            return false;
         }
 
         return true;
