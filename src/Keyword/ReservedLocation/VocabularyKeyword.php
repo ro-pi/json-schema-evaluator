@@ -17,7 +17,9 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
     }
 
     /**
+     * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException
+     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -30,11 +32,11 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
         }
 
         foreach ($keywordValue as $vocabulary => $required) {
-            if ($required && !$context->draft->supportsVocabulary($vocabulary)) {
+            if ($required && (!$context->draft->supportsVocabulary($vocabulary) || !$context->draft->vocabularyEnabled($vocabulary))) {
                 throw new StaticKeywordAnalysisException(
                     'The value of "%s" indicates that the vocabulary "'
                     . $vocabulary
-                    . '" is required, but that vocabulary is not supported by this implementation of draft "'
+                    . '" is required, but that vocabulary is not supported or enabled by draft, which is assigned to URI "'
                     . $context->draft->getUri()
                     . '"',
                     $this,

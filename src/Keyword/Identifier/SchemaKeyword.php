@@ -56,7 +56,18 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $context->draft = $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue);
+        $draft = $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue);
+
+        if ($draft) {
+            $context->draft = $draft;
+        } else {
+            throw new \RuntimeException(
+                'The draft which was assigned to URI "'
+                . $keywordValue
+                . '" is no longer registered as supported draft',
+                1647640409
+            );
+        }
 
         return $context->createResultForKeyword($this);
     }

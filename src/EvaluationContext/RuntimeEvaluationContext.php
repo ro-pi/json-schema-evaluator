@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
-use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class RuntimeEvaluationContext
@@ -25,7 +24,6 @@ class RuntimeEvaluationContext
     public function __construct(
         object|bool $schema,
         mixed &$instance,
-        public /*readonly*/ RuntimeEvaluationConfig $config,
         public /*readonly*/ StaticEvaluationContext $staticEvaluationContext
     ) {
         $this->schemaStack[0] = [

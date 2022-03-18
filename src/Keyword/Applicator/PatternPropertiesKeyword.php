@@ -85,7 +85,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 if (!$valid) {
                     $result->valid = false;
 
-                    if ($context->config->shortCircuit) {
+                    if ($context->draft->shortCircuit()) {
                         break 2;
                     }
                 }

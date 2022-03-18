@@ -11,7 +11,7 @@ use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
 use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
-use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
+use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
 class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
@@ -25,9 +25,9 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->draft->createBigNumber($keywordValue);
+        $number = $context->draft->createNumber($keywordValue);
 
-        if (!$number || $number->lessThanOrEquals($context->draft->createBigNumber(0))) {
+        if (!$number || $number->lessThanOrEquals($context->draft->createNumber(0))) {
             throw new InvalidKeywordValueException(
                 'The value of "%s" must be a number greater than 0',
                 $this,
@@ -40,14 +40,14 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->draft->createBigNumber($context->getCurrentInstance());
-        if (!$instanceNumber instanceof BigNumberInterface) {
+        $instanceNumber = $context->draft->createNumber($context->getCurrentInstance());
+        if (!$instanceNumber instanceof NumberInterface) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        if (!$instanceNumber->mod($keywordValue)->equals($context->draft->createBigNumber(0))) {
+        if (!$instanceNumber->mod($keywordValue)->equals($context->draft->createNumber(0))) {
             $result->invalidate(
                 $context->getCurrentInstance()
                 . ' is not a multiple of '

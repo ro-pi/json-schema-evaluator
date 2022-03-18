@@ -7,6 +7,7 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriNormalizer;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
+use Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
@@ -15,8 +16,8 @@ use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\UnknownKeyword;
-use Ropi\JsonSchemaEvaluator\Type\BigNumber;
-use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
+use Ropi\JsonSchemaEvaluator\Type\Number;
+use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
 abstract class AbstractDraft implements DraftInterface
 {
@@ -27,18 +28,104 @@ abstract class AbstractDraft implements DraftInterface
     private int $lastPriority = 0;
 
     /**
-     * @var string[]
+     * @var bool[]
      */
-    protected const VOCABULARIES = [];
+    protected array $vocabularies = [];
+
+    public function __construct(
+        private string $uri = '',
+        private bool $assertFormat = false,
+        private bool $assertContentMediaTypeEncoding = false,
+        private bool $evaluateMutations = false,
+        private bool $acceptNumericStrings = false,
+        private bool $shortCircuit = false
+    ) {}
+
+    public function getUri(): string
+    {
+        return $this->uri;
+    }
+
+    public function assertFormat(): bool
+    {
+        return $this->assertFormat;
+    }
+
+    public function assertContentMediaTypeEncoding(): bool
+    {
+        return $this->assertContentMediaTypeEncoding;
+    }
+
+    public function evaluateMutations(): bool
+    {
+        return $this->evaluateMutations;
+    }
+
+    public function acceptNumericStrings(): bool
+    {
+        return $this->acceptNumericStrings;
+    }
+
+    public function shortCircuit(): bool
+    {
+        return $this->shortCircuit;
+    }
 
     public function supportsVocabulary(string $vocabulary): bool
     {
-        return isset(static::VOCABULARIES[$vocabulary]) && static::VOCABULARIES[$vocabulary];
+        return isset($this->vocabularies[$vocabulary]);
+    }
+
+    public function getSupportedVocabularies(): array
+    {
+        return array_keys($this->vocabularies);
     }
 
     public function getVocabularies(): array
     {
-        return static::VOCABULARIES;
+        return $this->vocabularies;
+    }
+
+    public function vocabularyEnabled(string $vocabulary): bool
+    {
+        if (!$this->supportsVocabulary($vocabulary)) {
+            throw new UnsupportedVocabularyException(
+                'Can not enable vocabulary "'
+                . $vocabulary
+                . '", because vocabulary is not supported',
+                1647637917
+            );
+        }
+
+        return $this->vocabularies[$vocabulary];
+    }
+
+    public function enableVocabulary(string $vocabulary): void
+    {
+        if (!$this->supportsVocabulary($vocabulary)) {
+            throw new UnsupportedVocabularyException(
+                'Can not enable vocabulary "'
+                . $vocabulary
+                . '", because vocabulary is not supported',
+                1647637758
+            );
+        }
+
+        $this->vocabularies[$vocabulary] = true;
+    }
+
+    public function disableVocabulary(string $vocabulary): void
+    {
+        if (!$this->supportsVocabulary($vocabulary)) {
+            throw new UnsupportedVocabularyException(
+                'Can not disable vocabulary "'
+                . $vocabulary
+                . '", because vocabulary is not supported',
+                1647637759
+            );
+        }
+
+        $this->vocabularies[$vocabulary] = false;
     }
 
     public function registerKeyword(KeywordInterface $keyword): void
@@ -117,7 +204,7 @@ abstract class AbstractDraft implements DraftInterface
         }
 
         $lastResultNumber = $context->getLastResultNumber();
-        $shortCircuit = $context->config->shortCircuit;
+        $shortCircuit = $context->draft->shortCircuit();
         $valid = true;
 
         foreach ($context->staticEvaluationContext->getPrioritizedSchemaKeywords($schema) as $keyword) {
@@ -209,14 +296,14 @@ abstract class AbstractDraft implements DraftInterface
         return $currentSchemaPart;
     }
 
-    public function createBigNumber(mixed $value, bool $acceptNumericStrings = false): ?BigNumberInterface
+    public function createNumber(mixed $value): ?NumberInterface
     {
-        if ($value instanceof BigNumberInterface) {
+        if ($value instanceof NumberInterface) {
             return clone $value;
         }
 
         if (!is_int($value) && !is_float($value)) {
-            if ($acceptNumericStrings) {
+            if ($this->acceptNumericStrings()) {
                 if (!is_string($value) || !is_numeric($value)) {
                     return null;
                 }
@@ -226,7 +313,7 @@ abstract class AbstractDraft implements DraftInterface
         }
 
         try {
-            return new BigNumber(sprintf('%f', $value));
+            return new Number(sprintf('%f', $value));
         } catch (\InvalidArgumentException) {
             // Instance is not a number
         }
@@ -236,13 +323,13 @@ abstract class AbstractDraft implements DraftInterface
 
     public function valueIsNumeric(mixed $value): bool
     {
-        return is_int($value) || is_float($value) || $value instanceof BigNumberInterface;
+        return is_int($value) || is_float($value) || $value instanceof NumberInterface;
     }
 
     public function valuesAreEqual(mixed $value1, mixed $value2): bool
     {
         if ($this->valueIsNumeric($value1) && $this->valueIsNumeric($value2)) {
-            return $this->createBigNumber($value1)->equals($this->createBigNumber($value2));
+            return $this->createNumber($value1)->equals($this->createNumber($value2));
         }
 
         if (gettype($value1) !== gettype($value2)) {

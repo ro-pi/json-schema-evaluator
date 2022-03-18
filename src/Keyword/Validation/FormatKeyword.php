@@ -90,6 +90,9 @@ REGEX;
         }
     }
 
+    /**
+     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException
+     */
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $instance = $context->getCurrentInstance();
@@ -124,7 +127,7 @@ REGEX;
 
         $result->setAnnotation($valid);
 
-        if ($context->config->assertFormat && !$valid) {
+        if ($context->draft->assertFormat() && !$valid) {
             $result->invalidate(
                 $instance
                 . ' is not a valid '
@@ -389,14 +392,6 @@ REGEX;
 
             if (strlen($offsetMinutes) !== 2 || $offsetMinutes > 59) {
                 return false;
-            }
-
-            if ($offsetSign === '-') {
-                $normalizedHours = ((int) $hours + (int) $offsetHours) % 24;
-                $normalizedMinutes = ((int) $minutes + (int) $offsetMinutes) % 60;
-            } else {
-                $normalizedHours = abs((int) $hours - (int) $offsetHours) % 24;
-                $normalizedMinutes = abs((int) $minutes - (int) $offsetMinutes) % 60;
             }
 
             if ($seconds === '60' && !$this->checkRfc3339TimeLeapSecond($rfcTime)) {

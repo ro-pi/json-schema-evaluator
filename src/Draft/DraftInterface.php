@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\Draft;
 
 use Psr\Http\Message\UriInterface;
+use Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
-use Ropi\JsonSchemaEvaluator\Type\BigNumberInterface;
+use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
 interface DraftInterface
 {
@@ -17,7 +18,37 @@ interface DraftInterface
     function schemaHasMutationKeywords(object|bool $schema): bool;
 
     function supportsVocabulary(string $vocabulary): bool;
+
+    /**
+     * @return string[]
+     */
+    function getSupportedVocabularies(): array;
+
+    /**
+     * @return bool[]
+     */
     function getVocabularies(): array;
+
+    /**
+     * @throws UnsupportedVocabularyException
+     */
+    function vocabularyEnabled(string $vocabulary): bool;
+
+    /**
+     * @throws UnsupportedVocabularyException
+     */
+    function enableVocabulary(string $vocabulary): void;
+
+    /**
+     * @throws UnsupportedVocabularyException
+     */
+    function disableVocabulary(string $vocabulary): void;
+
+    function assertFormat(): bool;
+    function evaluateMutations(): bool;
+    function assertContentMediaTypeEncoding(): bool;
+    function shortCircuit(): bool;
+    function acceptNumericStrings(): bool;
 
     /**
      * @throws InvalidSchemaException
@@ -32,7 +63,7 @@ interface DraftInterface
 
     function dereferenceJsonPointer(object $schema, string $fragment): mixed;
 
-    function createBigNumber(mixed $value, bool $acceptNumericStrings = false): ?BigNumberInterface;
+    function createNumber(mixed $value): ?NumberInterface;
     function valueIsNumeric(mixed $value): bool;
     function valuesAreEqual(mixed $value1, mixed $value2): bool;
 }

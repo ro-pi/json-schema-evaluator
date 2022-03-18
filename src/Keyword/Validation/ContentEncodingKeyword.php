@@ -53,7 +53,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
         $result = $context->createResultForKeyword($this);
 
-        if ($context->config->evaluateMutations) {
+        if ($context->draft->evaluateMutations()) {
             $decodingCallable = $this->getDecoderCallableForEncoding($keywordValue);
 
             $decodingError = null;

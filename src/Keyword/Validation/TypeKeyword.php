@@ -100,12 +100,10 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     protected function detectType(mixed $instance, RuntimeEvaluationContext $context): string
     {
-        $acceptNumericStrings = $context->staticEvaluationContext->config->acceptNumericStrings;
-
         return match (true) {
             is_object($instance) => 'object',
             is_array($instance) => 'array',
-            $context->draft->createBigNumber($instance, $acceptNumericStrings)?->isInteger() => 'integer',
+            $context->draft->createNumber($instance)?->isInteger() => 'integer',
             $context->draft->valueIsNumeric($instance) => 'number',
             is_string($instance) => 'string',
             is_bool($instance) => 'boolean',

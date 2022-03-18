@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ropi\JsonSchemaEvaluator\Type;
 
-class BigNumber implements BigNumberInterface
+class Number implements NumberInterface
 {
     protected string $value;
 
@@ -21,37 +21,37 @@ class BigNumber implements BigNumberInterface
         $this->value = $value;
     }
 
-    public function add(BigNumberInterface $addend): self
+    public function add(NumberInterface $addend): self
     {
         $this->value = bcadd($this->value, (string) $addend, static::PRECISION);
         return $this;
     }
 
-    public function sub(BigNumberInterface $subtrahend): self
+    public function sub(NumberInterface $subtrahend): self
     {
         $this->value = bcsub($this->value, (string) $subtrahend, static::PRECISION);
         return $this;
     }
 
-    public function mul(BigNumberInterface $multiplicand): self
+    public function mul(NumberInterface $multiplicand): self
     {
         $this->value = bcmul($this->value, (string) $multiplicand, static::PRECISION);
         return $this;
     }
 
-    public function div(BigNumberInterface $divisor): self
+    public function div(NumberInterface $divisor): self
     {
         $this->value = bcdiv($this->value, (string) $divisor, static::PRECISION);
         return $this;
     }
 
-    public function pow(BigNumberInterface $exponent): self
+    public function pow(NumberInterface $exponent): self
     {
         $this->value = bcpow($this->value, (string) $exponent, static::PRECISION);
         return $this;
     }
 
-    public function mod(BigNumberInterface $divisor): self
+    public function mod(NumberInterface $divisor): self
     {
         $this->value = bcmod($this->value, (string) $divisor, static::PRECISION);
         return $this;
@@ -63,32 +63,32 @@ class BigNumber implements BigNumberInterface
         return $this;
     }
 
-    public function compare(BigNumberInterface $operand): int
+    public function compare(NumberInterface $operand): int
     {
         return bccomp($this->value, (string) $operand, static::PRECISION);
     }
 
-    public function equals(BigNumberInterface $operand): bool
+    public function equals(NumberInterface $operand): bool
     {
         return $this->compare($operand) === 0;
     }
 
-    public function greaterThan(BigNumberInterface $operand): bool
+    public function greaterThan(NumberInterface $operand): bool
     {
         return $this->compare($operand) === 1;
     }
 
-    public function lessThan(BigNumberInterface $operand): bool
+    public function lessThan(NumberInterface $operand): bool
     {
         return $this->compare($operand) === -1;
     }
 
-    public function greaterThanOrEquals(BigNumberInterface $operand): bool
+    public function greaterThanOrEquals(NumberInterface $operand): bool
     {
         return $this->compare($operand) >= 0;
     }
 
-    public function lessThanOrEquals(BigNumberInterface $operand): bool
+    public function lessThanOrEquals(NumberInterface $operand): bool
     {
         return $this->compare($operand) <= 0;
     }

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Ropi\JsonSchemaEvaluator;
 
-use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
@@ -11,13 +10,6 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 
 class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
 {
-    protected RuntimeEvaluationConfig $defaultRuntimeEvaluationConfig;
-
-    public function __construct()
-    {
-        $this->defaultRuntimeEvaluationConfig = new RuntimeEvaluationConfig();
-    }
-
     /**
      * @throws Draft\Exception\InvalidSchemaException
      * @throws Keyword\Exception\StaticKeywordAnalysisException
@@ -34,20 +26,17 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
     /**
      * @param mixed $instance
      * @param StaticEvaluationContext $staticEvaluationContext
-     * @param RuntimeEvaluationConfig|null $config
      * @param RuntimeEvaluationResult[] $results
      * @return bool
      */
     public function evaluate(
         mixed &$instance,
         StaticEvaluationContext $staticEvaluationContext,
-        ?RuntimeEvaluationConfig $config = null,
         array &$results = null
     ): bool {
         $context = new RuntimeEvaluationContext(
             $staticEvaluationContext->getCurrentSchema(),
             $instance,
-            $config ?: $this->defaultRuntimeEvaluationConfig,
             $staticEvaluationContext
         );
 

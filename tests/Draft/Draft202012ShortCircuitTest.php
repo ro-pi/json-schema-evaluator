@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\Tests\Draft;
 
 use Ropi\JsonSchemaEvaluator\Draft\Draft202012;
-use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\Tests\AbstractJsonSchemaTestSuite;
 
@@ -15,7 +14,9 @@ class Draft202012ShortCircuitTest extends AbstractJsonSchemaTestSuite
     public function setUp(): void
     {
         parent::setUp();
-        $this->draft = new Draft202012();
+        $this->draft = new Draft202012(
+            shortCircuit: true
+        );
     }
 
     protected function getRelativeTestsPath(): string
@@ -33,8 +34,7 @@ class Draft202012ShortCircuitTest extends AbstractJsonSchemaTestSuite
     {
         $this->evaluateTestCollection(
             $testCollection,
-            new StaticEvaluationConfig($this->draft),
-            new RuntimeEvaluationConfig(shortCircuit: true)
+            new StaticEvaluationConfig($this->draft)
         );
     }
 }

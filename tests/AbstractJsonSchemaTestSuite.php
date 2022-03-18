@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator;
 use Ropi\JsonSchemaEvaluator\Output\BasicOutput;
@@ -62,8 +61,7 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
      */
     protected function evaluateTestCollection(
         object|bool $testCollection,
-        ?StaticEvaluationConfig $staticEvaluationConfig,
-        ?RuntimeEvaluationConfig $runtimeEvaluationConfig = null
+        ?StaticEvaluationConfig $staticEvaluationConfig
     ): void {
         $staticEvaluationContext = $this->jsonSchemaValidator->evaluateStatic(
             $testCollection->schema,
@@ -76,7 +74,6 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
             $valid = $this->jsonSchemaValidator->evaluate(
                 $instance,
                 $staticEvaluationContext,
-                $runtimeEvaluationConfig ?: null,
                 $results
             );
 

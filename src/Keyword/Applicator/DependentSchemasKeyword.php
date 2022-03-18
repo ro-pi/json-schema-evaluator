@@ -67,7 +67,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $propertyExists = property_exists($instance, $dependencyPropertyName);
 
             if (!$propertyExists) {
-                if (!$context->config->evaluateMutations) {
+                if (!$context->draft->evaluateMutations()) {
                     continue;
                 }
 
@@ -91,7 +91,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             if (!$valid) {
                 $result->valid = false;
 
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     break;
                 }
             }

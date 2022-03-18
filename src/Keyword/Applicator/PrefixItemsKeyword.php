@@ -80,7 +80,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             if (!$valid) {
                 $result->valid = false;
 
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     break;
                 }
             }

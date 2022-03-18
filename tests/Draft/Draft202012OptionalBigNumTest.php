@@ -14,7 +14,9 @@ class Draft202012OptionalBigNumTest extends AbstractJsonSchemaTestSuite
     public function setUp(): void
     {
         parent::setUp();
-        $this->draft = new Draft202012();
+        $this->draft = new Draft202012(
+            acceptNumericStrings: true
+        );
     }
 
     protected function getRelativeTestsPath(): string
@@ -31,8 +33,7 @@ class Draft202012OptionalBigNumTest extends AbstractJsonSchemaTestSuite
     public function test(object|bool $testCollection)
     {
         $this->evaluateTestCollection($testCollection, new StaticEvaluationConfig(
-            defaultDraft: $this->draft,
-            acceptNumericStrings: true
+            defaultDraft: $this->draft
         ));
     }
 }

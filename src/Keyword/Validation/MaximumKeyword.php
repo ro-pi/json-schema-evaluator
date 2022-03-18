@@ -24,7 +24,7 @@ class MaximumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->draft->createBigNumber($keywordValue, $context->config->acceptNumericStrings);
+        $number = $context->draft->createNumber($keywordValue);
 
         if (!$number) {
             throw new InvalidKeywordValueException(
@@ -39,10 +39,7 @@ class MaximumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->draft->createBigNumber(
-            $context->getCurrentInstance(),
-            $context->staticEvaluationContext->config->acceptNumericStrings
-        );
+        $instanceNumber = $context->draft->createNumber($context->getCurrentInstance());
 
         if (!$instanceNumber) {
             return null;

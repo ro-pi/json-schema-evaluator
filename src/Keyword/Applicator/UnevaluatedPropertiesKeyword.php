@@ -77,7 +77,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             if (!$valid) {
                 $result->valid = false;
 
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     break;
                 }
             }

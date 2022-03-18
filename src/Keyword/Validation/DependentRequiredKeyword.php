@@ -83,7 +83,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
             foreach ($requiredProperties as $requiredProperty) {
                 if (!property_exists($instance, $requiredProperty)) {
-                    if ($context->config->shortCircuit) {
+                    if ($context->draft->shortCircuit()) {
                         $result->invalidate(
                             'Dependent required property '
                             . $requiredProperty

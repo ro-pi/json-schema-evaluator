@@ -20,13 +20,11 @@ class StaticEvaluationConfig
      * @param DraftInterface $defaultDraft
      * @param DraftInterface[] $supportedDrafts
      * @param SchemaPoolInterface|null $schemaPool
-     * @param bool $acceptNumericStrings
      */
     public function __construct(
         public /*readonly*/ DraftInterface $defaultDraft,
         array $supportedDrafts = [],
-        ?SchemaPoolInterface $schemaPool = null,
-        public /*readonly*/ bool $acceptNumericStrings = false,
+        ?SchemaPoolInterface $schemaPool = null
     ) {
         $this->supportedDrafts[$this->defaultDraft->getUri()] = $this->defaultDraft;
 

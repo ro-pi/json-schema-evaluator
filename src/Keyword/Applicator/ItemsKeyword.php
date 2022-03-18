@@ -66,7 +66,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             if (!$valid) {
                 $result->valid = false;
 
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     break;
                 }
             }

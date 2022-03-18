@@ -54,7 +54,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             if (is_array($instanceValue) || is_object($instanceValue)) {
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
-                        if ($context->config->shortCircuit) {
+                        if ($context->draft->shortCircuit()) {
                             $result->invalidate(
                                 'Item at position '
                                 . $instanceKey
@@ -75,7 +75,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     $result->invalidate(
                         'Item at position '
                         . $instanceKey

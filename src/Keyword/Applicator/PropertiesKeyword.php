@@ -68,7 +68,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $propertyExists = property_exists($instance, $propertyName);
 
             if (!$propertyExists) {
-                if (!$context->config->evaluateMutations) {
+                if (!$context->draft->evaluateMutations()) {
                     continue;
                 }
 
@@ -94,7 +94,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             if (!$valid) {
                 $result->valid = false;
 
-                if ($context->config->shortCircuit) {
+                if ($context->draft->shortCircuit()) {
                     break;
                 }
             }

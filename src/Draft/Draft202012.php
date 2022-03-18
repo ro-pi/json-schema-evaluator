@@ -63,26 +63,39 @@ use Ropi\JsonSchemaEvaluator\Keyword\Validation\UniqueItemsKeyword;
 
 class Draft202012 extends AbstractDraft
 {
-    protected const URI = 'https://json-schema.org/draft/2020-12/schema';
-
-    protected const VOCABULARIES = [
+    protected array $vocabularies = [
         'https://json-schema.org/draft/2020-12/vocab/core' => true,
         'https://json-schema.org/draft/2020-12/vocab/applicator' => true,
         'https://json-schema.org/draft/2020-12/vocab/unevaluated' => true,
         'https://json-schema.org/draft/2020-12/vocab/validation' => true,
         'https://json-schema.org/draft/2020-12/vocab/meta-data' => true,
         'https://json-schema.org/draft/2020-12/vocab/format-annotation' => true,
-        'https://json-schema.org/draft/2020-12/vocab/format-assertion' => true,
+        'https://json-schema.org/draft/2020-12/vocab/format-assertion' => false,
         'https://json-schema.org/draft/2020-12/vocab/content' => true,
     ];
 
-    public function getUri(): string
-    {
-        return static::URI;
-    }
+    public function __construct(
+        string $uri = 'https://json-schema.org/draft/2020-12/schema',
+        bool $assertFormat = false,
+        bool $assertContentMediaTypeEncoding = false,
+        bool $evaluateMutations = false,
+        bool $acceptNumericStrings = false,
+        bool $shortCircuit = false
+    ) {
+        parent::__construct(
+            $uri,
+            $assertFormat,
+            $assertContentMediaTypeEncoding,
+            $evaluateMutations,
+            $acceptNumericStrings,
+            $shortCircuit
+        );
 
-    public function __construct()
-    {
+        if ($assertFormat) {
+            /** @noinspection PhpUnhandledExceptionInspection  */
+            $this->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-annotation');
+        }
+
         // Core
         $this->registerKeyword(new SchemaKeyword());
         $this->registerKeyword(new VocabularyKeyword());
@@ -156,5 +169,11 @@ class Draft202012 extends AbstractDraft
         $this->registerKeyword(new ReadOnlyKeyword());
         $this->registerKeyword(new WriteOnlyKeyword());
         $this->registerKeyword(new ExamplesKeyword());
+    }
+
+    public function assertFormat(): bool
+    {
+        /** @noinspection PhpUnhandledExceptionInspection  */
+        return $this->vocabularyEnabled('https://json-schema.org/draft/2020-12/vocab/format-annotation');
     }
 }
