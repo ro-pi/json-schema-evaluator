@@ -93,7 +93,7 @@ class Draft202012 extends AbstractDraft
 
         if ($assertFormat) {
             /** @noinspection PhpUnhandledExceptionInspection  */
-            $this->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-annotation');
+            $this->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-assertion');
         }
 
         // Core
@@ -174,6 +174,6 @@ class Draft202012 extends AbstractDraft
     public function assertFormat(): bool
     {
         /** @noinspection PhpUnhandledExceptionInspection  */
-        return $this->vocabularyEnabled('https://json-schema.org/draft/2020-12/vocab/format-annotation');
+        return $this->vocabularyEnabled('https://json-schema.org/draft/2020-12/vocab/format-assertion');
     }
 }
