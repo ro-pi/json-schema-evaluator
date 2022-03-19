@@ -19,7 +19,6 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
     /**
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
