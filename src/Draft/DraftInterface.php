@@ -13,10 +13,10 @@ use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
 interface DraftInterface
 {
-    function registerKeyword(KeywordInterface $keyword): void;
+    function registerKeyword(KeywordInterface $keyword, string $vocabulary): void;
     function getKeywordByName(string $name): KeywordInterface;
-    function schemaHasMutationKeywords(object|bool $schema): bool;
 
+    function schemaHasMutationKeywords(object|bool $schema): bool;
     function supportsVocabulary(string $vocabulary): bool;
 
     /**

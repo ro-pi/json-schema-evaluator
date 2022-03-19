@@ -22,7 +22,7 @@ class Draft202012AdditionalContentMutationAndAssertionTest extends AbstractJsonS
             evaluateMutations: true
         );
 
-        $this->draft->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-assertion');
+        $this->draft->enableVocabulary(Draft202012::VOCABULARY_FORMAT_ASSERTION);
     }
 
     protected function getRelativeTestsPath(): string

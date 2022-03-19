@@ -25,7 +25,11 @@ abstract class AbstractDraft implements DraftInterface
      * @var KeywordInterface[]
      */
     private array $keywords = [];
-    private int $lastPriority = 0;
+
+    /**
+     * @var KeywordInterface[][]
+     */
+    private array $keywordsByVocabulary = [];
 
     /**
      * @var bool[]
@@ -111,7 +115,12 @@ abstract class AbstractDraft implements DraftInterface
             );
         }
 
+        if ($this->vocabularies[$vocabulary]) {
+            return;
+        }
+
         $this->vocabularies[$vocabulary] = true;
+        $this->registerKeywords();
     }
 
     public function disableVocabulary(string $vocabulary): void
@@ -125,21 +134,34 @@ abstract class AbstractDraft implements DraftInterface
             );
         }
 
-        $this->vocabularies[$vocabulary] = false;
-    }
-
-    public function registerKeyword(KeywordInterface $keyword): void
-    {
-        if (!$keyword->hasPriority()) {
-            $keyword->setPriority($this->lastPriority += 1000);
+        if (!$this->vocabularies[$vocabulary]) {
+            return;
         }
 
+        $this->vocabularies[$vocabulary] = false;
+        $this->registerKeywords();
+    }
+
+    abstract protected function registerKeywords(): void;
+
+    public function registerKeyword(KeywordInterface $keyword, string $vocabulary): void
+    {
+        $this->keywordsByVocabulary[$vocabulary][$keyword->getName()] = $keyword;
         $this->keywords[$keyword->getName()] = $keyword;
+    }
+
+    protected function unregisterKeywordByVocabulary(string $vocabulary): void
+    {
+        foreach ($this->keywordsByVocabulary[$vocabulary] as $keyword) {
+            unset($this->keywords[$keyword->getName()]);
+        }
+
+        $this->keywordsByVocabulary[$vocabulary] = [];
     }
 
     public function getKeywordByName(string $name): KeywordInterface
     {
-        return $this->keywords[$name] ?? new UnknownKeyword($name);
+        return $this->keywords[$name] ?? new UnknownKeyword(1647650000, $name);
     }
 
     public function schemaHasMutationKeywords(object|bool $schema): bool

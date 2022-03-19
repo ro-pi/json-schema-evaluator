@@ -26,10 +26,24 @@ class Draft202012Test extends AbstractJsonSchemaTestSuite
      * @dataProvider jsonSchemaTestSuiteProvider
      *
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
     public function test(object|bool $testCollection)
     {
-        $this->evaluateTestCollection($testCollection, new StaticEvaluationConfig($this->draft));
+        $metaSchemaNoValidation = new Draft202012('http://localhost:1234/draft2020-12/metaschema-no-validation.json');
+        foreach ($metaSchemaNoValidation->getSupportedVocabularies() as $vocabulary) {
+            $metaSchemaNoValidation->disableVocabulary($vocabulary);
+        }
+
+        $metaSchemaNoValidation->enableVocabulary(Draft202012::VOCABULARY_APPLICATOR);
+        $metaSchemaNoValidation->enableVocabulary(Draft202012::VOCABULARY_CORE);
+
+        $this->evaluateTestCollection($testCollection, new StaticEvaluationConfig(
+            defaultDraft: $this->draft,
+            supportedDrafts: [
+                $metaSchemaNoValidation
+            ]
+        ));
     }
 }

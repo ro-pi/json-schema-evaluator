@@ -103,16 +103,16 @@ $schema = json_decode('{
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        evaluateMutations: true
+    )
 ));
 
 $instance = (object) [
     'lastname' => 'Gauss'
 ];
 
-$evaluator->evaluate($instance, $staticEvaluationContext, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig(
-    evaluateMutations: true
-));
+$evaluator->evaluate($instance, $staticEvaluationContext);
 
 echo $instance->firstname; // Returns "n/a"
 ```
@@ -129,14 +129,14 @@ $schema = json_decode('{
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        evaluateMutations: true
+    )
 ));
 
 $instance = 'eyJmb28iOiAiYmFyIn0K'; // Base64 encoded JSON '{"foo": "bar"}'
 
-$evaluator->evaluate($instance, $staticEvaluationContext, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig(
-    evaluateMutations: true
-)); // Returns true
+$evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 
 echo $instance; // Returns '{"foo": "bar"}'
 ```
@@ -152,18 +152,16 @@ $schema = json_decode('{
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        assertContentMediaTypeEncoding: true
+    )
 ));
 
-$runtimeEvaluationConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig(
-    assertContentMediaTypeEncoding: true
-);
-
 $instance = '{"foo": "bar"}';
-$evaluator->evaluate($instance, $staticEvaluationContext, $runtimeEvaluationConfig); // Returns true
+$evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 
 $instance2 = 'invalidJSON';
-$evaluator->evaluate($instance2, $staticEvaluationContext, $runtimeEvaluationConfig); // Returns false
+$evaluator->evaluate($instance2, $staticEvaluationContext); // Returns false
 ```
 
 ## Assert format
@@ -177,12 +175,10 @@ $schema = json_decode('{
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        assertFormat: true
+    )
 ));
-
-$runtimeEvaluationConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig(
-    assertFormat: true
-);
 
 $instance = 'test@example.com';
 $evaluator->evaluate($instance, $staticEvaluationContext, $runtimeEvaluationConfig); // Returns true
@@ -195,8 +191,10 @@ $evaluator->evaluate($instance2, $staticEvaluationContext, $runtimeEvaluationCon
 By default, all keywords are evaluated, even if the first keyword validation fails.
 If short circuiting is activated, the evaluation stops at the first negative validation result.
 ```php
-$runtimeEvaluationConfig = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\RuntimeEvaluationConfig(
-    shortCircuit: true
+$config = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        shortCircuit: true
+    )
 );
 ```
 
@@ -210,8 +208,9 @@ $schema = json_decode('{
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 
 $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(),
-    acceptNumericStrings: true
+    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012(
+        acceptNumericStrings: true
+    )
 ));
 
 $instance = json_decode('6565650699413464649797946464646464649797979', false, 512, JSON_BIGINT_AS_STRING);

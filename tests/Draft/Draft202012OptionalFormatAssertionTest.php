@@ -24,10 +24,10 @@ class Draft202012OptionalFormatAssertionTest extends AbstractJsonSchemaTestSuite
     public function test(object|bool $testCollection)
     {
         $draftFormatAssertionFalse = new Draft202012('http://localhost:1234/draft2020-12/format-assertion-false.json');
-        $draftFormatAssertionFalse->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-assertion');
+        $draftFormatAssertionFalse->enableVocabulary(Draft202012::VOCABULARY_FORMAT_ASSERTION);
 
         $draftFormatAssertionTrue = new Draft202012('http://localhost:1234/draft2020-12/format-assertion-true.json');
-        $draftFormatAssertionTrue->enableVocabulary('https://json-schema.org/draft/2020-12/vocab/format-assertion');
+        $draftFormatAssertionTrue->enableVocabulary(Draft202012::VOCABULARY_FORMAT_ASSERTION);
 
         $this->evaluateTestCollection(
             $testCollection,

@@ -10,8 +10,9 @@ class UnknownKeyword extends AbstractKeyword implements RuntimeKeywordInterface
 {
     private string $name;
 
-    public function __construct(string $name)
+    public function __construct(int $priority, string $name)
     {
+        parent::__construct($priority);
         $this->name = $name;
     }
 
