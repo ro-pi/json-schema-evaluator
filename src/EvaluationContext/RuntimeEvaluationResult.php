@@ -43,7 +43,7 @@ class RuntimeEvaluationResult
 
     public function getAnnotation(bool $force = false): mixed
     {
-        if (!$force && (!$this->valid || $this->suppressAnnotation)) {
+        if (!$force && $this->suppressAnnotation) {
             return null;
         }
 

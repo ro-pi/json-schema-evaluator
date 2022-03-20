@@ -86,9 +86,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             }
         }
 
-        if ($result->valid) {
-            $result->setAnnotation(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
-        }
+        $result->setAnnotation(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
 
         return $result;
     }

@@ -102,9 +102,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $evaluatedProperties[$propertyName] = $propertyName;
         }
 
-        if ($result->valid) {
-            $result->setAnnotation($evaluatedProperties);
-        }
+        $result->setAnnotation($evaluatedProperties);
 
         return $result;
     }

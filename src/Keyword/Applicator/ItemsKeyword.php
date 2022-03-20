@@ -72,9 +72,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             }
         }
 
-        if ($result->valid) {
-            $result->setAnnotation(true);
-        }
+        $result->setAnnotation(true);
 
         return $result;
     }

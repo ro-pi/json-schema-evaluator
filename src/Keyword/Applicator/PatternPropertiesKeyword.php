@@ -94,9 +94,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
             }
         }
 
-        if ($result->valid) {
-            $result->setAnnotation($matchedPropertyNames);
-        }
+        $result->setAnnotation($matchedPropertyNames);
 
         return $result;
     }

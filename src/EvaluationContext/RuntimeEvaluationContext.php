@@ -97,6 +97,9 @@ class RuntimeEvaluationContext
         return $this->lastResultNumber;
     }
 
+    /**
+     * @return RuntimeEvaluationResult[]
+     */
     public function getResultsByKeywordName(string $keywordName): array
     {
         $results = [];

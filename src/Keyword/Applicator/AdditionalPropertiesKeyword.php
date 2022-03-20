@@ -96,9 +96,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $additionalEvaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        if ($result->valid) {
-            $result->setAnnotation($additionalEvaluatedPropertyNames);
-        }
+        $result->setAnnotation($additionalEvaluatedPropertyNames);
 
         return $result;
     }

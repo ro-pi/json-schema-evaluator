@@ -107,9 +107,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             }
         }
 
-        if ($result->valid) {
-            $result->setAnnotation(true);
-        }
+        $result->setAnnotation(true);
 
         return $result;
     }

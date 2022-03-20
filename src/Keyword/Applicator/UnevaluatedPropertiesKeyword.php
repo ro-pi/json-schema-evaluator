@@ -85,9 +85,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $evaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        if ($result->valid) {
-            $result->setAnnotation($evaluatedPropertyNames);
-        }
+        $result->setAnnotation($evaluatedPropertyNames);
 
         return $result;
     }
