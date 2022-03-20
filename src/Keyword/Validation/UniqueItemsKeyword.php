@@ -26,7 +26,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
     {
         if (!is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a boolean',
+                'The value of \'%s\' must be a boolean.',
                 $this,
                 $context
             );
@@ -48,23 +48,20 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
         $scalarItems = [];
         $complexItems = [];
-        $duplicateItemPositions = [];
 
         foreach ($instance as $instanceKey => $instanceValue) {
             if (is_array($instanceValue) || is_object($instanceValue)) {
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
+                        $context->pushInstance($instanceValue, (string) $instanceKey);
+                        $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
+                        $context->popInstance();
+
+                        $result->valid = false;
+
                         if ($context->draft->shortCircuit()) {
-                            $result->invalidate(
-                                'Item at position '
-                                . $instanceKey
-                                . ' is not unique'
-                            );
-
-                            return $result;
+                            break 2;
                         }
-
-                        $duplicateItemPositions[] = $instanceKey;
                     }
                 }
 
@@ -75,28 +72,18 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
+                $context->pushInstance($instanceValue, (string) $instanceKey);
+                $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
+                $context->popInstance();
+
+                $result->valid = false;
+
                 if ($context->draft->shortCircuit()) {
-                    $result->invalidate(
-                        'Item at position '
-                        . $instanceKey
-                        . ' is not unique'
-                    );
-
-                    return $result;
+                    break;
                 }
-
-                $duplicateItemPositions[] = $instanceKey;
             }
 
             $scalarItems[$scalarKey] = true;
-        }
-
-        if ($duplicateItemPositions) {
-            $result->invalidate(
-                'Items at following positions are not unique: '
-                . implode(', ', $duplicateItemPositions),
-                $duplicateItemPositions
-            );
         }
 
         return $result;

@@ -36,7 +36,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
     {
         if (!is_string($keywordValue) && !is_array($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string or an array',
+                'The value of \'%s\' must be a string or an array.',
                 $this,
                 $context
             );
@@ -47,7 +47,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         foreach ($types as $type) {
             if (!is_string($type)) {
                 throw new InvalidKeywordValueException(
-                    'The array elements of "%s" must be strings',
+                    'The array elements of \'%s\' must be strings.',
                     $this,
                     $context
                 );
@@ -55,9 +55,9 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
             if (!isset(static::SUPPORTED_TYPES[$type])) {
                 throw new InvalidKeywordValueException(
-                    'The value of "%s" must be a valid type ('
+                    'The value of \'%s\' must be a valid type ('
                     . $this->arrayToHumanReadableList(static::SUPPORTED_TYPES)
-                    . ') or an array of valid types',
+                    . ') or an array of valid types.',
                     $this,
                     $context
                 );
@@ -93,6 +93,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             . $this->arrayToHumanReadableList($keywordValue)
             . ' expected, but is '
             . $instanceType
+            . '.'
         );
 
         return $result;

@@ -26,7 +26,7 @@ class MaxLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (!is_int($keywordValue) || $keywordValue < 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-negative integer',
+                'The value of \'%s\' must be a non-negative integer.',
                 $this,
                 $context
             );
@@ -49,9 +49,8 @@ class MaxLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
                 . $keywordValue
                 . ' characters are allowed, but there are '
                 . $instanceLength
+                . '.'
             );
-
-            return $result;
         }
 
         return $result;

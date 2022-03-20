@@ -29,7 +29,7 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -37,8 +37,8 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
         if (preg_match(static::PATTERN_XML_NC_NAME_US_ASCII, $keywordValue) !== 1) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must start with a letter ([A-Za-z]) or underscore ("_"), followed by any number of'
-                . ' letters, digits ([0-9]), hyphens ("-"), underscores ("_"), and periods (".")',
+                'The value of \'%s\' must start with a letter (a-z) or underscore (_), followed by any number of'
+                . ' letters, digits (0-9), hyphens (-), underscores (_), and periods (.).',
                 $this,
                 $context
             );
@@ -48,7 +48,7 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
         if ($context->hasSchema((string) $anchorUri)) {
             throw new StaticKeywordAnalysisException(
-                'The value "' . $keywordValue . '" of "%s" is defined twice, but must be unique in each JSON Schema',
+                'The value \'' . $keywordValue . '\' of \'%s\' is defined twice, but must be unique in each JSON Schema.',
                 $this,
                 $context
             );

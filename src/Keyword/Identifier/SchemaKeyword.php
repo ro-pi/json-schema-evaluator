@@ -26,7 +26,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -34,7 +34,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
         if (!filter_var($keywordValue, FILTER_VALIDATE_URL)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid URI reference',
+                'The value of \'%s\' must be a valid URI reference.',
                 $this,
                 $context
             );
@@ -43,9 +43,9 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
         $draft = $context->config->getSupportedDraftByUri($keywordValue);
         if (!$draft) {
             throw new StaticKeywordAnalysisException(
-                'The dialect "'
+                'The dialect \''
                 . $keywordValue
-                . '" specified by "%s" is not supported',
+                . '\' specified by \'%s\' is not supported.',
                 $this,
                 $context
             );
@@ -62,9 +62,9 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             $context->draft = $draft;
         } else {
             throw new \RuntimeException(
-                'The draft which was assigned to URI "'
+                'The draft which was assigned to URI \''
                 . $keywordValue
-                . '" is no longer registered as supported draft',
+                . '\' is no longer registered as supported draft.',
                 1647640409
             );
         }

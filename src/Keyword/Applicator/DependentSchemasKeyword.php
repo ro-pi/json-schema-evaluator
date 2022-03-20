@@ -27,7 +27,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -38,9 +38,9 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
 
             if (!is_object($dependentSchema) && !is_bool($dependentSchema)) {
                 throw new InvalidKeywordValueException(
-                    'The property "'
+                    'The property \''
                     . $dependencyPropertyName
-                    . '" in "%s" object must be a valid JSON Schema',
+                    . '\' in \'%s\' object must be a valid JSON Schema.',
                     $this,
                     $context
                 );

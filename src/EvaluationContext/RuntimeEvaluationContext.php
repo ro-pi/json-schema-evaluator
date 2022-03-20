@@ -139,6 +139,11 @@ class RuntimeEvaluationContext
         return null;
     }
 
+    public function getLastResult(): ?RuntimeEvaluationResult
+    {
+        return end($this->results) ?: null;
+    }
+
     /**
      * @return RuntimeEvaluationResult[]
      */

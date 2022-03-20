@@ -23,7 +23,7 @@ class ReadOnlyKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (!is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a boolean',
+                'The value of \'%s\' must be a boolean.',
                 $this,
                 $context
             );

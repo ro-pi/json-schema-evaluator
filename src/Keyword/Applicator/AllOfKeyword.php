@@ -37,7 +37,8 @@ class AllOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         if ($numMatches !== count($keywordValue)) {
             $result->invalidate(
                 'Value must match all schemas, but matches only '
-                . $numMatches
+                . $numMatches,
+                $numMatches
             );
         }
 

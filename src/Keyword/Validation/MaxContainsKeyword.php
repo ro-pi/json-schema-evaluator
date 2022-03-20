@@ -26,7 +26,7 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
     {
         if (!is_int($keywordValue) || $keywordValue < 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-negative integer',
+                'The value of \'%s\' must be a non-negative integer.',
                 $this,
                 $context
             );
@@ -59,9 +59,8 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 . $keywordValue
                 . ' matched elements must be contained, but there are '
                 . $containsCount
+                . '.'
             );
-
-            return $result;
         }
 
         return $result;

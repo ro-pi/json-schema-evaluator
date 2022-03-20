@@ -26,7 +26,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -37,9 +37,9 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
             if (!is_array($requiredProperties)) {
                 throw new InvalidKeywordValueException(
-                    'The property "'
+                    'The property \''
                     . $dependencyPropertyName
-                    . '" in "%s" object must be an array',
+                    . '\' in \'%s\' object must be an array.',
                     $this,
                     $context
                 );
@@ -50,9 +50,9 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
                 if (!is_string($requiredProperty)) {
                     throw new InvalidKeywordValueException(
-                        'The array elements of property "'
+                        'The array elements of property \''
                         . $dependencyPropertyName
-                        . '" in "%s" object must be strings',
+                        . '\' in \'%s\' object must be strings.',
                         $this,
                         $context
                     );
@@ -74,36 +74,30 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
         $result = $context->createResultForKeyword($this);
 
-        $missingProperties = [];
-
         foreach ($keywordValue as $dependencyPropertyName => $requiredProperties) {
             if (!property_exists($instance, $dependencyPropertyName)) {
                 continue;
             }
 
-            foreach ($requiredProperties as $requiredProperty) {
+            foreach ($requiredProperties as $requiredPropertyKey => $requiredProperty) {
                 if (!property_exists($instance, $requiredProperty)) {
+                    $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+
+                    $context->createResultForKeyword($this)->invalidate(
+                        'Dependent required property \''
+                        . $requiredProperty
+                        . '\' is missing.'
+                    );
+
+                    $context->popSchema();
+
+                    $result->valid = false;
+
                     if ($context->draft->shortCircuit()) {
-                        $result->invalidate(
-                            'Dependent required property '
-                            . $requiredProperty
-                            . ' is missing'
-                        );
-
-                        return $result;
+                        break 2;
                     }
-
-                    $missingProperties[] = $requiredProperty;
                 }
             }
-        }
-
-        if ($missingProperties) {
-            $result->invalidate(
-                'Missing dependent required properties: '
-                . implode(', ', $missingProperties),
-                $missingProperties
-            );
         }
 
         return $result;

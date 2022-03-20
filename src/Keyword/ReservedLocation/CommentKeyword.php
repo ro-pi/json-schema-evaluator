@@ -23,7 +23,7 @@ class CommentKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );

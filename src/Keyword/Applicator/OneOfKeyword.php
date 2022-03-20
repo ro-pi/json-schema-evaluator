@@ -37,7 +37,8 @@ class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         if ($numMatches !== 1) {
             $result->invalidate(
                 'Value must match exactly one schema, but matches '
-                . $numMatches
+                . $numMatches,
+                $numMatches
             );
         }
 

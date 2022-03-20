@@ -24,7 +24,7 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -33,11 +33,11 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
         foreach ($keywordValue as $vocabulary => $required) {
             if ($required && !$context->draft->supportsVocabulary($vocabulary)) {
                 throw new StaticKeywordAnalysisException(
-                    'The value of "%s" indicates that the vocabulary "'
+                    'The value of \'%s\' indicates that the vocabulary \''
                     . $vocabulary
-                    . '" is required, but that vocabulary is not supported by draft with URI "'
+                    . '\' is required, but that vocabulary is not supported by draft with URI \'.'
                     . $context->draft->getUri()
-                    . '"',
+                    . '\'.',
                     $this,
                     $context
                 );

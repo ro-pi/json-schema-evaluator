@@ -28,7 +28,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
     {
         if (!is_object($keywordValue) && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid JSON Schema',
+                'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
                 $context
             );

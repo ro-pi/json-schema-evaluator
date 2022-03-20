@@ -23,7 +23,7 @@ class DeprecatedKeyword extends AbstractKeyword implements StaticKeywordInterfac
     {
         if (!is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a boolean',
+                'The value of \'%s\' must be a boolean.',
                 $this,
                 $context
             );

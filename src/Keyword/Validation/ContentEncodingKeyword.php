@@ -26,7 +26,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -36,8 +36,9 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
         if (!$this->getDecoderCallableForEncoding($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid supported encoding. Following encodings are supported:'
-                . implode(', ', $this->getSupportedEncodings()),
+                'The value of \'%s\' must be a valid supported encoding. Following encodings are supported:'
+                . implode(', ', $this->getSupportedEncodings())
+                . '.',
                 $this,
                 $context
             );
@@ -69,7 +70,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
                 $instance = $decoded;
             } else {
                 $result->invalidate(
-                    $keywordValue . ' decoding failed',
+                    $keywordValue . ' decoding failed.',
                     $decodingError
                 );
             }

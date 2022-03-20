@@ -26,7 +26,7 @@ class MinItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
     {
         if (!is_int($keywordValue) || $keywordValue < 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-negative integer',
+                'The value of \'%s\' must be a non-negative integer.',
                 $this,
                 $context
             );
@@ -50,9 +50,8 @@ class MinItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
                 . $keywordValue
                 . ' items are required, but there are only '
                 . $instanceCount
+                . '.'
             );
-
-            return $result;
         }
 
         return $result;

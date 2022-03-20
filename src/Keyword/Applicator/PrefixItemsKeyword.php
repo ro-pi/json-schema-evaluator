@@ -27,7 +27,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
     {
         if (!is_array($keywordValue) || !$keywordValue) {
             throw new InvalidKeywordValueException(
-                'The "%s" must be a non-empty array',
+                'The \'%s\' must be a non-empty array.',
                 $this,
                 $context
             );
@@ -38,7 +38,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             if (!is_object($prefixItemSchema) && !is_bool($prefixItemSchema)) {
                 throw new InvalidKeywordValueException(
-                    'The array elements of "%s" must be valid JSON Schemas',
+                    'The array elements of \'%s\' must be valid JSON Schemas.',
                     $this,
                     $context
                 );

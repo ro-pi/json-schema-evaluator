@@ -27,7 +27,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -38,9 +38,9 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
             if (!is_object($propertySchema) && !is_bool($propertySchema)) {
                 throw new InvalidKeywordValueException(
-                    'Property "'
+                    'Property \''
                     . $propertyName
-                    . '" of "%s" object must be a valid JSON Schema',
+                    . '\' of \'%s\' object must be a valid JSON Schema.',
                     $this,
                     $context
                 );

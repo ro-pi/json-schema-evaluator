@@ -23,7 +23,7 @@ class DescriptionKeyword extends AbstractKeyword implements StaticKeywordInterfa
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );

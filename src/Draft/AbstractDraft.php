@@ -94,9 +94,9 @@ abstract class AbstractDraft implements DraftInterface
     {
         if (!$this->supportsVocabulary($vocabulary)) {
             throw new UnsupportedVocabularyException(
-                'Can not enable vocabulary "'
+                'Can not enable vocabulary \''
                 . $vocabulary
-                . '", because vocabulary is not supported',
+                . '\', because vocabulary is not supported.',
                 1647637917
             );
         }
@@ -108,9 +108,9 @@ abstract class AbstractDraft implements DraftInterface
     {
         if (!$this->supportsVocabulary($vocabulary)) {
             throw new UnsupportedVocabularyException(
-                'Can not enable vocabulary "'
+                'Can not enable vocabulary \''
                 . $vocabulary
-                . '", because vocabulary is not supported',
+                . '\', because vocabulary is not supported.',
                 1647637758
             );
         }
@@ -127,9 +127,9 @@ abstract class AbstractDraft implements DraftInterface
     {
         if (!$this->supportsVocabulary($vocabulary)) {
             throw new UnsupportedVocabularyException(
-                'Can not disable vocabulary "'
+                'Can not disable vocabulary \''
                 . $vocabulary
-                . '", because vocabulary is not supported',
+                . '\', because vocabulary is not supported.',
                 1647637759
             );
         }
@@ -222,6 +222,13 @@ abstract class AbstractDraft implements DraftInterface
         $schema = $context->getCurrentSchema();
 
         if (is_bool($schema)) {
+            if ($schema === false) {
+                $lastResult = $context->getLastResult();
+                if ($lastResult) {
+                    $context->createResultForKeyword($lastResult->keyword)->invalidate('Not allowed');
+                }
+            }
+
             return $schema;
         }
 

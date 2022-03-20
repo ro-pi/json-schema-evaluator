@@ -46,9 +46,9 @@ class SchemaPool implements SchemaPoolInterface
         $responseText = file_get_contents($uri, false, $streamContext);
         if (!is_string($responseText)) {
             throw new RemoteSchemaRequestException(
-                'Failed to request remote schema with URI "'
+                'Failed to request remote schema with URI \''
                 . $uri
-                . '"',
+                . '\'',
                 1621967929
             );
         }
@@ -56,9 +56,9 @@ class SchemaPool implements SchemaPoolInterface
         $schema = json_decode($responseText);
         if (!is_object($schema)) {
             throw new RemoteSchemaParseException(
-                'The remote schema URI "'
+                'The remote schema URI \''
                 . $uri
-                . '" does not contain a valid JSON Schema object',
+                . '\' does not contain a valid JSON Schema object',
                 1621967933
             );
         }

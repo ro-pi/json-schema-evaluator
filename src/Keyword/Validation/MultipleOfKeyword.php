@@ -29,7 +29,7 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
         if (!$number || $number->lessThanOrEquals($context->draft->createNumber(0))) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a number greater than 0',
+                'The value of \'%s\' must be a number greater than 0.',
                 $this,
                 $context
             );
@@ -52,9 +52,8 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 $context->getCurrentInstance()
                 . ' is not a multiple of '
                 . $keywordValue
+                . '.'
             );
-
-            return $result;
         }
 
         return $result;

@@ -254,7 +254,7 @@ class Md5HashKeyword extends \Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword i
 }
 
 $draft = new \Ropi\JsonSchemaEvaluator\Draft\Draft202012();
-$draft->registerKeyword(new Md5HashKeyword());
+$draft->registerKeyword(new Md5HashKeyword(), 'https://example.tld/draft/2022-03/vocab/md5'); // Register keyword with custom vocabulary
 
 $evaluator = new \Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator();
 

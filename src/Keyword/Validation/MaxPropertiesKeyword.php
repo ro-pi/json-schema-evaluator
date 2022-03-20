@@ -26,7 +26,7 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
     {
         if (!is_int($keywordValue) || $keywordValue < 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-negative integer',
+                'The value of \'%s\' must be a non-negative integer.',
                 $this,
                 $context
             );
@@ -48,10 +48,8 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
                 $numProperties
                 . ' properties found, but at most '
                 . $keywordValue
-                . ' are allowed'
+                . ' are allowed.'
             );
-
-            return $result;
         }
 
         return $result;

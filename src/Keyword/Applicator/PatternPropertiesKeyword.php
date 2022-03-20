@@ -27,7 +27,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -38,7 +38,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
 
             if (!is_object($patternPropertySchema) && !is_bool($patternPropertySchema)) {
                 throw new InvalidKeywordValueException(
-                    'The property values of "%s" must valid JSON Schemas',
+                    'The property values of \'%s\' must valid JSON Schemas.',
                     $this,
                     $context
                 );

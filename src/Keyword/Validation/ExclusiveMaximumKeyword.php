@@ -28,7 +28,7 @@ class ExclusiveMaximumKeyword extends AbstractKeyword implements StaticKeywordIn
 
         if (!$number) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a number',
+                'The value of \'%s\' must be a number.',
                 $this,
                 $context
             );
@@ -53,9 +53,8 @@ class ExclusiveMaximumKeyword extends AbstractKeyword implements StaticKeywordIn
                 . $keywordValue
                 . ' required, but was '
                 . $context->getCurrentInstance()
+                . '.'
             );
-
-            return $result;
         }
 
         return $result;

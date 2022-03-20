@@ -30,7 +30,7 @@ REGEX;
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -38,7 +38,7 @@ REGEX;
 
         if (preg_match(static::PATTERN_MIME_TYPE_FORMAT, $keywordValue) === 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a media type, as defined by RFC 2046',
+                'The value of \'%s\' must be a media type, as defined by RFC 2046.',
                 $this,
                 $context
             );
@@ -65,10 +65,12 @@ REGEX;
 
             if ($mimeType !== $keywordValue) {
                 $result->invalidate(
-                    'Mime type '
+                    'Mime type \''
                     . $keywordValue
-                    . ' expected, but is '
+                    . '\' expected, but is \''
                     . $mimeType
+                    . '\'.',
+                    $mimeType
                 );
             }
 

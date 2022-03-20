@@ -26,7 +26,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -35,7 +35,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
         $uri = $context->draft->createUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid URI reference',
+                'The value of \'%s\' must be a valid URI reference.',
                 $this,
                 $context
             );
@@ -43,7 +43,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
 
         if ($uri->getFragment()) {
             throw new InvalidKeywordValueException(
-                'The URI reference of "%s" must not contain a non-empty fragment',
+                'The URI reference of \'%s\' must not contain a non-empty fragment.',
                 $this,
                 $context
             );
@@ -54,7 +54,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
 
         if ($context->hasSchema((string) $normalizedUri)) {
             throw new StaticKeywordAnalysisException(
-                'The URI reference "' . $keywordValue . '" is defined twice',
+                'The URI reference \'' . $keywordValue . '\' is defined twice.',
                 $this,
                 $context
             );

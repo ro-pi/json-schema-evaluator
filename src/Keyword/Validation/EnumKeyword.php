@@ -26,7 +26,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
     {
         if (!is_array($keywordValue) || !$keywordValue) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-empty array',
+                'The value of \'%s\' must be a non-empty array.',
                 $this,
                 $context
             );
@@ -43,7 +43,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             }
         }
 
-        $result->invalidate('Value not allowed');
+        $result->invalidate('Value not allowed.');
         return $result;
     }
 }

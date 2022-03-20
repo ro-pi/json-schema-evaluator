@@ -83,16 +83,13 @@ REGEX;
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
         }
     }
 
-    /**
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException
-     */
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
         $instance = $context->getCurrentInstance();
@@ -129,9 +126,9 @@ REGEX;
 
         if ($context->draft->assertFormat() && !$valid) {
             $result->invalidate(
-                $instance
-                . ' is not a valid '
+                'Value is not a valid '
                 . $keywordValue
+                . '.'
             );
         }
 

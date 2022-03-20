@@ -19,7 +19,7 @@ trait OfKeywordTrait
     {
         if (!is_array($keywordValue) || !$keywordValue) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-empty array',
+                'The value of \'%s\' must be a non-empty array.',
                 $keyword,
                 $context
             );
@@ -30,7 +30,7 @@ trait OfKeywordTrait
 
             if (!is_object($schema) && !is_bool($schema)) {
                 throw new InvalidKeywordValueException(
-                    'The array elements of "%s" must be valid JSON Schemas',
+                    'The array elements of \'%s\' must be valid JSON Schemas.',
                     $keyword,
                     $context
                 );

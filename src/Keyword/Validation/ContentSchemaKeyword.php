@@ -28,7 +28,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
     {
         if (!is_object($keywordValue) && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid JSON Schema',
+                'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
                 $context
             );
@@ -65,7 +65,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
                 restore_error_handler();
 
                 if ($instance === null) {
-                    $result->invalidate('Parsing JSON failed', $parseError);
+                    $result->invalidate('Parsing of JSON failed.', $parseError);
                 }
             }
 

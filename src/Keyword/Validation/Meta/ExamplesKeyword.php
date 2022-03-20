@@ -23,7 +23,7 @@ class ExamplesKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (!is_array($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an array',
+                'The value of \'%s\' must be an array.',
                 $this,
                 $context
             );

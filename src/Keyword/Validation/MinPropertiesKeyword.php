@@ -26,7 +26,7 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
     {
         if (!is_int($keywordValue) || $keywordValue < 0) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a non-negative integer',
+                'The value of \'%s\' must be a non-negative integer.',
                 $this,
                 $context
             );
@@ -49,10 +49,8 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
                 $numProperties
                 . ' properties found, but at least '
                 . $keywordValue
-                . ' are required'
+                . ' are required.'
             );
-
-            return $result;
         }
 
         return $result;

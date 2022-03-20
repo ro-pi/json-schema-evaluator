@@ -24,7 +24,7 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
     {
         if (!is_object($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an object',
+                'The value of \'%s\' must be an object.',
                 $this,
                 $context
             );
@@ -35,7 +35,7 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
 
             if (!is_object($schema) && !is_bool($schema)) {
                 throw new InvalidKeywordValueException(
-                    'Each member of "%s" must be a valid JSON Schema',
+                    'Each member of \'%s\' must be a valid JSON Schema.',
                     $this,
                     $context
                 );

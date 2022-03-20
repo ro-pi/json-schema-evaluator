@@ -139,9 +139,9 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
         }
 
         throw new \RuntimeException(
-            'Test file path "'
+            'Test file path \''
             . $path
-            . '" does not exist'
+            . '\' does not exist'
         );
     }
 }

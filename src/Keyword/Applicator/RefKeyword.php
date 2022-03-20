@@ -33,7 +33,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
     {
         if (!is_string($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a string',
+                'The value of \'%s\' must be a string.',
                 $this,
                 $context
             );
@@ -42,7 +42,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $uri = $context->draft->createUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be a valid URI reference',
+                'The value of \'%s\' must be a valid URI reference.',
                 $this,
                 $context
             );
@@ -91,7 +91,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             $referencedSchema = $context->draft->dereferenceJsonPointer($referencedSchema, $fragment);
             if ($referencedSchema === null) {
                 throw new KeywordRuntimeEvaluationException(
-                    'Can not dereference JSON pointer "' . $fragment . '"',
+                    'Can not dereference JSON pointer \'' . $fragment . '\'.',
                     $this,
                     $context
                 );
@@ -103,7 +103,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $schemaInstanceLocationHash = spl_object_hash($context->getCurrentSchema()) . ':' . $context->getCurrentInstanceLocation();
         if (isset($this->processedSchemaInstanceLocations[$schemaInstanceLocationHash])) {
             throw new KeywordRuntimeEvaluationException(
-                '"%s" causes an infinite recursion',
+                '\'%s\' causes an infinite recursion.',
                 $this,
                 $context
             );
@@ -136,7 +136,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $referencedSchema = $context->staticEvaluationContext->getSchemaByUri($schemaUri);
         if (!$referencedSchema) {
             throw new KeywordRuntimeEvaluationException(
-                'Failed to dereference schema URI "' . $schemaUri . '"',
+                'Failed to dereference schema URI \'' . $schemaUri . '\'.',
                 $this,
                 $context
             );

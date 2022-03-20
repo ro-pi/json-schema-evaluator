@@ -26,7 +26,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
     {
         if (!is_array($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of "%s" must be an array',
+                'The value of \'%s\' must be an array.',
                 $this,
                 $context
             );
@@ -37,7 +37,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
             if (!is_string($requiredProperty)) {
                 throw new InvalidKeywordValueException(
-                    'The array elements of "%s" must be strings',
+                    'The array elements of \'%s\' must be strings.',
                     $this,
                     $context
                 );
@@ -57,30 +57,24 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
         $result = $context->createResultForKeyword($this);
 
-        $missingProperties = [];
-
-        foreach ($keywordValue as $requiredProperty) {
+        foreach ($keywordValue as $requiredPropertyKey => $requiredProperty) {
             if (!property_exists($instance, $requiredProperty)) {
+                $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+
+                $context->createResultForKeyword($this)->invalidate(
+                    'Required property \''
+                    . $requiredProperty
+                    . '\' is missing.'
+                );
+
+                $context->popSchema();
+
+                $result->valid = false;
+
                 if ($context->draft->shortCircuit()) {
-                    $result->invalidate(
-                        'Required property '
-                        . $requiredProperty
-                        . ' is missing'
-                    );
-
-                    return $result;
+                    break;
                 }
-
-                $missingProperties[] = $requiredProperty;
             }
-        }
-
-        if ($missingProperties) {
-            $result->invalidate(
-                'Missing required properties: '
-                . implode(', ', $missingProperties),
-                $missingProperties
-            );
         }
 
         return $result;
