@@ -24,7 +24,7 @@ class RuntimeEvaluationContext
     public function __construct(
         object|bool $schema,
         mixed &$instance,
-        public /*readonly*/ StaticEvaluationContext $staticEvaluationContext
+        public readonly StaticEvaluationContext $staticEvaluationContext
     ) {
         $this->schemaStack[0] = [
             'schema' => $schema,

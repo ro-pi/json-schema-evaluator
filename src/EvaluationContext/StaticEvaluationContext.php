@@ -16,7 +16,7 @@ class StaticEvaluationContext
 
     public function __construct(
         object|bool $schema,
-        public /*readonly*/ StaticEvaluationConfig $config
+        public readonly StaticEvaluationConfig $config
     ) {
         $this->draft = $this->config->defaultDraft;
         $this->prioritizedSchemaKeywords = new \WeakMap();

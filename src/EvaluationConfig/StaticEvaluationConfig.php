@@ -9,7 +9,7 @@ use Ropi\JsonSchemaEvaluator\SchemaPool\SchemaPoolInterface;
 
 class StaticEvaluationConfig
 {
-    public /*readonly*/ SchemaPoolInterface $schemaPool;
+    public readonly SchemaPoolInterface $schemaPool;
 
     /**
      * @var DraftInterface[]
@@ -22,7 +22,7 @@ class StaticEvaluationConfig
      * @param SchemaPoolInterface|null $schemaPool
      */
     public function __construct(
-        public /*readonly*/ DraftInterface $defaultDraft,
+        public readonly DraftInterface $defaultDraft,
         array $supportedDrafts = [],
         ?SchemaPoolInterface $schemaPool = null
     ) {

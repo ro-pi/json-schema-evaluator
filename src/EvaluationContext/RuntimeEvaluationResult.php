@@ -15,11 +15,11 @@ class RuntimeEvaluationResult
     private ?bool $evaluationResult = null;
 
     public function __construct(
-        public /*readonly*/ int $number,
-        public /*readonly*/ KeywordInterface $keyword,
-        public /*readonly*/ string $keywordLocation,
-        public /*readonly*/ string $instanceLocation,
-        public /*readonly*/ ?string $absoluteKeywordLocation
+        public readonly int $number,
+        public readonly KeywordInterface $keyword,
+        public readonly string $keywordLocation,
+        public readonly string $instanceLocation,
+        public readonly ?string $absoluteKeywordLocation
     ) {}
 
     public function setEvaluationResult(bool $evaluationResult): void
