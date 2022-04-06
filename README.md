@@ -15,7 +15,7 @@ Passes all [official JSON schema tests](https://github.com/json-schema-org/JSON-
   This means that the specifics of Ecmascript regular expressions are not respected. Instead, regular expressions are evaluated as PERL regular expressions.
   
 ### Requirements
-* PHP ^8.0
+* PHP ^8.1
 ## Installation
 The library can be installed from a command line interface by using [composer](https://getcomposer.org/).
 
