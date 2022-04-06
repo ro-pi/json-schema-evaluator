@@ -114,7 +114,7 @@ $instance = (object) [
 
 $evaluator->evaluate($instance, $staticEvaluationContext);
 
-echo $instance->firstname; // Returns "n/a"
+echo $instance->firstname; // Prints "n/a"
 ```
 
 ### Decoding of encoded content 
@@ -138,7 +138,7 @@ $instance = 'eyJmb28iOiAiYmFyIn0K'; // Base64 encoded JSON '{"foo": "bar"}'
 
 $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 
-echo $instance; // Returns '{"foo": "bar"}'
+echo $instance; // Prints '{"foo": "bar"}'
 ```
 
 ## Assert content media type
