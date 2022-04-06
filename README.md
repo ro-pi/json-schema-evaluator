@@ -215,10 +215,6 @@ $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSch
 
 $instance = json_decode('6565650699413464649797946464646464649797979', false, 512, JSON_BIGINT_AS_STRING);
 $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
-
-$staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
-));
 ```
 
 ## Custom keywords
