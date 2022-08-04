@@ -375,7 +375,7 @@ REGEX;
                 // Invalid leap second
                 return false;
             }
-        } else if ($offset) {
+        } elseif ($offset) {
             $offsetParts = explode(':', $parts[1], 2);
             if (count($offsetParts) !== 2) {
                 return false;
@@ -553,11 +553,11 @@ REGEX;
             if (!$this->checkEmail(substr($uri, 7))) {
                 return false;
             }
-        } else if ($scheme === 'tel') {
+        } elseif ($scheme === 'tel') {
             if (!$this->checkPhone(substr($uri, 4))) {
                 return false;
             }
-        } else if ($scheme === 'urn') {
+        } elseif ($scheme === 'urn') {
             if (!$this->checkUrn($uri)) {
                 return false;
             }

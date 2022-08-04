@@ -311,7 +311,7 @@ abstract class AbstractDraft implements DraftInterface
                 }
 
                 $currentSchemaPart = &$currentSchemaPart[$token];
-            } else if (is_object($currentSchemaPart)) {
+            } elseif (is_object($currentSchemaPart)) {
                 if (!isset($currentSchemaPart->{$token})) {
                     return null;
                 }
@@ -392,7 +392,7 @@ abstract class AbstractDraft implements DraftInterface
                     if (!array_key_exists($key, $value1)) {
                         return false;
                     }
-                } else if (!property_exists($value1, $key)) {
+                } elseif (!property_exists($value1, $key)) {
                     return false;
                 }
             }

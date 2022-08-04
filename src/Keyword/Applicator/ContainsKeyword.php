@@ -66,7 +66,7 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
         if ($matchedIndexes) {
             ksort($matchedIndexes);
-        } else if (!isset($currentSchema->minContains) || $currentSchema->minContains > 0) {
+        } elseif (!isset($currentSchema->minContains) || $currentSchema->minContains > 0) {
             $result->invalidate('No item matches schema');
             return $result;
         }
