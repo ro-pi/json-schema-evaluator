@@ -114,7 +114,7 @@ $instance = (object) [
 
 $evaluator->evaluate($instance, $staticEvaluationContext);
 
-echo $instance->firstname; // Returns "n/a"
+echo $instance->firstname; // Prints "n/a"
 ```
 
 ### Decoding of encoded content 
@@ -138,7 +138,7 @@ $instance = 'eyJmb28iOiAiYmFyIn0K'; // Base64 encoded JSON '{"foo": "bar"}'
 
 $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 
-echo $instance; // Returns '{"foo": "bar"}'
+echo $instance; // Prints '{"foo": "bar"}'
 ```
 
 ## Assert content media type
@@ -215,10 +215,6 @@ $staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSch
 
 $instance = json_decode('6565650699413464649797946464646464649797979', false, 512, JSON_BIGINT_AS_STRING);
 $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
-
-$staticEvaluationContext = $evaluator->evaluateStatic($schema, new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
-    defaultDraft: new \Ropi\JsonSchemaEvaluator\Draft\Draft202012()
-));
 ```
 
 ## Custom keywords
