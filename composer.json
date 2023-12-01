@@ -28,10 +28,10 @@
         "phpunit/phpunit": "^9.0"
     },
     "suggest": {
-        "ext-idn": "Allows better performance for IDN validations"
+        "ext-idn": "Enables better performance for IDN validations"
     },
     "autoload": {
-        "psr-4": { 
+        "psr-4": {
             "Ropi\\JsonSchemaEvaluator\\": "src/"
         }
     },
