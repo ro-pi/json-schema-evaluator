@@ -236,6 +236,8 @@ $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 ```
 
 ### Custom keywords
+It is possible to add custom keywords to a draft.\
+The following example shows how to implement a keyword where the value must match a specific md5 hash.
 ```php
 $schema = json_decode('{
     "md5Hash": "098f6bcd4621d373cade4e832627b4f6"
