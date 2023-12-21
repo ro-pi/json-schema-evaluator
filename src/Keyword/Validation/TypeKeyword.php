@@ -101,7 +101,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         return $result;
     }
 
-    protected function detectType(mixed $instance, RuntimeEvaluationContext $context): string
+    private function detectType(mixed $instance, RuntimeEvaluationContext $context): string
     {
         return match (true) {
             $instance instanceof \stdClass => 'object',
@@ -119,7 +119,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
      * @param string[] $stringArray
      * @return string
      */
-    protected function stringArrayToHumanReadableList(array $stringArray): string
+    private function stringArrayToHumanReadableList(array $stringArray): string
     {
         if (count($stringArray) <= 1) {
             return implode(', ', $stringArray);

@@ -14,7 +14,7 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
-    protected const PATTERN_XML_NC_NAME_US_ASCII = '/[A-Z_][A-Z_0-9\-.]*$/i';
+    private const PATTERN_XML_NC_NAME_US_ASCII = '/[A-Z_][A-Z_0-9\-.]*$/i';
 
     public function getName(): string
     {
@@ -35,7 +35,7 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        if (preg_match(static::PATTERN_XML_NC_NAME_US_ASCII, $keywordValue) !== 1) {
+        if (preg_match(self::PATTERN_XML_NC_NAME_US_ASCII, $keywordValue) !== 1) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must start with a letter (a-z) or underscore (_), followed by any number of'
                 . ' letters, digits (0-9), hyphens (-), underscores (_), and periods (.).',

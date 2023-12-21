@@ -14,43 +14,43 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
-    protected const PATTERN_URI_TEMPLATE = <<<'REGEX'
+    private const PATTERN_URI_TEMPLATE = <<<'REGEX'
 /^(([\x{21}\x{23}\x{24}\x{26}\x{28}-\x{3B}\x{3D}\x{3F}-\x{5B}\x{5D}\x{5F}\x{61}-\x{7A}\x{7E}]|([\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}])|([\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}])|(%[A-F0-9][A-F0-9]))|(\{([+#]|[.\/;?&]|[=,!@|])?([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*(:[1-9][0-9]{0,3}|\*)?(,([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*(:[1-9][0-9]{0,3}|\*)?)*}))*$/iu
 REGEX;
 
-    protected const PATTERN_DURATION = <<<'REGEX'
+    private const PATTERN_DURATION = <<<'REGEX'
 /^(P((([0-9]+D|[0-9]+M([0-9]+D)?|[0-9]+Y([0-9]+M([0-9]+D)?)?)(T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S))?)|(T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S))|[0-9]+W))$/
 REGEX;
 
-    protected const PATTERN_DURATION_WEEKS = <<<'REGEX'
+    private const PATTERN_DURATION_WEEKS = <<<'REGEX'
 /^P[0-9]+W$/
 REGEX;
 
-    protected const PATTERN_URI_SCHEME = <<<'REGEX'
+    private const PATTERN_URI_SCHEME = <<<'REGEX'
 /^[a-z][a-z0-9+\-.]*$/
 REGEX;
 
-    protected const PATTERN_URI_PATH_SEGMENT = <<<'REGEX'
+    private const PATTERN_URI_PATH_SEGMENT = <<<'REGEX'
 /^([a-z0-9\-._~]|%[0-9a-f][0-9a-f]|[!$&()*+,;=']|[:@]')+$/i
 REGEX;
 
-    protected const PATTERN_URI_FRAGMENT = <<<'REGEX'
+    private const PATTERN_URI_FRAGMENT = <<<'REGEX'
 /^([a-z0-9\-._~]|%[0-9a-f][0-9a-f]|[!$&()*+,;=']|[:@\/?]')+$/i
 REGEX;
 
-    protected const PATTERN_URN = <<<'REGEX'
+    private const PATTERN_URN = <<<'REGEX'
 /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%\/?#]+$/
 REGEX;
 
-    protected const PATTERN_UUID = <<<'REGEX'
+    private const PATTERN_UUID = <<<'REGEX'
 /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
 REGEX;
 
-    protected const PATTERN_PHONE = <<<'REGEX'
+    private const PATTERN_PHONE = <<<'REGEX'
 /^(\+([0-9]|[\-.()]?)*[0-9]([0-9]|[\-.()]?)*(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*|(([0-9A-Fa-f]|\*|#|([\-.()])?)*([0-9A-Fa-f]|\*|#)([0-9A-Fa-f]|\*|#|([\-.()])?)*)(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*;phone-context=((([A-Za-z0-9]|[A-Za-z0-9][-A-Za-z0-9]*[A-Za-z0-9])\.)*([A-Za-z]|[A-Za-z][-A-Za-z0-9]*[A-Za-z0-9])(\.)?|\+([0-9]|([\-.()])?)*[0-9]([0-9]|([\-.()])?)*)(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*)$/
 REGEX;
 
-    protected const IDN_DISALLOWED_CHARS = [
+    private const IDN_DISALLOWED_CHARS = [
         "\u{0640}", # ARABIC TATWEEL
         "\u{07FA}", # NKO LAJANYALAN
         "\u{302E}", # HANGUL SINGLE DOT TONE MARK
@@ -63,7 +63,7 @@ REGEX;
         "\u{303B}", # VERTICAL IDEOGRAPHIC ITERATION MARK
     ];
 
-    protected const IDN_CONTEXTUAL_RULE_PATTERNS = [
+    private const IDN_CONTEXTUAL_RULE_PATTERNS = [
         "\u{00B7}" => '/l\x{00B7}l/u', # MIDDLE DOT
         "\u{0375}" => '/\x{0375}\p{Greek}/u', # GREEK LOWER NUMERAL SIGN (KERAIA)
         "\u{05f3}" => '/\p{Hebrew}\x{05f3}/u', # HEBREW PUNCTUATION GERESH
@@ -136,108 +136,108 @@ REGEX;
         return $result;
     }
 
-    protected function evaluateEmail(string $instance): bool
+    private function evaluateEmail(string $instance): bool
     {
         return $this->checkEmail($instance);
     }
 
-    protected function evaluateIdnEmail(string $instance): bool
+    private function evaluateIdnEmail(string $instance): bool
     {
         return $this->checkIdnEmail($instance);
     }
 
-    protected function evaluateRegex(string $instance): bool
+    private function evaluateRegex(string $instance): bool
     {
         return $this->checkRegexPattern($instance);
     }
 
-    protected function evaluateIpv4(string $instance): bool
+    private function evaluateIpv4(string $instance): bool
     {
         return $this->checkIpv4($instance);
     }
 
-    protected function evaluateIpv6(string $instance): bool
+    private function evaluateIpv6(string $instance): bool
     {
         return $this->checkIpv6($instance);
     }
 
-    protected function evaluateIdnHostname(string $instance): bool
+    private function evaluateIdnHostname(string $instance): bool
     {
         return $this->checkIdn($instance);
     }
 
-    protected function evaluateHostname(string $instance): bool
+    private function evaluateHostname(string $instance): bool
     {
         return $this->checkHostname($instance);
     }
 
-    protected function evaluateDate(string $instance): bool
+    private function evaluateDate(string $instance): bool
     {
         return $this->checkRfc3339Date($instance);
     }
 
-    protected function evaluateDateTime(string $instance): bool
+    private function evaluateDateTime(string $instance): bool
     {
         return $this->checkRfc3339Date(substr($instance, 0, 10))
                 && $this->checkRfc3339Time(substr($instance, 11));
     }
 
-    protected function evaluateTime(string $instance): bool
+    private function evaluateTime(string $instance): bool
     {
         return $this->checkRfc3339Time($instance);
     }
 
-    protected function evaluateJsonPointer(string $instance): bool
+    private function evaluateJsonPointer(string $instance): bool
     {
         return $this->checkJsonPointer($instance, true);
     }
 
-    protected function evaluateRelativeJsonPointer(string $instance): bool
+    private function evaluateRelativeJsonPointer(string $instance): bool
     {
         return $this->checkJsonPointer($instance, false);
     }
 
-    protected function evaluateIri(string $instance): bool
+    private function evaluateIri(string $instance): bool
     {
         return $this->checkUri($instance, true, true);
     }
 
-    protected function evaluateIriReference(string $instance): bool
+    private function evaluateIriReference(string $instance): bool
     {
         return $this->checkUri($instance, false, true);
     }
 
-    protected function evaluateUri(string $instance): bool
+    private function evaluateUri(string $instance): bool
     {
         return $this->checkUri($instance, true);
     }
 
-    protected function evaluateUriReference(string $instance): bool
+    private function evaluateUriReference(string $instance): bool
     {
         return $this->checkUri($instance, false);
     }
 
-    protected function evaluateUriTemplate(string $instance): bool
+    private function evaluateUriTemplate(string $instance): bool
     {
         return $this->checkUriTemplate($instance);
     }
 
-    protected function evaluateUuid(string $instance): bool
+    private function evaluateUuid(string $instance): bool
     {
         return $this->checkUuid($instance);
     }
 
-    protected function evaluateDuration(string $instance): bool
+    private function evaluateDuration(string $instance): bool
     {
         return $this->checkDuration($instance);
     }
 
-    protected function checkUriTemplate(string $uriTemplate): bool
+    private function checkUriTemplate(string $uriTemplate): bool
     {
-        return preg_match(static::PATTERN_URI_TEMPLATE, $uriTemplate) === 1;
+        return preg_match(self::PATTERN_URI_TEMPLATE, $uriTemplate) === 1;
     }
 
-    protected function checkJsonPointer(string $jsonPointer, bool $absolute): bool
+    private function checkJsonPointer(string $jsonPointer, bool $absolute): bool
     {
         if ($absolute) {
             if ($jsonPointer === '') {
@@ -283,22 +283,22 @@ REGEX;
         return true;
     }
 
-    protected function checkIpv4(string $ipv4): bool
+    private function checkIpv4(string $ipv4): bool
     {
         return filter_var($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
     }
 
-    protected function checkIpv6(string $ipv6): bool
+    private function checkIpv6(string $ipv6): bool
     {
         return filter_var($ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
     }
 
-    protected function checkRegexPattern(string $regexPattern): bool
+    private function checkRegexPattern(string $regexPattern): bool
     {
         return is_int(@preg_match('{' . $regexPattern . '}u', ''));
     }
 
-    protected function checkRfc3339Date(string $rfcDate): bool
+    private function checkRfc3339Date(string $rfcDate): bool
     {
         if (strlen($rfcDate) !== 10) {
             return false;
@@ -326,7 +326,7 @@ REGEX;
         return checkdate((int)$month, (int)$day, (int)$year);
     }
 
-    protected function checkRfc3339Time(string $rfcTime): bool
+    private function checkRfc3339Time(string $rfcTime): bool
     {
         if (preg_match('{[+\-Zz]}', $rfcTime, $matches) === 0) {
             // No offset sign
@@ -403,7 +403,7 @@ REGEX;
         return true;
     }
 
-    protected function checkRfc3339TimeLeapSecond(string $rfcTime): bool
+    private function checkRfc3339TimeLeapSecond(string $rfcTime): bool
     {
         try {
             $dateTime = (new \DateTime($rfcTime));
@@ -420,13 +420,13 @@ REGEX;
         return true;
     }
 
-    protected function checkDuration(string $duration): bool
+    private function checkDuration(string $duration): bool
     {
-        if (preg_match(static::PATTERN_DURATION, $duration) !== 1) {
+        if (preg_match(self::PATTERN_DURATION, $duration) !== 1) {
             return false;
         }
 
-        if (str_contains($duration, 'W') && preg_match(static::PATTERN_DURATION_WEEKS, $duration) !== 1) {
+        if (str_contains($duration, 'W') && preg_match(self::PATTERN_DURATION_WEEKS, $duration) !== 1) {
             // weeks cannot be combined with other units
             return false;
         }
@@ -434,15 +434,15 @@ REGEX;
         return true;
     }
 
-    protected function checkIdn(string $idn): bool
+    private function checkIdn(string $idn): bool
     {
-        foreach (static::IDN_DISALLOWED_CHARS as $disallowedChar) {
+        foreach (self::IDN_DISALLOWED_CHARS as $disallowedChar) {
             if (str_contains($idn, $disallowedChar)) {
                 return false;
             }
         }
 
-        foreach (static::IDN_CONTEXTUAL_RULE_PATTERNS as $codePoint => $rulePattern) {
+        foreach (self::IDN_CONTEXTUAL_RULE_PATTERNS as $codePoint => $rulePattern) {
             if (!str_contains($idn, $codePoint)) {
                 continue;
             }
@@ -466,7 +466,7 @@ REGEX;
         return $this->checkHostname($punycoded);
     }
 
-    protected function checkHostname(string $host): bool
+    private function checkHostname(string $host): bool
     {
         if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
             return true;
@@ -483,7 +483,7 @@ REGEX;
         return true;
     }
 
-    protected function checkIdnEmail(string $idnEmail): bool
+    private function checkIdnEmail(string $idnEmail): bool
     {
         if (!str_contains($idnEmail, '@')) {
             return false;
@@ -500,31 +500,31 @@ REGEX;
         return $this->checkEmail($punycoded);
     }
 
-    protected function checkEmail(string $email): bool
+    private function checkEmail(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    protected function checkPhone(string $phone): bool
+    private function checkPhone(string $phone): bool
     {
-        return preg_match(static::PATTERN_PHONE, $phone) === 1;
+        return preg_match(self::PATTERN_PHONE, $phone) === 1;
     }
 
-    protected function checkUuid(string $uuid): bool
+    private function checkUuid(string $uuid): bool
     {
         if (strlen($uuid) !== 36) {
             return false;
         }
 
-        return preg_match(static::PATTERN_UUID, $uuid) === 1;
+        return preg_match(self::PATTERN_UUID, $uuid) === 1;
     }
 
-    protected function checkUrn(string $urn): bool
+    private function checkUrn(string $urn): bool
     {
-        return preg_match(static::PATTERN_URN, $urn) === 1;
+        return preg_match(self::PATTERN_URN, $urn) === 1;
     }
 
-    protected function checkUri(string $uri, bool $absolute, bool $international = false): bool
+    private function checkUri(string $uri, bool $absolute, bool $international = false): bool
     {
         $scheme = parse_url($uri, PHP_URL_SCHEME);
 
@@ -569,7 +569,7 @@ REGEX;
                 return false;
             }
 
-            if ($scheme && preg_match(static::PATTERN_URI_SCHEME, $scheme) === 0) {
+            if ($scheme && preg_match(self::PATTERN_URI_SCHEME, $scheme) === 0) {
                 return false;
             }
 
@@ -596,14 +596,14 @@ REGEX;
                 }
 
                 foreach ($pathSegments as $pathSegment) {
-                    if (preg_match(static::PATTERN_URI_PATH_SEGMENT, $pathSegment) === 0) {
+                    if (preg_match(self::PATTERN_URI_PATH_SEGMENT, $pathSegment) === 0) {
                         return false;
                     }
                 }
             }
         }
 
-        if ($fragment && preg_match(static::PATTERN_URI_FRAGMENT, $fragment) === 0) {
+        if ($fragment && preg_match(self::PATTERN_URI_FRAGMENT, $fragment) === 0) {
             return false;
         }
 

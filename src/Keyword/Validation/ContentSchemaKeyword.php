@@ -86,7 +86,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
         return $result;
     }
 
-    protected function shouldParseInstance(string $contentMediaType): bool
+    private function shouldParseInstance(string $contentMediaType): bool
     {
         return str_starts_with($contentMediaType, 'application/json');
     }
@@ -94,7 +94,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
     /**
      * @return \stdClass|array<scalar, mixed>|null
      */
-    protected function parseInstance(RuntimeEvaluationContext $context): \stdClass|array|null
+    private function parseInstance(RuntimeEvaluationContext $context): \stdClass|array|null
     {
         /** @var string $instance */
         $instance = $context->getCurrentInstance();

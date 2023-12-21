@@ -14,14 +14,14 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class ContentMediaTypeKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
+    private const PATTERN_MIME_TYPE_FORMAT = <<<'REGEX'
+/[a-z0-9!#$%^&*_\-+{}|'.`~]+\/[a-z0-9!#$%^&*_\-+{}|'.`~]+/i
+REGEX;
+
     public function getName(): string
     {
         return 'contentMediaType';
     }
-
-    protected const PATTERN_MIME_TYPE_FORMAT = <<<'REGEX'
-/[a-z0-9!#$%^&*_\-+{}|'.`~]+\/[a-z0-9!#$%^&*_\-+{}|'.`~]+/i
-REGEX;
 
     /**
      * @throws StaticKeywordAnalysisException
@@ -36,7 +36,7 @@ REGEX;
             );
         }
 
-        if (preg_match(static::PATTERN_MIME_TYPE_FORMAT, $keywordValue) === 0) {
+        if (preg_match(self::PATTERN_MIME_TYPE_FORMAT, $keywordValue) === 0) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a media type, as defined by RFC 2046.',
                 $this,
@@ -85,7 +85,7 @@ REGEX;
      * @param resource $stream
      * @return string
      */
-    protected function detectMimeType($stream): string
+    private function detectMimeType($stream): string
     {
         return mime_content_type($stream) ?: 'application/octet-stream';
     }

@@ -134,7 +134,7 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new DynamicRefKeyword(8000), self::VOCABULARY_CORE);
             $this->registerKeyword(new CommentKeyword(9000), self::VOCABULARY_CORE);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_CORE);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_CORE);
         }
 
         // Content
@@ -143,7 +143,7 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new ContentMediaTypeKeyword(11000), self::VOCABULARY_CONTENT);
             $this->registerKeyword(new ContentSchemaKeyword(12000), self::VOCABULARY_CONTENT);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_CONTENT);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_CONTENT);
         }
 
         // Applicator
@@ -169,7 +169,7 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new ElseKeyword(26000), self::VOCABULARY_APPLICATOR);
             $this->registerKeyword(new DependentSchemasKeyword(27000), self::VOCABULARY_APPLICATOR);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_APPLICATOR);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_APPLICATOR);
         }
 
         // Unevaluated (depends on in-place applicators)
@@ -177,14 +177,14 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new UnevaluatedItemsKeyword(28000), self::VOCABULARY_UNEVALUATED);
             $this->registerKeyword(new UnevaluatedPropertiesKeyword(29000), self::VOCABULARY_UNEVALUATED);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_UNEVALUATED);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_UNEVALUATED);
         }
 
         // Format annotation
         if ($this->vocabularyEnabled(self::VOCABULARY_FORMAT_ANNOTATION)) {
             $this->registerKeyword(new FormatKeyword(30000), self::VOCABULARY_FORMAT_ANNOTATION);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_FORMAT_ANNOTATION);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_FORMAT_ANNOTATION);
         }
 
         // Validation
@@ -210,7 +210,7 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new RequiredKeyword(49000), self::VOCABULARY_VALIDATION);
             $this->registerKeyword(new DependentRequiredKeyword(50000), self::VOCABULARY_VALIDATION);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_VALIDATION);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_VALIDATION);
         }
 
         // Meta data
@@ -223,7 +223,7 @@ class Draft202012 extends AbstractDraft
             $this->registerKeyword(new WriteOnlyKeyword(56000), self::VOCABULARY_META_DATA);
             $this->registerKeyword(new ExamplesKeyword(57000), self::VOCABULARY_META_DATA);
         } else {
-            $this->unregisterKeywordByVocabulary(self::VOCABULARY_META_DATA);
+            $this->unregisterKeywordsByVocabulary(self::VOCABULARY_META_DATA);
         }
     }
 }

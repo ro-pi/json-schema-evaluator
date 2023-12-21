@@ -150,7 +150,7 @@ abstract class AbstractDraft implements DraftInterface
         $this->keywords[$keyword->getName()] = $keyword;
     }
 
-    protected function unregisterKeywordByVocabulary(string $vocabulary): void
+    protected function unregisterKeywordsByVocabulary(string $vocabulary): void
     {
         foreach ($this->keywordsByVocabulary[$vocabulary] as $keyword) {
             unset($this->keywords[$keyword->getName()]);
@@ -412,7 +412,7 @@ abstract class AbstractDraft implements DraftInterface
     /**
      * @return KeywordInterface[]
      */
-    protected function prioritizeSchemaKeywords(\stdClass $schema, StaticEvaluationContext $context): array
+    private function prioritizeSchemaKeywords(\stdClass $schema, StaticEvaluationContext $context): array
     {
         $prioritizedKeywords = [];
 
@@ -426,7 +426,7 @@ abstract class AbstractDraft implements DraftInterface
         return $prioritizedKeywords;
     }
 
-    protected function decodeJsonPointerToken(string $fragment): string
+    private function decodeJsonPointerToken(string $fragment): string
     {
         return str_replace(['~1', '~0'], ['/', '~'], urldecode($fragment));
     }
