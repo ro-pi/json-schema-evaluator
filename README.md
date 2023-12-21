@@ -163,7 +163,7 @@ echo $instance; // Prints '{"foo": "bar"}'
 ```
 ## Advanced examples
 ### Assert content media type
-If content media type is defined with the [contentMediaType keyword](https://json-schema.org/draft/2020-12/json-schema-validation.html#rfc.section.8.4), it can be respected during evaluation.
+If content media type is defined with the [contentMediaType keyword](https://json-schema.org/draft/2020-12/json-schema-validation#name-contentmediatype), it can be respected during evaluation.
 ```php
 $schema = json_decode('{
     "contentMediaType": "application/json"
