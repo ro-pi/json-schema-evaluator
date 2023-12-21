@@ -3,29 +3,47 @@
 This library is a PHP based implementation for evaluating and validating [JSON Schemas](https://json-schema.org/).
 The library can be easily extended with your own keywords and drafts.
 
-The following drafts are natively supported:
-* [Draft 2020-12 Core](https://json-schema.org/draft/2020-12/json-schema-core.html)
-* [Draft 2020-12 Validation](https://json-schema.org/draft/2020-12/json-schema-validation.html)
+## Requirements
+* PHP >= 8.1
+* ext-bcmath
+* ext-mbstring
+* ext-fileinfo
 
-### Draft 2020-12
-Passes all [official JSON schema tests](https://github.com/json-schema-org/JSON-Schema-Test-Suite) except the following optional tests:
-* [optional/refOfUnknownKeyword.json](https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft2020-12/optional/refOfUnknownKeyword.json): 
-  This means that you cannot use the $ref keyword to reference to schemas that are located inside unknown keywords. 
-* [optional/ecmascript-regex.json](https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft2020-12/optional/ecmascript-regex.json):
-  This means that the specifics of Ecmascript regular expressions are not respected. Instead, regular expressions are evaluated as PERL regular expressions.
-  
-### Requirements
-* PHP ^8.1
+## Table of contents
+* [Installation](#installation)
+* [Supported drafts](#supported-drafts)
+* [Basic examples](#basic-examples)
+  * [Basic usage](#basic-usage)
+  * [Read individual error results](#read-individual-error-results)
+  * [Formatting results](#formatting-results)
+* [Mutations](#mutations)
+  * [Default values](#default-values)
+  * [Content decoding](#content-decoding)
+* [Advanced examples](#advanced-examples)
+  * [Assert content media type](#assert-content-media-type)
+  * [Assert format](#assert-format)
+  * [Short-circuiting](#short-circuiting)
+  * [Big numbers](#big-numbers-interpret-numeric-strings-as-numbers)
+  * [Custom keywords](#custom-keywords)
+
 ## Installation
 The library can be installed from a command line interface by using [composer](https://getcomposer.org/).
+
+## Supported drafts
+
+### Draft 2020-12 ([Core](https://json-schema.org/draft/2020-12/json-schema-core.html) and [Validation](https://json-schema.org/draft/2020-12/json-schema-validation.html))
+Passes all tests of [official JSON schema test suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite) except the following optional tests:
+* [optional/refOfUnknownKeyword.json](https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft2020-12/optional/refOfUnknownKeyword.json):
+  This means that you cannot use the <b>$ref</b> keyword to reference schemas that are located inside unknown keywords.
+* [optional/ecmascript-regex.json](https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft2020-12/optional/ecmascript-regex.json):
+  This means that the specifics of Ecmascript regular expressions are not respected. Instead, regular expressions are evaluated as PERL regular expressions.
 
 ```
 composer require ropi/json-schema-evaluator
 ```
-
-## Basic usage
+## Basic examples
+### Basic usage
 ```php
-<?php
 $schema = json_decode('{
     "type": "string",
     "maxLength": 5
@@ -62,8 +80,14 @@ foreach ($results as $result) {
     }
 }
 ```
-The results can also be formatted. 
-In this example errors will be formatted to [Basic Output Structure](https://json-schema.org/draft/2020-12/json-schema-core.html#rfc.section.12.4.2).
+Output of above example:
+```
+Error keyword location: '/maxLength'
+Error instance location: ''
+Error message: At most 5 characters are allowed, but there are 10.
+```
+### Formatting results
+In the following example, the results are formatted as [Basic Output Structure](https://json-schema.org/draft/2020-12/json-schema-core#name-basic).
 ```php
 $formattedResults = (new \Ropi\JsonSchemaEvaluator\Output\BasicOutput($valid, $results))->format();
 echo json_encode($formattedResults, JSON_PRETTY_PRINT);
@@ -84,12 +108,10 @@ Output of above example:
     ]
 }
 ```
-
 ## Mutations
 ### Default values
-If a default value is defined with the [default keyword](https://json-schema.org/draft/2020-12/json-schema-validation.html#rfc.section.9.2), it can be automatically applied during evaluation.
+If a default value is defined with the [default keyword](https://json-schema.org/draft/2020-12/json-schema-validation#name-default), it can be automatically applied during evaluation.
 ```php
-<?php
 $schema = json_decode('{
     "type": "object",
     "required": ["lastname"],
@@ -117,10 +139,9 @@ $evaluator->evaluate($instance, $staticEvaluationContext);
 echo $instance->firstname; // Prints "n/a"
 ```
 
-### Decoding of encoded content 
-If encoded content is defined with the [contentEncoding keyword](https://json-schema.org/draft/2020-12/json-schema-validation.html#rfc.section.8.3), it can be automatically decoded during evaluation.
+### Content decoding
+If encoded content is defined with the [contentEncoding keyword](https://json-schema.org/draft/2020-12/json-schema-validation#name-contentencoding), it can be automatically decoded during evaluation.
 ```php
-<?php
 $schema = json_decode('{
     "contentMediaType": "application/json",
     "contentEncoding": "base64"
@@ -140,11 +161,10 @@ $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 
 echo $instance; // Prints '{"foo": "bar"}'
 ```
-
-## Assert content media type
+## Advanced examples
+### Assert content media type
 If content media type is defined with the [contentMediaType keyword](https://json-schema.org/draft/2020-12/json-schema-validation.html#rfc.section.8.4), it can be respected during evaluation.
 ```php
-<?php
 $schema = json_decode('{
     "contentMediaType": "application/json"
 }');
@@ -164,10 +184,9 @@ $instance2 = 'invalidJSON';
 $evaluator->evaluate($instance2, $staticEvaluationContext); // Returns false
 ```
 
-## Assert format
-If format is defined with the [format keyword](https://json-schema.org/draft/2020-12/json-schema-core.html#rfc.section.12.1), it can be respected during evaluation. 
+### Assert format
+If format is defined with the [format keyword](https://json-schema.org/draft/2020-12/json-schema-validation#name-format-annotation-vocabular), it can be respected during evaluation. 
 ```php
-<?php
 $schema = json_decode('{
     "format": "email"
 }');
@@ -187,7 +206,7 @@ $instance2 = 'invalidEmail';
 $evaluator->evaluate($instance2, $staticEvaluationContext, $runtimeEvaluationConfig); // Returns false
 ```
 
-## Short-circuiting
+### Short-circuiting
 By default, all keywords are evaluated, even if the first keyword validation fails.
 If short circuiting is activated, the evaluation stops at the first negative validation result.
 ```php
@@ -198,9 +217,8 @@ $config = new \Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig(
 );
 ```
 
-## Big numbers (interpret numeric strings as numbers)
+### Big numbers (interpret numeric strings as numbers)
 ```php
-<?php
 $schema = json_decode('{
     "type": "integer"
 }');
@@ -217,9 +235,8 @@ $instance = json_decode('6565650699413464649797946464646464649797979', false, 51
 $evaluator->evaluate($instance, $staticEvaluationContext); // Returns true
 ```
 
-## Custom keywords
+### Custom keywords
 ```php
-<?php 
 $schema = json_decode('{
     "md5Hash": "098f6bcd4621d373cade4e832627b4f6"
 }');
