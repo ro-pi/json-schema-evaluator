@@ -37,7 +37,7 @@ class SchemaPool implements SchemaPoolInterface
         $streamContext = stream_context_create(
             [
                 'http' => [
-                    'user_agent' => 'ropi-json-schema-evaluator'
+                    'user_agent' => 'ropi/json-schema-evaluator'
                 ],
                 'ssl' => [
                     'verify_peer' => false,

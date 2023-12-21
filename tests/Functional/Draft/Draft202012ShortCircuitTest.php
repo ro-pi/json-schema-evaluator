@@ -6,6 +6,7 @@ namespace Ropi\JsonSchemaEvaluator\Tests\Functional\Draft;
 use Ropi\JsonSchemaEvaluator\Draft\Draft202012;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
 use Ropi\JsonSchemaEvaluator\Tests\Functional\AbstractJsonSchemaTestSuite;
+use Ropi\JsonSchemaEvaluator\Tests\Functional\JsonSchemaTestSuiteSchemaPool;
 
 class Draft202012ShortCircuitTest extends AbstractJsonSchemaTestSuite
 {
@@ -49,7 +50,8 @@ class Draft202012ShortCircuitTest extends AbstractJsonSchemaTestSuite
             defaultDraft: $this->draft,
             supportedDrafts: [
                 $metaSchemaNoValidation
-            ]
+            ],
+            schemaPool: new JsonSchemaTestSuiteSchemaPool()
         ));
     }
 }
