@@ -10,13 +10,18 @@ trait EvaluationContextTrait
     public DraftInterface $draft;
 
     /**
-     * @var array[]
+     * @var list<array{
+     *     schema: \stdClass|bool,
+     *     keywordLocation: string,
+     *     schemaKeywordLocation: string,
+     *     baseUri: string
+     * }>
      */
     private array $schemaStack = [];
     private int $schemaStackPointer = 0;
 
     public function pushSchema(
-        object|bool|null $schema = null,
+        \stdClass|bool|null $schema = null,
         string $keywordLocationFragment = null,
         ?string $baseUri = null,
         string $schemaLocation = ''
@@ -58,7 +63,7 @@ trait EvaluationContextTrait
         $this->schemaStackPointer--;
     }
 
-    public function setCurrentSchema(object|bool $schema): void
+    public function setCurrentSchema(\stdClass|bool $schema): void
     {
         if (!$this->schemaStackPointer) {
             throw new \RuntimeException(
@@ -70,12 +75,12 @@ trait EvaluationContextTrait
         $this->schemaStack[$this->schemaStackPointer]['schema'] = $schema;
     }
 
-    public function getCurrentSchema(): object|bool
+    public function getCurrentSchema(): \stdClass|bool
     {
         return $this->schemaStack[$this->schemaStackPointer]['schema'];
     }
 
-    public function getRootSchema(): object|bool
+    public function getRootSchema(): \stdClass|bool
     {
         return $this->schemaStack[0]['schema'];
     }

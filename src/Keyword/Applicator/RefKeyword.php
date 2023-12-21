@@ -16,7 +16,10 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
-    protected array $processedSchemaInstanceLocations = [];
+    /**
+     * @var array<string, bool>
+     */
+    private array $processedSchemaInstanceLocations = [];
 
     public function getName(): string
     {
@@ -39,7 +42,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             );
         }
 
-        $uri = $context->draft->createUri($keywordValue);
+        $uri = $context->draft->tryCreateUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid URI reference.',
@@ -54,28 +57,28 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $config = $context->config;
 
         if (
-            !$context->hasSchema((string) $normalizedUri)
+            !$context->hasSchema((string)$normalizedUri)
             && !$this->scanSchemaForId($context->getRootSchema(), $normalizedUri, $context))
         {
-            $remoteSchema = $config->schemaPool->getSchemaByUri((string) $normalizedUri);
+            $remoteSchema = $config->schemaPool->getSchemaByUri((string)$normalizedUri);
             if (!$remoteSchema) {
-                $remoteSchema = $config->schemaPool->fetchRemoteSchema((string) $normalizedUri);
+                $remoteSchema = $config->schemaPool->fetchRemoteSchema((string)$normalizedUri);
             }
 
             if (!isset($remoteSchema->{'$id'})) {
                 $context->registerSchema(
-                    (string) $normalizedUri,
+                    (string)$normalizedUri,
                     $remoteSchema,
                     $context->getCurrentSchemaKeywordLocation(-1)
                 );
             }
 
-            $context->pushSchema(schema: $remoteSchema, baseUri: (string) $normalizedUri);
+            $context->pushSchema(schema: $remoteSchema, baseUri: (string)$normalizedUri);
             $context->draft->evaluateStatic($context);
             $context->popSchema();
         }
 
-        $keywordValue = (string) $resolvedUri;
+        $keywordValue = (string)$resolvedUri;
     }
 
     /**
@@ -83,15 +86,17 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
      */
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var string $keywordValue */
+
         $uriComponents = explode('#', $keywordValue, 2);
         $fragment = $uriComponents[1] ?? '';
 
         if ($fragment && str_starts_with($fragment, '/')) {
             $referencedSchema = $this->dereferenceSchema($uriComponents[0], $context);
             $referencedSchema = $context->draft->dereferenceJsonPointer($referencedSchema, $fragment);
-            if ($referencedSchema === null) {
+            if (!is_bool($referencedSchema) && !$referencedSchema instanceof \stdClass) {
                 throw new KeywordRuntimeEvaluationException(
-                    'Can not dereference JSON pointer \'' . $fragment . '\'.',
+                    'Can not dereference valid schema from JSON pointer \'' . $fragment . '\'.',
                     $this,
                     $context
                 );
@@ -100,7 +105,10 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             $referencedSchema = $this->dereferenceSchema($keywordValue, $context);
         }
 
-        $schemaInstanceLocationHash = spl_object_hash($context->getCurrentSchema()) . ':' . $context->getCurrentInstanceLocation();
+        /** @var \stdClass $currentSchema */
+        $currentSchema = $context->getCurrentSchema();
+
+        $schemaInstanceLocationHash = spl_object_hash($currentSchema) . ':' . $context->getCurrentInstanceLocation();
         if (isset($this->processedSchemaInstanceLocations[$schemaInstanceLocationHash])) {
             throw new KeywordRuntimeEvaluationException(
                 '\'%s\' causes an infinite recursion.',
@@ -116,7 +124,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         $context->pushSchema(
             schema: $referencedSchema,
             baseUri: $uriComponents[0],
-            schemaLocation: (string) $context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
+            schemaLocation: (string)$context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
         );
 
         $result->valid = $context->draft->evaluate($context);
@@ -131,7 +139,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
     /**
      * @throws KeywordRuntimeEvaluationException
      */
-    protected function dereferenceSchema(string $schemaUri, RuntimeEvaluationContext $context): object
+    private function dereferenceSchema(string $schemaUri, RuntimeEvaluationContext $context): \stdClass
     {
         $referencedSchema = $context->staticEvaluationContext->getSchemaByUri($schemaUri);
         if (!$referencedSchema) {
@@ -145,20 +153,20 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
         return $referencedSchema;
     }
 
-    protected function scanSchemaForId(mixed $schemaPart, UriInterface $uri, StaticEvaluationContext $context): bool
+    private function scanSchemaForId(mixed $schemaPart, UriInterface $uri, StaticEvaluationContext $context): bool
     {
-        if (is_object($schemaPart)) {
+        if ($schemaPart instanceof \stdClass) {
             if (isset($schemaPart->{'$id'}) && is_string($schemaPart->{'$id'})) {
-                $idUri = $context->draft->createUri($schemaPart->{'$id'});
+                $idUri = $context->draft->tryCreateUri($schemaPart->{'$id'});
                 if ($idUri) {
                     $idUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $idUri);
-                    if ((string) $idUri == (string) $uri) {
+                    if ((string)$idUri == (string)$uri) {
                         return true;
                     }
                 }
             }
 
-            foreach ($schemaPart as $propertyName => $propertyValue) {
+            foreach (get_object_vars($schemaPart) as $propertyName => $propertyValue) {
                 if ($propertyName === '$id') {
                     continue;
                 }

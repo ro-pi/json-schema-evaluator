@@ -18,6 +18,7 @@ class WriteOnlyKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {

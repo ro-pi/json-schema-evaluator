@@ -6,7 +6,7 @@ namespace Ropi\JsonSchemaEvaluator\Output;
 abstract class AbstractOutput implements OutputInterface
 {
     public function __construct(
-        private bool $valid
+        private readonly bool $valid
     ){}
 
     public function getValid(): bool

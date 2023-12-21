@@ -22,10 +22,11 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -40,6 +41,8 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
@@ -55,8 +58,9 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
         $startIndex = is_int($prefixItemsAnnotation) ? $prefixItemsAnnotation : -1;
 
         for ($instanceIndex = ++$startIndex; $instanceIndex < count($instance); $instanceIndex++) {
+            /** @noinspection DuplicatedCode */
             $context->pushSchema($keywordValue);
-            $context->pushInstance($instance[$instanceIndex], (string) $instanceIndex);
+            $context->pushInstance($instance[$instanceIndex], (string)$instanceIndex);
 
             $valid = $context->draft->evaluate($context);
 

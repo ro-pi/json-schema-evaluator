@@ -21,6 +21,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,6 +36,8 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var list<mixed> $keywordValue */
+
         $result = $context->createResultForKeyword($this);
 
         foreach ($keywordValue as $enumElement) {

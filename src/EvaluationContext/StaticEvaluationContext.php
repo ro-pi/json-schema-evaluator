@@ -4,18 +4,34 @@ declare(strict_types=1);
 namespace Ropi\JsonSchemaEvaluator\EvaluationContext;
 
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
+use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class StaticEvaluationContext
 {
     use EvaluationContextTrait;
 
+    /**
+     * @var array<string, \stdClass>
+     */
     private array $schemas = [];
+
+    /**
+     * @var array<string, bool>
+     */
     private array $dynamicAnchors = [];
+
+    /**
+     * @var array<string, string>
+     */
     private array $schemaLocations = [];
+
+    /**
+     * @var \WeakMap<\stdClass, KeywordInterface[]>
+     */
     private \WeakMap $prioritizedSchemaKeywords;
 
     public function __construct(
-        object|bool $schema,
+        \stdClass|bool $schema,
         public readonly StaticEvaluationConfig $config
     ) {
         $this->draft = $this->config->defaultDraft;
@@ -28,27 +44,33 @@ class StaticEvaluationContext
             'baseUri' => '',
         ];
 
-        if (is_object($schema)) {
+        if ($schema instanceof \stdClass) {
             $this->registerSchema('', $schema, '');
         }
     }
 
-    public function registerPrioritizedSchemaKeywords(object $schema, array $prioritizedKeywords): void
+    /**
+     * @param KeywordInterface[] $prioritizedKeywords
+     */
+    public function registerPrioritizedSchemaKeywords(\stdClass $schema, array $prioritizedKeywords): void
     {
         $this->prioritizedSchemaKeywords[$schema] = $prioritizedKeywords;
     }
 
-    public function hasPrioritizedSchemaKeywords(object $schema): bool
+    public function hasPrioritizedSchemaKeywords(\stdClass $schema): bool
     {
         return isset($this->prioritizedSchemaKeywords[$schema]);
     }
 
-    public function getPrioritizedSchemaKeywords(object $schema): array
+    /**
+     * @return KeywordInterface[]
+     */
+    public function getPrioritizedSchemaKeywords(\stdClass $schema): array
     {
         return $this->prioritizedSchemaKeywords[$schema] ?? [];
     }
 
-    public function registerSchema(string $uri, object $schema, string $location): void
+    public function registerSchema(string $uri, \stdClass $schema, string $location): void
     {
         $this->schemas[$uri] = $schema;
         $this->schemaLocations[$uri] = $location;
@@ -59,7 +81,7 @@ class StaticEvaluationContext
         return isset($this->schemas[$uri]);
     }
 
-    public function getSchemaByUri(string $uri): ?object
+    public function getSchemaByUri(string $uri): ?\stdClass
     {
         return $this->schemas[$uri] ?? null;
     }

@@ -16,7 +16,7 @@ interface DraftInterface
     function registerKeyword(KeywordInterface $keyword, string $vocabulary): void;
     function getKeywordByName(string $name): KeywordInterface;
 
-    function schemaHasMutationKeywords(object|bool $schema): bool;
+    function schemaHasMutationKeywords(\stdClass|bool $schema): bool;
     function supportsVocabulary(string $vocabulary): bool;
 
     /**
@@ -59,11 +59,11 @@ interface DraftInterface
     function getUri(): string;
 
     function resolveUri(UriInterface|string $baseUri, UriInterface|string $uri): UriInterface;
-    function createUri(string $uri): ?UriInterface;
+    function tryCreateUri(string $uri): ?UriInterface;
 
-    function dereferenceJsonPointer(object $schema, string $fragment): mixed;
+    function dereferenceJsonPointer(\stdClass $schema, string $fragment): mixed;
 
-    function createNumber(mixed $value): ?NumberInterface;
+    function tryCreateNumber(mixed $value): ?NumberInterface;
     function valueIsNumeric(mixed $value): bool;
     function valuesAreEqual(mixed $value1, mixed $value2): bool;
 }

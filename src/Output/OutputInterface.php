@@ -6,5 +6,5 @@ namespace Ropi\JsonSchemaEvaluator\Output;
 interface OutputInterface
 {
     function getValid(): bool;
-    function format(): object;
+    function format(): \stdClass;
 }

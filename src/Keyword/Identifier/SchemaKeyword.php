@@ -21,6 +21,7 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -56,6 +57,8 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var string $keywordValue */
+
         $draft = $context->staticEvaluationContext->config->getSupportedDraftByUri($keywordValue);
 
         if ($draft) {

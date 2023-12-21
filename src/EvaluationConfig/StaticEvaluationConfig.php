@@ -17,9 +17,7 @@ class StaticEvaluationConfig
     private array $supportedDrafts = [];
 
     /**
-     * @param DraftInterface $defaultDraft
      * @param DraftInterface[] $supportedDrafts
-     * @param SchemaPoolInterface|null $schemaPool
      */
     public function __construct(
         public readonly DraftInterface $defaultDraft,

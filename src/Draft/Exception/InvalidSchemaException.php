@@ -9,11 +9,14 @@ class InvalidSchemaException extends DraftException
 {
     public function __construct(
         string $message,
-        private StaticEvaluationContext $context
+        private readonly StaticEvaluationContext $context
     ) {
         parent::__construct($message);
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function getContext(): StaticEvaluationContext
     {
         return $this->context;

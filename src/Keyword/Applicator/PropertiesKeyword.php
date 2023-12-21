@@ -22,10 +22,11 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be an object.',
                 $this,
@@ -33,10 +34,10 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             );
         }
 
-        foreach ($keywordValue as $propertyName => $propertySchema) {
-            $context->pushSchema(keywordLocationFragment: (string) $propertyName);
+        foreach (get_object_vars($keywordValue) as $propertyName => $propertySchema) {
+            $context->pushSchema(keywordLocationFragment: (string)$propertyName);
 
-            if (!is_object($propertySchema) && !is_bool($propertySchema)) {
+            if (!$propertySchema instanceof \stdClass && !is_bool($propertySchema)) {
                 throw new InvalidKeywordValueException(
                     'Property \''
                     . $propertyName
@@ -55,8 +56,10 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 
@@ -64,7 +67,9 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
         $evaluatedProperties = [];
 
-        foreach ($keywordValue as $propertyName => $propertySchema) {
+        foreach (get_object_vars($keywordValue) as $propertyName => $propertySchema) {
+            /** @var \stdClass $propertySchema|bool */
+
             $propertyExists = property_exists($instance, $propertyName);
 
             if (!$propertyExists) {
@@ -79,8 +84,8 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 $instance->$propertyName = null;
             }
 
-            $context->pushSchema(schema: $propertySchema, keywordLocationFragment: (string) $propertyName);
-            $context->pushInstance($instance->$propertyName, (string) $propertyName);
+            $context->pushSchema(schema: $propertySchema, keywordLocationFragment: (string)$propertyName);
+            $context->pushInstance($instance->$propertyName, (string)$propertyName);
 
             if ($propertyExists) {
                 $valid = $context->draft->evaluate($context);

@@ -21,6 +21,7 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,8 +36,10 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var int $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 

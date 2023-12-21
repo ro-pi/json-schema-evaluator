@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Ropi\JsonSchemaEvaluator\Tests\Draft;
+namespace Ropi\JsonSchemaEvaluator\Tests\Functional\Draft;
 
 use Ropi\JsonSchemaEvaluator\Draft\Draft202012;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\Tests\AbstractJsonSchemaTestSuite;
+use Ropi\JsonSchemaEvaluator\Tests\Functional\AbstractJsonSchemaTestSuite;
 
 class Draft202012AdditionalContentMutationAndAssertionTest extends AbstractJsonSchemaTestSuite
 {
@@ -36,7 +36,7 @@ class Draft202012AdditionalContentMutationAndAssertionTest extends AbstractJsonS
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
-    public function test(object|bool $testCollection)
+    public function test(\stdClass $testCollection): void
     {
         $staticEvaluationConfig = new StaticEvaluationConfig($this->draft);
 

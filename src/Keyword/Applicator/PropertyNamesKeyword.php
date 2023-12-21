@@ -22,10 +22,11 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -40,16 +41,19 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        foreach ($instance as $propertyName => $propertyValue) {
+        foreach (get_object_vars($instance) as $propertyName => $propertyValue) {
+            /** @noinspection DuplicatedCode */
             $context->pushSchema($keywordValue);
-            $context->pushInstance($propertyName, (string) $propertyName);
+            $context->pushInstance($propertyName, (string)$propertyName);
 
             $valid = $context->draft->evaluate($context);
 

@@ -22,10 +22,11 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -40,6 +41,8 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $result = $context->createResultForKeyword($this);
 
         $intermediateSchema = clone $context;

@@ -37,12 +37,12 @@ abstract class AbstractDraft implements DraftInterface
     protected array $vocabularies = [];
 
     public function __construct(
-        private string $uri = '',
-        private bool $assertFormat = false,
-        private bool $assertContentMediaTypeEncoding = false,
-        private bool $evaluateMutations = false,
-        private bool $acceptNumericStrings = false,
-        private bool $shortCircuit = false
+        private readonly string $uri = '',
+        private readonly bool $assertFormat = false,
+        private readonly bool $assertContentMediaTypeEncoding = false,
+        private readonly bool $evaluateMutations = false,
+        private readonly bool $acceptNumericStrings = false,
+        private readonly bool $shortCircuit = false
     ) {}
 
     public function getUri(): string
@@ -164,13 +164,13 @@ abstract class AbstractDraft implements DraftInterface
         return $this->keywords[$name] ?? new UnknownKeyword(1647650000, $name);
     }
 
-    public function schemaHasMutationKeywords(object|bool $schema): bool
+    public function schemaHasMutationKeywords(\stdClass|bool $schema): bool
     {
-        if (!is_object($schema)) {
+        if (!$schema instanceof \stdClass) {
             return false;
         }
 
-        foreach ($schema as $keywordName => $keywordValue) {
+        foreach (get_object_vars($schema) as $keywordName => $keywordValue) {
             if ($this->getKeywordByName($keywordName) instanceof MutationKeywordInterface) {
                 return true;
             }
@@ -191,7 +191,7 @@ abstract class AbstractDraft implements DraftInterface
             return;
         }
 
-        if (!is_object($schema)) {
+        if (!$schema instanceof \stdClass) {
             throw new InvalidSchemaException(
                 'JSON Schema must be an object or a boolean',
                 $context
@@ -271,17 +271,17 @@ abstract class AbstractDraft implements DraftInterface
     public function resolveUri(UriInterface|string $baseUri, UriInterface|string $uri): UriInterface
     {
         if (!$baseUri instanceof UriInterface) {
-            $baseUri = $this->createUri($baseUri);
+            $baseUri = UriNormalizer::normalize(new Uri($baseUri));
         }
 
         if (!$uri instanceof UriInterface) {
-            $uri = $this->createUri($uri);
+            $uri = UriNormalizer::normalize(new Uri($uri));
         }
 
         return UriNormalizer::normalize(UriResolver::resolve($baseUri, $uri));
     }
 
-    public function createUri(string $uri): ?UriInterface
+    public function tryCreateUri(string $uri): ?UriInterface
     {
         try {
             return UriNormalizer::normalize(new Uri($uri));
@@ -292,7 +292,7 @@ abstract class AbstractDraft implements DraftInterface
         return null;
     }
 
-    public function dereferenceJsonPointer(object $schema, string $fragment): mixed
+    public function dereferenceJsonPointer(\stdClass $schema, string $fragment): mixed
     {
         if (!$fragment) {
             return $schema;
@@ -311,7 +311,7 @@ abstract class AbstractDraft implements DraftInterface
                 }
 
                 $currentSchemaPart = &$currentSchemaPart[$token];
-            } elseif (is_object($currentSchemaPart)) {
+            } elseif ($currentSchemaPart instanceof \stdClass) {
                 if (!isset($currentSchemaPart->{$token})) {
                     return null;
                 }
@@ -325,7 +325,7 @@ abstract class AbstractDraft implements DraftInterface
         return $currentSchemaPart;
     }
 
-    public function createNumber(mixed $value): ?NumberInterface
+    public function tryCreateNumber(mixed $value): ?NumberInterface
     {
         if ($value instanceof NumberInterface) {
             return clone $value;
@@ -358,41 +358,47 @@ abstract class AbstractDraft implements DraftInterface
     public function valuesAreEqual(mixed $value1, mixed $value2): bool
     {
         if ($this->valueIsNumeric($value1) && $this->valueIsNumeric($value2)) {
-            return $this->createNumber($value1)->equals($this->createNumber($value2));
+            /* @phpstan-ignore-next-line */
+            return $this->tryCreateNumber($value1)->equals($this->tryCreateNumber($value2));
         }
 
         if (gettype($value1) !== gettype($value2)) {
             return false;
         }
 
-        $isArray = is_array($value1);
-        if ($isArray || is_object($value1)) {
+        if (is_array($value1) && is_array($value2)) {
             foreach ($value1 as $key => $value) {
-                if ($isArray) {
-                    if (!array_key_exists($key, $value2)) {
-                        return false;
-                    }
+                if (!array_key_exists($key, $value2)) {
+                    return false;
+                }
 
-                    if (!$this->valuesAreEqual($value, $value2[$key])) {
-                        return false;
-                    }
-                } else {
-                    if (!property_exists($value2, $key)) {
-                        return false;
-                    }
-
-                    if (!$this->valuesAreEqual($value, $value2->$key)) {
-                        return false;
-                    }
+                if (!$this->valuesAreEqual($value, $value2[$key])) {
+                    return false;
                 }
             }
 
             foreach ($value2 as $key => $value) {
-                if ($isArray) {
-                    if (!array_key_exists($key, $value1)) {
-                        return false;
-                    }
-                } elseif (!property_exists($value1, $key)) {
+                if (!array_key_exists($key, $value1)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if ($value1 instanceof \stdClass && $value2 instanceof \stdClass) {
+            foreach (get_object_vars($value1) as $propertyName => $propertyValue) {
+                if (!property_exists($value2, $propertyName)) {
+                    return false;
+                }
+
+                if (!$this->valuesAreEqual($propertyValue, $value2->$propertyName)) {
+                    return false;
+                }
+            }
+
+            foreach (get_object_vars($value2) as $key => $value) {
+                if (!property_exists($value1, $key)) {
                     return false;
                 }
             }
@@ -403,12 +409,14 @@ abstract class AbstractDraft implements DraftInterface
         return $value1 === $value2;
     }
 
-    protected function prioritizeSchemaKeywords(object $schema, StaticEvaluationContext $context): array
+    /**
+     * @return KeywordInterface[]
+     */
+    protected function prioritizeSchemaKeywords(\stdClass $schema, StaticEvaluationContext $context): array
     {
-        /** @var StaticKeywordInterface[] $prioritizedKeywords */
         $prioritizedKeywords = [];
 
-        foreach ($schema as $keywordName => $keywordValue) {
+        foreach (get_object_vars($schema) as $keywordName => $keywordValue) {
             $keyword = $context->draft->getKeywordByName($keywordName);
             $prioritizedKeywords[$keyword->getPriority()] = $keyword;
         }

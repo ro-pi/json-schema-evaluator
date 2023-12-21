@@ -21,6 +21,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, 
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,6 +36,8 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, 
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var string $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;

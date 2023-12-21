@@ -23,10 +23,11 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -41,6 +42,8 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
@@ -56,6 +59,8 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
         if ($context->draft->evaluateMutations()) {
             if ($this->shouldParseInstance($contentMediaType)) {
                 $parseError = null;
+
+                /* @phpstan-ignore-next-line */
                 set_error_handler(static function(int $severity, string $error) use(&$parseError) {
                     $parseError = $error;
                 });
@@ -86,12 +91,18 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
         return str_starts_with($contentMediaType, 'application/json');
     }
 
-    protected function parseInstance(RuntimeEvaluationContext $context): object|array|null
+    /**
+     * @return \stdClass|array<scalar, mixed>|null
+     */
+    protected function parseInstance(RuntimeEvaluationContext $context): \stdClass|array|null
     {
+        /** @var string $instance */
+        $instance = $context->getCurrentInstance();
         $flags = $context->draft->acceptNumericStrings() ? JSON_BIGINT_AS_STRING : 0;
-        $parsed = json_decode($context->getCurrentInstance(), false, 512, $flags);
 
-        if (!is_object($parsed) && !is_array($parsed)) {
+        $parsed = json_decode($instance, false, 512, $flags);
+
+        if (!$parsed instanceof \stdClass && !is_array($parsed)) {
             return null;
         }
 

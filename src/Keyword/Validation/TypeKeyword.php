@@ -56,7 +56,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             if (!isset(static::SUPPORTED_TYPES[$type])) {
                 throw new InvalidKeywordValueException(
                     'The value of \'%s\' must be a valid type ('
-                    . $this->arrayToHumanReadableList(static::SUPPORTED_TYPES)
+                    . $this->stringArrayToHumanReadableList(static::SUPPORTED_TYPES)
                     . ') or an array of valid types.',
                     $this,
                     $context
@@ -69,6 +69,8 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var list<string> $keywordValue */
+
         if (!$keywordValue) {
             //Ignore keyword also if empty or false (same as default behavior)
             return null;
@@ -90,7 +92,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
         $result->invalidate(
             'Type '
-            . $this->arrayToHumanReadableList($keywordValue)
+            . $this->stringArrayToHumanReadableList($keywordValue)
             . ' expected, but is '
             . $instanceType
             . '.'
@@ -102,9 +104,9 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
     protected function detectType(mixed $instance, RuntimeEvaluationContext $context): string
     {
         return match (true) {
-            is_object($instance) => 'object',
+            $instance instanceof \stdClass => 'object',
             is_array($instance) => 'array',
-            $context->draft->createNumber($instance)?->isInteger() => 'integer',
+            $context->draft->tryCreateNumber($instance)?->isInteger() => 'integer',
             $context->draft->valueIsNumeric($instance) => 'number',
             is_string($instance) => 'string',
             is_bool($instance) => 'boolean',
@@ -113,14 +115,18 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         };
     }
 
-    protected function arrayToHumanReadableList(array $array): string
+    /**
+     * @param string[] $stringArray
+     * @return string
+     */
+    protected function stringArrayToHumanReadableList(array $stringArray): string
     {
-        if (count($array) <= 1) {
-            return implode(', ', $array);
+        if (count($stringArray) <= 1) {
+            return implode(', ', $stringArray);
         }
 
-        $lastElement = array_pop($array);
-        $list = implode(', ', $array);
+        $lastElement = array_pop($stringArray);
+        $list = implode(', ', $stringArray);
 
         if ($lastElement) {
             $list .= ' or ' . $lastElement;

@@ -14,7 +14,7 @@ class JsonSchemaEvaluator implements JsonSchemaEvaluatorInterface
      * @throws Draft\Exception\InvalidSchemaException
      * @throws Keyword\Exception\StaticKeywordAnalysisException
      */
-    public function evaluateStatic(object|bool $jsonSchema, StaticEvaluationConfig $config): StaticEvaluationContext
+    public function evaluateStatic(\stdClass|bool $jsonSchema, StaticEvaluationConfig $config): StaticEvaluationContext
     {
         $context = new StaticEvaluationContext($jsonSchema, $config);
 

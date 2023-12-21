@@ -20,7 +20,7 @@ class ContentMediaTypeKeyword extends AbstractKeyword implements StaticKeywordIn
     }
 
     protected const PATTERN_MIME_TYPE_FORMAT = <<<'REGEX'
-/[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+\/[a-z0-9!#\$%\^&\*_\-\+\{\}\|'\.`~]+/i
+/[a-z0-9!#$%^&*_\-+{}|'.`~]+\/[a-z0-9!#$%^&*_\-+{}|'.`~]+/i
 REGEX;
 
     /**
@@ -57,6 +57,7 @@ REGEX;
         $result = $context->createResultForKeyword($this);
 
         if ($context->draft->assertContentMediaTypeEncoding()) {
+            /** @var resource $stream */
             $stream = fopen('php://memory','r+');
             fwrite($stream, $instance);
             rewind($stream);

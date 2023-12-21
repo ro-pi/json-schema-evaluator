@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Ropi\JsonSchemaEvaluator\Tests;
+namespace Ropi\JsonSchemaEvaluator\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 use Ropi\JsonSchemaEvaluator\JsonSchemaEvaluator;
 use Ropi\JsonSchemaEvaluator\Output\BasicOutput;
 
@@ -19,6 +20,9 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
 
     abstract protected function getRelativeTestsPath(): string;
 
+    /**
+     * @return array<array<\stdClass>>
+     */
     public function jsonSchemaTestSuiteProvider(): array
     {
         $data = [];
@@ -60,8 +64,8 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
     protected function evaluateTestCollection(
-        object|bool $testCollection,
-        ?StaticEvaluationConfig $staticEvaluationConfig
+        \stdClass $testCollection,
+        StaticEvaluationConfig $staticEvaluationConfig
     ): void {
         $staticEvaluationContext = $this->jsonSchemaValidator->evaluateStatic(
             $testCollection->schema,
@@ -81,8 +85,8 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
 
             if (property_exists($test, 'mutatedData')) {
                 $this->assertJsonStringEqualsJsonString(
-                    json_encode($test->mutatedData),
-                    json_encode($instance),
+                    (string)json_encode($test->mutatedData),
+                    (string)json_encode($instance),
                     'Mutation test failed'
                     . PHP_EOL
                     . 'Test Collection: '
@@ -95,7 +99,10 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
         }
     }
 
-    protected function assertExpectedResult(bool $valid, array $results, object $testCollection, object $test): void
+    /**
+     * @param RuntimeEvaluationResult[] $results
+     */
+    protected function assertExpectedResult(bool $valid, array $results, \stdClass $testCollection, \stdClass $test): void
     {
         $this->assertEquals(
             $test->valid,
@@ -123,9 +130,12 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
         );
     }
 
+    /**
+     * @return \Traversable<\SplFileInfo>
+     */
     protected function getFileCollection(): \Traversable
     {
-        $testSuiteDir = __DIR__ . '/resources/json-schema-test-suite/tests';
+        $testSuiteDir = __DIR__ . '/../Resources/json-schema-test-suite/tests';
         $path = $testSuiteDir . '/' . $this->getRelativeTestsPath();
 
         if (is_dir($path)) {

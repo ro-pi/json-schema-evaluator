@@ -13,12 +13,21 @@ class BasicOutput extends AbstractOutput
      */
     public function __construct(
         bool $valid,
-        protected array $results
+        private readonly array $results
     ) {
         parent::__construct($valid);
     }
 
-    public function format(): object
+    /**
+     * @return RuntimeEvaluationResult[]
+     * @noinspection PhpUnused
+     */
+    public function getResults(): array
+    {
+        return $this->results;
+    }
+
+    public function format(): \stdClass
     {
         $formattedResult = new \stdClass();
         $formattedResult->valid = $this->getValid();
@@ -39,7 +48,7 @@ class BasicOutput extends AbstractOutput
         return $formattedResult;
     }
 
-    protected function createOutputUnit(RuntimeEvaluationResult $result): object
+    private function createOutputUnit(RuntimeEvaluationResult $result): \stdClass
     {
         $outputUnit = new \stdClass();
         $outputUnit->valid = $result->valid;

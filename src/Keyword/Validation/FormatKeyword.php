@@ -15,11 +15,11 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 class FormatKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
     protected const PATTERN_URI_TEMPLATE = <<<'REGEX'
-/^((([\x{21}\x{23}\x{24}\x{26}\x{28}-\x{3B}\x{3D}\x{3F}-\x{5B}\x{5D}\x{5F}\x{61}-\x{7A}\x{7E}]|([\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}])|([\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}])|(%[A-F0-9][A-F0-9])))|(\{(((\+|#)|(\.|\/|;|\?|&)|(\=|,|\!|@|\|)))?([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?(,([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*((\:[1-9][0-9]{0,3}|\*))?)*\}))*$/iu
+/^(([\x{21}\x{23}\x{24}\x{26}\x{28}-\x{3B}\x{3D}\x{3F}-\x{5B}\x{5D}\x{5F}\x{61}-\x{7A}\x{7E}]|([\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}])|([\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}])|(%[A-F0-9][A-F0-9]))|(\{([+#]|[.\/;?&]|[=,!@|])?([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*(:[1-9][0-9]{0,3}|\*)?(,([A-Z_0-9]|%[0-9A-F][0-9A-F])((\.)?([A-Z_0-9]|%[0-9A-F][0-9A-F]))*(:[1-9][0-9]{0,3}|\*)?)*}))*$/iu
 REGEX;
 
     protected const PATTERN_DURATION = <<<'REGEX'
-/^(P((([0-9]+D|[0-9]+M([0-9]+D)?|[0-9]+Y([0-9]+M([0-9]+D)?)?)((T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S)))?)|(T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S))|[0-9]+W))$/
+/^(P((([0-9]+D|[0-9]+M([0-9]+D)?|[0-9]+Y([0-9]+M([0-9]+D)?)?)(T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S))?)|(T([0-9]+H([0-9]+M([0-9]+S)?)?|[0-9]+M([0-9]+S)?|[0-9]+S))|[0-9]+W))$/
 REGEX;
 
     protected const PATTERN_DURATION_WEEKS = <<<'REGEX'
@@ -27,19 +27,19 @@ REGEX;
 REGEX;
 
     protected const PATTERN_URI_SCHEME = <<<'REGEX'
-/^[a-z][a-z0-9\+-\.]*$/
+/^[a-z][a-z0-9+\-.]*$/
 REGEX;
 
     protected const PATTERN_URI_PATH_SEGMENT = <<<'REGEX'
-/^([a-z0-9\-\._~]|%[0-9a-f][0-9a-f]|[!\$&\(\)*+,;=']|[:@]')+$/i
+/^([a-z0-9\-._~]|%[0-9a-f][0-9a-f]|[!$&()*+,;=']|[:@]')+$/i
 REGEX;
 
     protected const PATTERN_URI_FRAGMENT = <<<'REGEX'
-/^([a-z0-9\-\._~]|%[0-9a-f][0-9a-f]|[!\$&\(\)*+,;=']|[:@\/?]')+$/i
+/^([a-z0-9\-._~]|%[0-9a-f][0-9a-f]|[!$&()*+,;=']|[:@\/?]')+$/i
 REGEX;
 
     protected const PATTERN_URN = <<<'REGEX'
-/^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9\(\)+,\-.:=@;\$_!*'%\/?#]+$/
+/^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%\/?#]+$/
 REGEX;
 
     protected const PATTERN_UUID = <<<'REGEX'
@@ -47,7 +47,7 @@ REGEX;
 REGEX;
 
     protected const PATTERN_PHONE = <<<'REGEX'
-/^(\+([0-9]|((\-|\.|\(|\)))?)*[0-9]([0-9]|((\-|\.|\(|\)))?)*(;([-A-Za-z0-9]+)(\=((\[|\]|\/|\:|&|\+|\$)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext\=([0-9]|((\-|\.|\(|\)))?)+|;isub\=((;|\/|\?|\:|@|&|\=|\+|\$|,)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)*|(([0-9A-Fa-f]|\*|#|((\-|\.|\(|\)))?)*([0-9A-Fa-f]|\*|#)([0-9A-Fa-f]|\*|#|((\-|\.|\(|\)))?)*)(;([-A-Za-z0-9]+)(\=((\[|\]|\/|\:|&|\+|\$)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext\=([0-9]|((\-|\.|\(|\)))?)+|;isub\=((;|\/|\?|\:|@|&|\=|\+|\$|,)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)*;phone\-context\=((([A-Za-z0-9]|[A-Za-z0-9][-A-Za-z0-9]*[A-Za-z0-9])\.)*([A-Za-z]|[A-Za-z][-A-Za-z0-9]*[A-Za-z0-9])(\.)?|\+([0-9]|((\-|\.|\(|\)))?)*[0-9]([0-9]|((\-|\.|\(|\)))?)*)(;([-A-Za-z0-9]+)(\=((\[|\]|\/|\:|&|\+|\$)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext\=([0-9]|((\-|\.|\(|\)))?)+|;isub\=((;|\/|\?|\:|@|&|\=|\+|\$|,)|([A-Za-z0-9]|(\-|_|\.|\!|~|\*|'|\(|\)))|%[0-9A-Fa-f][0-9A-Fa-f])+)*)$/
+/^(\+([0-9]|[\-.()]?)*[0-9]([0-9]|[\-.()]?)*(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*|(([0-9A-Fa-f]|\*|#|([\-.()])?)*([0-9A-Fa-f]|\*|#)([0-9A-Fa-f]|\*|#|([\-.()])?)*)(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*;phone-context=((([A-Za-z0-9]|[A-Za-z0-9][-A-Za-z0-9]*[A-Za-z0-9])\.)*([A-Za-z]|[A-Za-z][-A-Za-z0-9]*[A-Za-z0-9])(\.)?|\+([0-9]|([\-.()])?)*[0-9]([0-9]|([\-.()])?)*)(;([-A-Za-z0-9]+)(=([\[\]\/:&+$]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)?|;ext=([0-9]|([\-.()])?)+|;isub=([;\/?:@&=+$,]|([A-Za-z0-9]|[\-_.!~*'()])|%[0-9A-Fa-f][0-9A-Fa-f])+)*)$/
 REGEX;
 
     protected const IDN_DISALLOWED_CHARS = [
@@ -78,6 +78,7 @@ REGEX;
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -100,25 +101,25 @@ REGEX;
         $result = $context->createResultForKeyword($this);
 
         $valid = match ($keywordValue) {
-            'email' => $this->evaluateEmail($context),
-            'idn-email' => $this->evaluateIdnEmail($context),
-            'regex' => $this->evaluateRegex($context),
-            'ipv4' => $this->evaluateIpv4($context),
-            'ipv6' => $this->evaluateIpv6($context),
-            'idn-hostname' => $this->evaluateIdnHostname($context),
-            'hostname' => $this->evaluateHostname($context),
-            'date' => $this->evaluateDate($context),
-            'date-time' => $this->evaluateDateTime($context),
-            'time' => $this->evaluateTime($context),
-            'json-pointer' => $this->evaluateJsonPointer($context),
-            'relative-json-pointer' => $this->evaluateRelativeJsonPointer($context),
-            'iri' => $this->evaluateIri($context),
-            'iri-reference' => $this->evaluateIriReference($context),
-            'uri' => $this->evaluateUri($context),
-            'uri-reference' => $this->evaluateUriReference($context),
-            'uri-template' => $this->evaluateUriTemplate($context),
-            'uuid' => $this->evaluateUuid($context),
-            'duration' => $this->evaluateDuration($context),
+            'email' => $this->evaluateEmail($instance),
+            'idn-email' => $this->evaluateIdnEmail($instance),
+            'regex' => $this->evaluateRegex($instance),
+            'ipv4' => $this->evaluateIpv4($instance),
+            'ipv6' => $this->evaluateIpv6($instance),
+            'idn-hostname' => $this->evaluateIdnHostname($instance),
+            'hostname' => $this->evaluateHostname($instance),
+            'date' => $this->evaluateDate($instance),
+            'date-time' => $this->evaluateDateTime($instance),
+            'time' => $this->evaluateTime($instance),
+            'json-pointer' => $this->evaluateJsonPointer($instance),
+            'relative-json-pointer' => $this->evaluateRelativeJsonPointer($instance),
+            'iri' => $this->evaluateIri($instance),
+            'iri-reference' => $this->evaluateIriReference($instance),
+            'uri' => $this->evaluateUri($instance),
+            'uri-reference' => $this->evaluateUriReference($instance),
+            'uri-template' => $this->evaluateUriTemplate($instance),
+            'uuid' => $this->evaluateUuid($instance),
+            'duration' => $this->evaluateDuration($instance),
             default => true
         };
 
@@ -135,100 +136,100 @@ REGEX;
         return $result;
     }
 
-    protected function evaluateEmail(RuntimeEvaluationContext $context): bool
+    protected function evaluateEmail(string $instance): bool
     {
-        return $this->checkEmail($context->getCurrentInstance());
+        return $this->checkEmail($instance);
     }
 
-    protected function evaluateIdnEmail(RuntimeEvaluationContext $context): bool
+    protected function evaluateIdnEmail(string $instance): bool
     {
-        return $this->checkIdnEmail($context->getCurrentInstance());
+        return $this->checkIdnEmail($instance);
     }
 
-    protected function evaluateRegex(RuntimeEvaluationContext $context): bool
+    protected function evaluateRegex(string $instance): bool
     {
-        return $this->checkRegexPattern($context->getCurrentInstance());
+        return $this->checkRegexPattern($instance);
     }
 
-    protected function evaluateIpv4(RuntimeEvaluationContext $context): bool
+    protected function evaluateIpv4(string $instance): bool
     {
-        return $this->checkIpv4($context->getCurrentInstance());
+        return $this->checkIpv4($instance);
     }
 
-    protected function evaluateIpv6(RuntimeEvaluationContext $context): bool
+    protected function evaluateIpv6(string $instance): bool
     {
-        return $this->checkIpv6($context->getCurrentInstance());
+        return $this->checkIpv6($instance);
     }
 
-    protected function evaluateIdnHostname(RuntimeEvaluationContext $context): bool
+    protected function evaluateIdnHostname(string $instance): bool
     {
-        return $this->checkIdn($context->getCurrentInstance());
+        return $this->checkIdn($instance);
     }
 
-    protected function evaluateHostname(RuntimeEvaluationContext $context): bool
+    protected function evaluateHostname(string $instance): bool
     {
-        return $this->checkHostname($context->getCurrentInstance());
+        return $this->checkHostname($instance);
     }
 
-    protected function evaluateDate(RuntimeEvaluationContext $context): bool
+    protected function evaluateDate(string $instance): bool
     {
-        return $this->checkRfc3339Date($context->getCurrentInstance());
+        return $this->checkRfc3339Date($instance);
     }
 
-    protected function evaluateDateTime(RuntimeEvaluationContext $context): bool
+    protected function evaluateDateTime(string $instance): bool
     {
-        return $this->checkRfc3339Date(substr($context->getCurrentInstance(), 0, 10))
-                && $this->checkRfc3339Time(substr($context->getCurrentInstance(), 11));
+        return $this->checkRfc3339Date(substr($instance, 0, 10))
+                && $this->checkRfc3339Time(substr($instance, 11));
     }
 
-    protected function evaluateTime(RuntimeEvaluationContext $context): bool
+    protected function evaluateTime(string $instance): bool
     {
-        return $this->checkRfc3339Time($context->getCurrentInstance());
+        return $this->checkRfc3339Time($instance);
     }
 
-    protected function evaluateJsonPointer(RuntimeEvaluationContext $context): bool
+    protected function evaluateJsonPointer(string $instance): bool
     {
-        return $this->checkJsonPointer($context->getCurrentInstance(), true);
+        return $this->checkJsonPointer($instance, true);
     }
 
-    protected function evaluateRelativeJsonPointer(RuntimeEvaluationContext $context): bool
+    protected function evaluateRelativeJsonPointer(string $instance): bool
     {
-        return $this->checkJsonPointer($context->getCurrentInstance(), false);
+        return $this->checkJsonPointer($instance, false);
     }
 
-    protected function evaluateIri(RuntimeEvaluationContext $context): bool
+    protected function evaluateIri(string $instance): bool
     {
-        return $this->checkUri($context->getCurrentInstance(), true, true);
+        return $this->checkUri($instance, true, true);
     }
 
-    protected function evaluateIriReference(RuntimeEvaluationContext $context): bool
+    protected function evaluateIriReference(string $instance): bool
     {
-        return $this->checkUri($context->getCurrentInstance(), false, true);
+        return $this->checkUri($instance, false, true);
     }
 
-    protected function evaluateUri(RuntimeEvaluationContext $context): bool
+    protected function evaluateUri(string $instance): bool
     {
-        return $this->checkUri($context->getCurrentInstance(), true);
+        return $this->checkUri($instance, true);
     }
 
-    protected function evaluateUriReference(RuntimeEvaluationContext $context): bool
+    protected function evaluateUriReference(string $instance): bool
     {
-        return $this->checkUri($context->getCurrentInstance(), false);
+        return $this->checkUri($instance, false);
     }
 
-    protected function evaluateUriTemplate(RuntimeEvaluationContext $context): bool
+    protected function evaluateUriTemplate(string $instance): bool
     {
-        return $this->checkUriTemplate($context->getCurrentInstance());
+        return $this->checkUriTemplate($instance);
     }
 
-    protected function evaluateUuid(RuntimeEvaluationContext $context): bool
+    protected function evaluateUuid(string $instance): bool
     {
-        return $this->checkUuid($context->getCurrentInstance());
+        return $this->checkUuid($instance);
     }
 
-    protected function evaluateDuration(RuntimeEvaluationContext $context): bool
+    protected function evaluateDuration(string $instance): bool
     {
-        return $this->checkDuration($context->getCurrentInstance());
+        return $this->checkDuration($instance);
     }
 
     protected function checkUriTemplate(string $uriTemplate): bool
@@ -322,7 +323,7 @@ REGEX;
             return false;
         }
 
-        return checkdate((int) $month, (int) $day, (int) $year);
+        return checkdate((int)$month, (int)$day, (int)$year);
     }
 
     protected function checkRfc3339Time(string $rfcTime): bool
@@ -333,6 +334,8 @@ REGEX;
         }
 
         $offsetSign = $matches[0];
+
+        /* @phpstan-ignore-next-line */
         $parts = explode($offsetSign, $rfcTime, 2);
         $timeParts = explode(':', $parts[0], 3);
 
@@ -449,7 +452,7 @@ REGEX;
             }
         }
 
-        $punycoded = idn_to_ascii(
+        $punycoded = (string)idn_to_ascii(
             $idn,
             IDNA_CHECK_CONTEXTJ | IDNA_CHECK_BIDI | IDNA_USE_STD3_RULES | IDNA_NONTRANSITIONAL_TO_ASCII,
             INTL_IDNA_VARIANT_UTS46,
@@ -540,11 +543,11 @@ REGEX;
 
         if ($international) {
             foreach ($uriComponents as $key => $value) {
-                $uriComponents[$key] = idn_to_ascii((string) $value);
+                $uriComponents[$key] = idn_to_ascii((string)$value);
             }
         }
 
-        $scheme = strtolower($uriComponents['scheme'] ?? '');
+        $scheme = strtolower(($uriComponents['scheme'] ?? '') ?: '');
         $host = $uriComponents['host'] ?? '';
         $path = $uriComponents['path'] ?? '';
         $fragment = $uriComponents['fragment'] ?? '';

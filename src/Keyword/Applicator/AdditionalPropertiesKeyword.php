@@ -22,10 +22,11 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -40,8 +41,10 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 
@@ -50,7 +53,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
 
         foreach ($context->getResultsByKeywordName('properties') as $propertiesResult) {
             $propertiesAnnotation = $propertiesResult->getAnnotation();
-            if (!$propertiesAnnotation) {
+            if (!is_array($propertiesAnnotation)) {
                 continue;
             }
 
@@ -61,7 +64,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
 
         foreach ($context->getResultsByKeywordName('patternProperties') as $patternPropertiesResult) {
             $patternPropertiesAnnotation = $patternPropertiesResult->getAnnotation();
-            if (!$patternPropertiesAnnotation) {
+            if (!is_array($patternPropertiesAnnotation)) {
                 continue;
             }
 
@@ -72,13 +75,14 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
 
         $additionalEvaluatedPropertyNames = [];
 
-        foreach ($instance as $propertyName => &$propertyValue) {
+        foreach (get_object_vars($instance) as $propertyName => &$propertyValue) {
             if (isset($evaluatedPropertyNames[$propertyName])) {
                 continue;
             }
 
+            /** @noinspection DuplicatedCode */
             $context->pushSchema($keywordValue);
-            $context->pushInstance($propertyValue, (string) $propertyName);
+            $context->pushInstance($propertyValue, (string)$propertyName);
 
             $valid = $context->draft->evaluate($context);
 

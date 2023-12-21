@@ -25,9 +25,12 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->draft->createNumber($keywordValue);
+        $number = $context->draft->tryCreateNumber($keywordValue);
 
-        if (!$number || $number->lessThanOrEquals($context->draft->createNumber(0))) {
+        /** @var NumberInterface $zero */
+        $zero = $context->draft->tryCreateNumber(0);
+
+        if (!$number || $number->lessThanOrEquals($zero)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a number greater than 0.',
                 $this,
@@ -40,14 +43,19 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->draft->createNumber($context->getCurrentInstance());
+        /** @var NumberInterface $keywordValue */
+
+        $instanceNumber = $context->draft->tryCreateNumber($context->getCurrentInstance());
         if (!$instanceNumber instanceof NumberInterface) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        if (!$instanceNumber->mod($keywordValue)->equals($context->draft->createNumber(0))) {
+        /** @var NumberInterface $zero */
+        $zero = $context->draft->tryCreateNumber(0);
+
+        if (!$instanceNumber->mod($keywordValue)->equals($zero)) {
             $result->invalidate(
                 $context->getCurrentInstance()
                 . ' is not a multiple of '

@@ -19,10 +19,11 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
      * @throws InvalidKeywordValueException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be an object.',
                 $this,
@@ -30,10 +31,10 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
             );
         }
 
-        foreach ($keywordValue as $schemaIdentifier => $schema) {
-            $context->pushSchema(keywordLocationFragment: (string) $schemaIdentifier);
+        foreach (get_object_vars($keywordValue) as $schemaIdentifier => $schema) {
+            $context->pushSchema(keywordLocationFragment: (string)$schemaIdentifier);
 
-            if (!is_object($schema) && !is_bool($schema)) {
+            if (!$schema instanceof \stdClass && !is_bool($schema)) {
                 throw new InvalidKeywordValueException(
                     'Each member of \'%s\' must be a valid JSON Schema.',
                     $this,

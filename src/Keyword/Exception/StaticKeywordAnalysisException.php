@@ -11,17 +11,23 @@ class StaticKeywordAnalysisException extends JsonSchemaEvaluatorException
 {
     public function __construct(
         string $message,
-        private StaticKeywordInterface $keyword,
-        private StaticEvaluationContext $context
+        private readonly StaticKeywordInterface $keyword,
+        private readonly StaticEvaluationContext $context
     ) {
         parent::__construct(sprintf($message, $this->keyword->getName()));
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function getContext(): StaticEvaluationContext
     {
         return $this->context;
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function getKeyword(): StaticKeywordInterface
     {
         return $this->keyword;

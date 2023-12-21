@@ -18,6 +18,7 @@ class DeprecatedKeyword extends AbstractKeyword implements StaticKeywordInterfac
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {

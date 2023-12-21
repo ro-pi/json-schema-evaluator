@@ -21,10 +21,11 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be an object.',
                 $this,
@@ -32,8 +33,8 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
             );
         }
 
-        foreach ($keywordValue as $dependencyPropertyName => $requiredProperties) {
-            $context->pushSchema(keywordLocationFragment: (string) $dependencyPropertyName);
+        foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $requiredProperties) {
+            $context->pushSchema(keywordLocationFragment: (string)$dependencyPropertyName);
 
             if (!is_array($requiredProperties)) {
                 throw new InvalidKeywordValueException(
@@ -46,7 +47,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
             }
 
             foreach ($requiredProperties as $requiredPropertyKey => $requiredProperty) {
-                $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+                $context->pushSchema(keywordLocationFragment: (string)$requiredPropertyKey);
 
                 if (!is_string($requiredProperty)) {
                     throw new InvalidKeywordValueException(
@@ -67,21 +68,25 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        foreach ($keywordValue as $dependencyPropertyName => $requiredProperties) {
+        foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $requiredProperties) {
+            /** @var list<string> $requiredProperties */
+
             if (!property_exists($instance, $dependencyPropertyName)) {
                 continue;
             }
 
             foreach ($requiredProperties as $requiredPropertyKey => $requiredProperty) {
                 if (!property_exists($instance, $requiredProperty)) {
-                    $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+                    $context->pushSchema(keywordLocationFragment: (string)$requiredPropertyKey);
 
                     $context->createResultForKeyword($this)->invalidate(
                         'Dependent required property \''

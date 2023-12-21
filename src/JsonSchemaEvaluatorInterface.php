@@ -13,7 +13,7 @@ interface JsonSchemaEvaluatorInterface
      * @throws Draft\Exception\InvalidSchemaException
      * @throws Keyword\Exception\StaticKeywordAnalysisException
      */
-    function evaluateStatic(object $jsonSchema, StaticEvaluationConfig $config): StaticEvaluationContext;
+    function evaluateStatic(\stdClass $jsonSchema, StaticEvaluationConfig $config): StaticEvaluationContext;
 
     /**
      * @param mixed $instance

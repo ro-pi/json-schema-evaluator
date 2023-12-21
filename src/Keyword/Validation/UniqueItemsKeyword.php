@@ -21,6 +21,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,6 +36,8 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var bool $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
@@ -50,10 +53,10 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         $complexItems = [];
 
         foreach ($instance as $instanceKey => $instanceValue) {
-            if (is_array($instanceValue) || is_object($instanceValue)) {
+            if (is_array($instanceValue) || $instanceValue instanceof \stdClass) {
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
-                        $context->pushInstance($instanceValue, (string) $instanceKey);
+                        $context->pushInstance($instanceValue, (string)$instanceKey);
                         $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
                         $context->popInstance();
 
@@ -72,7 +75,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
-                $context->pushInstance($instanceValue, (string) $instanceKey);
+                $context->pushInstance($instanceValue, (string)$instanceKey);
                 $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
                 $context->popInstance();
 

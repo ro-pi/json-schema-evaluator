@@ -21,6 +21,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -33,7 +34,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
         }
 
         foreach ($keywordValue as $requiredPropertyKey => $requiredProperty) {
-            $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+            $context->pushSchema(keywordLocationFragment: (string)$requiredPropertyKey);
 
             if (!is_string($requiredProperty)) {
                 throw new InvalidKeywordValueException(
@@ -49,8 +50,10 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var list<string> $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance) || !$keywordValue) {
+        if (!$instance instanceof \stdClass || !$keywordValue) {
             //Ignore keyword also if empty (same as default behavior)
             return null;
         }
@@ -59,7 +62,7 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
 
         foreach ($keywordValue as $requiredPropertyKey => $requiredProperty) {
             if (!property_exists($instance, $requiredProperty)) {
-                $context->pushSchema(keywordLocationFragment: (string) $requiredPropertyKey);
+                $context->pushSchema(keywordLocationFragment: (string)$requiredPropertyKey);
 
                 $context->createResultForKeyword($this)->invalidate(
                     'Required property \''

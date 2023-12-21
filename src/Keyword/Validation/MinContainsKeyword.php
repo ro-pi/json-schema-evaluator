@@ -21,6 +21,7 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,6 +36,8 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var int $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_array($instance) || $keywordValue === 1) {
             // Ignore keyword also if 1 (same as default behavior)

@@ -1,39 +1,37 @@
 <?php
 declare(strict_types=1);
 
-namespace Ropi\JsonSchemaEvaluator\Tests\Draft;
+namespace Ropi\JsonSchemaEvaluator\Tests\Functional\Draft;
 
 use Ropi\JsonSchemaEvaluator\Draft\Draft202012;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
-use Ropi\JsonSchemaEvaluator\Keyword\Exception\KeywordRuntimeEvaluationException;
-use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
-use Ropi\JsonSchemaEvaluator\Tests\AbstractJsonSchemaTestSuite;
+use Ropi\JsonSchemaEvaluator\Tests\Functional\AbstractJsonSchemaTestSuite;
 
-class Draft202012AdditionalRefRecursionTest extends AbstractJsonSchemaTestSuite
+class Draft2020DefaultMutationTest extends AbstractJsonSchemaTestSuite
 {
     private Draft202012 $draft;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->draft = new Draft202012();
+        $this->draft = new Draft202012(
+            evaluateMutations: true // Enabled mutations should not affect validation result of default keyword
+        );
     }
 
     protected function getRelativeTestsPath(): string
     {
-        return 'draft2020-12-additional/ref-recursion.json';
+        return 'draft2020-12/default.json';
     }
 
     /**
      * @dataProvider jsonSchemaTestSuiteProvider
      *
-     * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
-    public function test(object|bool $testCollection)
+    public function test(\stdClass $testCollection): void
     {
-        $this->expectException(KeywordRuntimeEvaluationException::class);
-
         $staticEvaluationConfig = new StaticEvaluationConfig($this->draft);
 
         $this->evaluateTestCollection(

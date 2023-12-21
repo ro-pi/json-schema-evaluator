@@ -47,6 +47,8 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var string $keywordValue */
+
         $instance =& $context->getCurrentInstance();
         if (!is_string($instance)) {
             return null;
@@ -55,18 +57,21 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
         $result = $context->createResultForKeyword($this);
 
         if ($context->draft->evaluateMutations()) {
+            /** @var callable $decodingCallable */
             $decodingCallable = $this->getDecoderCallableForEncoding($keywordValue);
 
             $decodingError = null;
+
+            /* @phpstan-ignore-next-line */
             set_error_handler(static function(int $severity, string $error) use(&$decodingError) {
                 $decodingError = $error;
             });
 
-            $decoded = $decodingCallable($context);
+            $decoded = $decodingCallable($instance);
 
             restore_error_handler();
 
-            if ($decoded) {
+            if (is_string($decoded)) {
                 $instance = $decoded;
             } else {
                 $result->invalidate(
@@ -79,17 +84,20 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
         return $result;
     }
 
-    protected function getDecoderCallableForEncoding(string $encoding): ?callable
+    private function getDecoderCallableForEncoding(string $encoding): ?callable
     {
         $methodName = 'decode'. ucfirst($encoding);
         if (!method_exists($this, $methodName)) {
             return null;
         }
 
-        return [$this, 'decode'. ucfirst($encoding)];
+        return $this->$methodName(...);
     }
 
-    protected function getSupportedEncodings(): array
+    /**
+     * @return list<string>
+     */
+    private function getSupportedEncodings(): array
     {
         $methods = get_class_methods($this);
 
@@ -104,8 +112,11 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
         return $supportedEncodings;
     }
 
-    protected function decodeBase64(RuntimeEvaluationContext $context): ?string
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function decodeBase64(string $instance): ?string
     {
-        return base64_decode($context->getCurrentInstance()) ?: null;
+        return base64_decode($instance) ?: null;
     }
 }

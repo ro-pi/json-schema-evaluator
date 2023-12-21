@@ -44,9 +44,9 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        $anchorUri = $context->draft->createUri($context->getCurrentBaseUri())->withFragment($keywordValue);
+        $anchorUri = (string)$context->draft->tryCreateUri($context->getCurrentBaseUri())?->withFragment($keywordValue);
 
-        if ($context->hasSchema((string) $anchorUri)) {
+        if ($context->hasSchema($anchorUri)) {
             throw new StaticKeywordAnalysisException(
                 'The value \'' . $keywordValue . '\' of \'%s\' is defined twice, but must be unique in each JSON Schema.',
                 $this,
@@ -54,13 +54,12 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        $context->registerSchema(
-            (string) $anchorUri,
-            $context->getCurrentSchema(),
-            $context->getCurrentSchemaKeywordLocation(-1)
-        );
+        /** @var \stdClass $currentSchema */
+        $currentSchema = $context->getCurrentSchema();
 
-        $keywordValue = (string) $anchorUri;
+        $context->registerSchema($anchorUri, $currentSchema, $context->getCurrentSchemaKeywordLocation(-1));
+
+        $keywordValue = $anchorUri;
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult

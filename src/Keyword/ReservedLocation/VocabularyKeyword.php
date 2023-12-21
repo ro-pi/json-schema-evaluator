@@ -19,10 +19,11 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
     /**
      * @throws InvalidKeywordValueException
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be an object.',
                 $this,
@@ -30,7 +31,7 @@ class VocabularyKeyword extends AbstractKeyword implements StaticKeywordInterfac
             );
         }
 
-        foreach ($keywordValue as $vocabulary => $required) {
+        foreach (get_object_vars($keywordValue) as $vocabulary => $required) {
             if ($required && !$context->draft->supportsVocabulary($vocabulary)) {
                 throw new StaticKeywordAnalysisException(
                     'The value of \'%s\' indicates that the vocabulary \''

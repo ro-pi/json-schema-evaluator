@@ -11,6 +11,7 @@ use Ropi\JsonSchemaEvaluator\Keyword\Exception\InvalidKeywordValueException;
 use Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException;
 use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
+use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
 class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface, RuntimeKeywordInterface
 {
@@ -24,7 +25,7 @@ class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        $number = $context->draft->createNumber($keywordValue);
+        $number = $context->draft->tryCreateNumber($keywordValue);
 
         if (!$number) {
             throw new InvalidKeywordValueException(
@@ -39,7 +40,9 @@ class MinimumKeyword extends AbstractKeyword implements StaticKeywordInterface, 
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $instanceNumber = $context->draft->createNumber($context->getCurrentInstance());
+        /** @var NumberInterface $keywordValue */
+
+        $instanceNumber = $context->draft->tryCreateNumber($context->getCurrentInstance());
 
         if (!$instanceNumber) {
             return null;

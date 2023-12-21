@@ -21,6 +21,7 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,6 +36,8 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var int $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;

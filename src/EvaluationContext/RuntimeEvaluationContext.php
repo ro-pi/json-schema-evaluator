@@ -10,7 +10,10 @@ class RuntimeEvaluationContext
     use EvaluationContextTrait;
 
     /**
-     * @var array[]
+     * @var list<array{
+     *     instance: mixed,
+     *     instanceLocation: string
+     * }>
      */
     private array $instanceStack = [];
     private int $instanceStackPointer = 0;
@@ -22,7 +25,7 @@ class RuntimeEvaluationContext
     private int $lastResultNumber = 0;
 
     public function __construct(
-        object|bool $schema,
+        \stdClass|bool $schema,
         mixed &$instance,
         public readonly StaticEvaluationContext $staticEvaluationContext
     ) {

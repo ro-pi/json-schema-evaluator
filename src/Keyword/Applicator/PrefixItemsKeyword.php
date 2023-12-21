@@ -22,6 +22,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -34,9 +35,9 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         }
 
         foreach ($keywordValue as $prefixItemSchemaKey => $prefixItemSchema) {
-            $context->pushSchema(keywordLocationFragment: (string) $prefixItemSchemaKey);
+            $context->pushSchema(keywordLocationFragment: (string)$prefixItemSchemaKey);
 
-            if (!is_object($prefixItemSchema) && !is_bool($prefixItemSchema)) {
+            if (!$prefixItemSchema instanceof \stdClass && !is_bool($prefixItemSchema)) {
                 throw new InvalidKeywordValueException(
                     'The array elements of \'%s\' must be valid JSON Schemas.',
                     $this,
@@ -53,6 +54,8 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var list<\stdClass> $keywordValue */
+
         $instance = $context->getCurrentInstance();
         if (!is_array($instance)) {
             return null;
@@ -61,6 +64,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
         $result = $context->createResultForKeyword($this);
 
         $instanceKeys = array_keys($instance);
+        $prefixItemsKey = null;
 
         foreach ($keywordValue as $prefixItemsKey => $prefixItemSchema) {
             if (!array_key_exists($prefixItemsKey, $instanceKeys)) {
@@ -69,8 +73,8 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
             $instanceKey = $instanceKeys[$prefixItemsKey];
 
-            $context->pushSchema($prefixItemSchema, (string) $prefixItemsKey);
-            $context->pushInstance($instance[$instanceKey], (string) $instanceKey);
+            $context->pushSchema($prefixItemSchema, (string)$prefixItemsKey);
+            $context->pushInstance($instance[$instanceKey], (string)$instanceKey);
 
             $valid = $context->draft->evaluate($context);
 

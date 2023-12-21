@@ -26,9 +26,9 @@ trait OfKeywordTrait
         }
 
         foreach ($keywordValue as $schemaKey => $schema) {
-           $context->pushSchema(keywordLocationFragment: (string) $schemaKey);
+           $context->pushSchema(keywordLocationFragment: (string)$schemaKey);
 
-            if (!is_object($schema) && !is_bool($schema)) {
+            if (!$schema instanceof \stdClass && !is_bool($schema)) {
                 throw new InvalidKeywordValueException(
                     'The array elements of \'%s\' must be valid JSON Schemas.',
                     $keyword,
@@ -43,6 +43,9 @@ trait OfKeywordTrait
         }
     }
 
+    /**
+     * @param list<\stdClass|bool> $keywordValue
+     */
     public function evaluateOf(array $keywordValue, RuntimeEvaluationContext $context): int
     {
         $numMatches = 0;
@@ -51,7 +54,7 @@ trait OfKeywordTrait
             // Clone context without results (@see RuntimeEvaluationContext::__clone()),
             // to avoid accessing results of cousins
             $intermediateContext = clone $context;
-            $intermediateContext->pushSchema(schema: $ofSchema, keywordLocationFragment: (string) $ofSchemaKey);
+            $intermediateContext->pushSchema(schema: $ofSchema, keywordLocationFragment: (string)$ofSchemaKey);
 
             if ($context->draft->evaluate($intermediateContext)) {
                 $numMatches++;

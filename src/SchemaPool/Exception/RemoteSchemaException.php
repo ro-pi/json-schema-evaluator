@@ -6,5 +6,4 @@ namespace Ropi\JsonSchemaEvaluator\SchemaPool\Exception;
 use Ropi\JsonSchemaEvaluator\Exception\JsonSchemaEvaluatorException;
 
 class RemoteSchemaException extends JsonSchemaEvaluatorException
-{
-}
+{}

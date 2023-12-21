@@ -25,7 +25,8 @@
         "symfony/polyfill-intl-idn": "^1.23"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.0",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
         "ext-idn": "Enables better performance for IDN validations"
@@ -39,5 +40,11 @@
         "psr-4": {
             "Ropi\\JsonSchemaEvaluator\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": [
+            "phpstan analyse",
+            "phpunit tests"
+        ]
     }
 }

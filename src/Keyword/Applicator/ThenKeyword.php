@@ -22,10 +22,11 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue) && !is_bool($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass && !is_bool($keywordValue)) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid JSON Schema.',
                 $this,
@@ -40,6 +41,8 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass|bool $keywordValue */
+
         $ifResult = $context->getLastResultByKeywordLocation($context->getCurrentKeywordLocation(-1) . '/if');
         if (!$ifResult || !$ifResult->getEvaluationResult()) {
             return null;

@@ -18,6 +18,7 @@ class DescriptionKeyword extends AbstractKeyword implements StaticKeywordInterfa
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {

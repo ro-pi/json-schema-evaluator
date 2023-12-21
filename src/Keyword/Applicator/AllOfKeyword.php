@@ -23,6 +23,7 @@ class AllOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -31,6 +32,8 @@ class AllOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var list<\stdClass|bool> $keywordValue */
+
         $result = $context->createResultForKeyword($this);
         $numMatches = $this->evaluateOf($keywordValue, $context);
 

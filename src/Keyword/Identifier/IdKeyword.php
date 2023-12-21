@@ -32,7 +32,7 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
             );
         }
 
-        $uri = $context->draft->createUri($keywordValue);
+        $uri = $context->draft->tryCreateUri($keywordValue);
         if (!$uri) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be a valid URI reference.',
@@ -50,9 +50,9 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
         }
 
         $resolvedUri = $context->draft->resolveUri($context->getCurrentBaseUri(), $uri);
-        $normalizedUri = $resolvedUri->withFragment('');
+        $normalizedUri = (string)$resolvedUri->withFragment('');
 
-        if ($context->hasSchema((string) $normalizedUri)) {
+        if ($context->hasSchema($normalizedUri)) {
             throw new StaticKeywordAnalysisException(
                 'The URI reference \'' . $keywordValue . '\' is defined twice.',
                 $this,
@@ -60,19 +60,20 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
             );
         }
 
-        $context->registerSchema(
-            (string) $normalizedUri,
-            $context->getCurrentSchema(),
-            $context->getCurrentSchemaKeywordLocation(-1)
-        );
+        /** @var \stdClass $currentSchema */
+        $currentSchema = $context->getCurrentSchema();
 
-        $context->setCurrentBaseUri((string) $normalizedUri);
+        $context->registerSchema($normalizedUri, $currentSchema, $context->getCurrentSchemaKeywordLocation(-1));
 
-        $keywordValue = (string) $normalizedUri;
+        $context->setCurrentBaseUri($normalizedUri);
+
+        $keywordValue = $normalizedUri;
     }
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var string $keywordValue */
+
         $context->setCurrentBaseUri($keywordValue);
 
         return $context->createResultForKeyword($this);

@@ -21,6 +21,7 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     /**
      * @throws StaticKeywordAnalysisException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
@@ -35,8 +36,10 @@ class MinPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var int $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance) || !$keywordValue) {
+        if (!$instance instanceof \stdClass || !$keywordValue) {
             // Ignore keyword also if 0 (same as default behavior)
             return null;
         }

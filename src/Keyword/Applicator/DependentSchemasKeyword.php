@@ -22,10 +22,11 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
     /**
      * @throws StaticKeywordAnalysisException
      * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
+     * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_object($keywordValue)) {
+        if (!$keywordValue instanceof \stdClass) {
             throw new InvalidKeywordValueException(
                 'The value of \'%s\' must be an object.',
                 $this,
@@ -33,10 +34,10 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             );
         }
 
-        foreach ($keywordValue as $dependencyPropertyName => $dependentSchema) {
-            $context->pushSchema(keywordLocationFragment: (string) $dependencyPropertyName);
+        foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $dependentSchema) {
+            $context->pushSchema(keywordLocationFragment: (string)$dependencyPropertyName);
 
-            if (!is_object($dependentSchema) && !is_bool($dependentSchema)) {
+            if (!$dependentSchema instanceof \stdClass && !is_bool($dependentSchema)) {
                 throw new InvalidKeywordValueException(
                     'The property \''
                     . $dependencyPropertyName
@@ -56,14 +57,18 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
+        /** @var \stdClass $keywordValue */
+
         $instance = $context->getCurrentInstance();
-        if (!is_object($instance)) {
+        if (!$instance instanceof \stdClass) {
             return null;
         }
 
         $result = $context->createResultForKeyword($this);
 
-        foreach ($keywordValue as $dependencyPropertyName => $dependentSchema) {
+        foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $dependentSchema) {
+            /** @var \stdClass|bool $dependentSchema */
+
             $propertyExists = property_exists($instance, $dependencyPropertyName);
 
             if (!$propertyExists) {
@@ -78,7 +83,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
                 $instance->$dependencyPropertyName = null;
             }
 
-            $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string) $dependencyPropertyName);
+            $context->pushSchema(schema: $dependentSchema, keywordLocationFragment: (string)$dependencyPropertyName);
 
             if ($propertyExists) {
                 $valid = $context->draft->evaluate($context);

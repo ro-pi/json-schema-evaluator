@@ -8,14 +8,17 @@ use Ropi\JsonSchemaEvaluator\SchemaPool\Exception\RemoteSchemaRequestException;
 
 class SchemaPool implements SchemaPoolInterface
 {
+    /**
+     * @var array<string, \stdClass>
+     */
     private array $schemas = [];
 
-    public function registerSchema(string $uri, object $schema): void
+    public function registerSchema(string $uri, \stdClass $schema): void
     {
         $this->schemas[$uri] = $schema;
     }
 
-    public function getSchemaByUri(string $uri): ?object
+    public function getSchemaByUri(string $uri): ?\stdClass
     {
         return $this->schemas[$uri] ?? null;
     }
@@ -29,7 +32,7 @@ class SchemaPool implements SchemaPoolInterface
      * @throws RemoteSchemaParseException
      * @throws RemoteSchemaRequestException
      */
-    public function fetchRemoteSchema(string $uri): object
+    public function fetchRemoteSchema(string $uri): \stdClass
     {
         $streamContext = stream_context_create(
             [
@@ -54,7 +57,7 @@ class SchemaPool implements SchemaPoolInterface
         }
 
         $schema = json_decode($responseText);
-        if (!is_object($schema)) {
+        if (!$schema instanceof \stdClass) {
             throw new RemoteSchemaParseException(
                 'The remote schema URI \''
                 . $uri
