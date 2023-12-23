@@ -7,7 +7,6 @@ use Psr\Http\Message\UriInterface;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
-use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 use Ropi\JsonSchemaEvaluator\Type\NumberInterface;
 
@@ -51,7 +50,6 @@ interface DraftInterface
     function acceptNumericStrings(): bool;
 
     /**
-     * @throws InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
     function evaluateStatic(StaticEvaluationContext $context): void;

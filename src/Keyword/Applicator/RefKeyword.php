@@ -28,7 +28,6 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
 
     /**
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\SchemaPool\Exception\RemoteSchemaParseException
      * @throws \Ropi\JsonSchemaEvaluator\SchemaPool\Exception\RemoteSchemaRequestException
      */

@@ -20,7 +20,6 @@ class BasicOutput extends AbstractOutput
 
     /**
      * @return RuntimeEvaluationResult[]
-     * @noinspection PhpUnused
      */
     public function getResults(): array
     {

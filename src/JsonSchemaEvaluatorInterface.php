@@ -10,7 +10,6 @@ use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 interface JsonSchemaEvaluatorInterface
 {
     /**
-     * @throws Draft\Exception\InvalidSchemaException
      * @throws Keyword\Exception\StaticKeywordAnalysisException
      */
     function evaluateStatic(\stdClass $jsonSchema, StaticEvaluationConfig $config): StaticEvaluationContext;

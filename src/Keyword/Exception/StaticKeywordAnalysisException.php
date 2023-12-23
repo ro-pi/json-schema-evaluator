@@ -17,17 +17,11 @@ class StaticKeywordAnalysisException extends JsonSchemaEvaluatorException
         parent::__construct(sprintf($message, $this->keyword->getName()));
     }
 
-    /**
-     * @noinspection PhpUnused
-     */
     public function getContext(): StaticEvaluationContext
     {
         return $this->context;
     }
 
-    /**
-     * @noinspection PhpUnused
-     */
     public function getKeyword(): StaticKeywordInterface
     {
         return $this->keyword;

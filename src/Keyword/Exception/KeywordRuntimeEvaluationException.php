@@ -17,17 +17,11 @@ class KeywordRuntimeEvaluationException extends JsonSchemaEvaluatorException
         parent::__construct(sprintf($message, $this->keyword->getName()));
     }
 
-    /**
-     * @noinspection PhpUnused
-     */
     public function getContext(): RuntimeEvaluationContext
     {
         return $this->context;
     }
 
-    /**
-     * @noinspection PhpUnused
-     */
     public function getKeyword(): KeywordInterface
     {
         return $this->keyword;

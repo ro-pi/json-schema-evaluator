@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Ropi\JsonSchemaEvaluator\Tests\Functional;
+namespace Ropi\JsonSchemaEvaluator\Tests\Compliance;
 
 use PHPUnit\Framework\TestCase;
 use Ropi\JsonSchemaEvaluator\EvaluationConfig\StaticEvaluationConfig;
@@ -60,7 +60,6 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
     }
 
     /**
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
     protected function evaluateTestCollection(

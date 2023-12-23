@@ -10,7 +10,6 @@ use Psr\Http\Message\UriInterface;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
-use Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\RuntimeKeywordInterface;
@@ -180,7 +179,6 @@ abstract class AbstractDraft implements DraftInterface
     }
 
     /**
-     * @throws InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      */
     public function evaluateStatic(StaticEvaluationContext $context): void
@@ -189,13 +187,6 @@ abstract class AbstractDraft implements DraftInterface
 
         if (is_bool($schema)) {
             return;
-        }
-
-        if (!$schema instanceof \stdClass) {
-            throw new InvalidSchemaException(
-                'JSON Schema must be an object or a boolean',
-                $context
-            );
         }
 
         if (!$context->hasPrioritizedSchemaKeywords($schema)) {

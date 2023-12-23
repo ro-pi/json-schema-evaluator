@@ -21,7 +21,6 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
 
     /**
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void

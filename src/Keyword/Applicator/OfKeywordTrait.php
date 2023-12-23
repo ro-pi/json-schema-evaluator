@@ -13,7 +13,6 @@ trait OfKeywordTrait
 {
     /**
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      */
     public function evaluateStaticOf(mixed $keywordValue, StaticKeywordInterface $keyword, StaticEvaluationContext $context): void
     {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Ropi\JsonSchemaEvaluator\Tests\Functional;
+namespace Ropi\JsonSchemaEvaluator\Tests\Compliance;
 
 use Ropi\JsonSchemaEvaluator\SchemaPool\Exception\RemoteSchemaParseException;
 use Ropi\JsonSchemaEvaluator\SchemaPool\Exception\RemoteSchemaRequestException;

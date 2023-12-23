@@ -17,7 +17,6 @@ class DefsKeyword extends AbstractKeyword implements StaticKeywordInterface
 
     /**
      * @throws InvalidKeywordValueException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @throws \Ropi\JsonSchemaEvaluator\Keyword\Exception\StaticKeywordAnalysisException
      * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */

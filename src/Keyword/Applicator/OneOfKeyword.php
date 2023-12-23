@@ -22,7 +22,6 @@ class OneOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
 
     /**
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void

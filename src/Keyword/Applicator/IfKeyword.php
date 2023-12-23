@@ -21,7 +21,6 @@ class IfKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
 
     /**
      * @throws StaticKeywordAnalysisException
-     * @throws \Ropi\JsonSchemaEvaluator\Draft\Exception\InvalidSchemaException
      * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
