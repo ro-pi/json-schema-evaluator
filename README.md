@@ -73,7 +73,7 @@ $valid = $evaluator->evaluate(
 
 foreach ($results as $result) {
     /** @var $result \Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult */
-    if ($result->error) {
+    if ($result->error && !$result->suppressAnnotation) {
         echo "Error keyword location: '{$result->keywordLocation}'\n";
         echo "Error instance location: '{$result->instanceLocation}'\n";
         echo "Error message: {$result->error}\n";
