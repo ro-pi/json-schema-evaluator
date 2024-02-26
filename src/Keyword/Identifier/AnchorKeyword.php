@@ -64,6 +64,6 @@ class AnchorKeyword extends AbstractKeyword implements StaticKeywordInterface, R
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        return $context->createResultForKeyword($this);
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 }

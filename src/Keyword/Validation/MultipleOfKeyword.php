@@ -50,7 +50,7 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         /** @var NumberInterface $zero */
         $zero = $context->draft->tryCreateNumber(0);
@@ -60,7 +60,6 @@ class MultipleOfKeyword extends AbstractKeyword implements StaticKeywordInterfac
                 $context->getCurrentInstance()
                 . ' is not a multiple of '
                 . $keywordValue
-                . '.'
             );
         }
 

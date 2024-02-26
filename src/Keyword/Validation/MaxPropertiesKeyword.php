@@ -43,7 +43,7 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $numProperties = count(get_object_vars($instance));
 
         if ($numProperties > $keywordValue) {
@@ -51,7 +51,8 @@ class MaxPropertiesKeyword extends AbstractKeyword implements StaticKeywordInter
                 $numProperties
                 . ' properties found, but at most '
                 . $keywordValue
-                . ' are allowed.'
+                . ' are allowed',
+                $numProperties
             );
         }
 

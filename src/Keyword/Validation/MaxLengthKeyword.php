@@ -43,7 +43,7 @@ class MaxLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $instanceLength = mb_strlen($instance, 'UTF-8');
 
         if ($instanceLength > $keywordValue) {

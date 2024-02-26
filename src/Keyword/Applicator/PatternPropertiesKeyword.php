@@ -60,7 +60,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $matchedPropertyNames = [];
 
         foreach (get_object_vars($instance) as $propertyName => &$propertyValue) {
@@ -87,7 +87,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
                 $context->popSchema();
 
                 if (!$valid) {
-                    $result->valid = false;
+                    $result->invalidate();
 
                     if ($context->draft->shortCircuit()) {
                         break 2;
@@ -98,7 +98,7 @@ class PatternPropertiesKeyword extends AbstractKeyword implements StaticKeywordI
             }
         }
 
-        $result->setAnnotation($matchedPropertyNames);
+        $result->setAnnotationValue($matchedPropertyNames);
 
         return $result;
     }

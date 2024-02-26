@@ -42,12 +42,15 @@ class IfKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
     {
         /** @var \stdClass|bool $keywordValue */
 
-        $context->pushSchema($keywordValue);
+        $intermediateContext = clone $context;
+        $intermediateContext->pushSchema($keywordValue);
 
-        $result = $context->createResultForKeyword($this);
-        $result->setEvaluationResult($context->draft->evaluate($context));
+        $result = $context->createResultForKeyword($this, $keywordValue);
+        $result->valid = $context->draft->evaluate($intermediateContext);
 
-        $context->popSchema();
+        $intermediateContext->popSchema();
+
+        $context->adoptResultsFromContextAsAnnotations($intermediateContext);
 
         return $result;
     }

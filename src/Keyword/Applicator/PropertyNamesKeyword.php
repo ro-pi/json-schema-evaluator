@@ -47,7 +47,7 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         foreach (get_object_vars($instance) as $propertyName => $propertyValue) {
             /** @noinspection DuplicatedCode */
@@ -60,7 +60,7 @@ class PropertyNamesKeyword extends AbstractKeyword implements StaticKeywordInter
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;

@@ -73,7 +73,7 @@ $valid = $evaluator->evaluate(
 
 foreach ($results as $result) {
     /** @var $result \Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult */
-    if ($result->error && !$result->suppressAnnotation) {
+    if ($result->type === 'error') {
         echo "Error keyword location: '{$result->keywordLocation}'\n";
         echo "Error instance location: '{$result->instanceLocation}'\n";
         echo "Error message: {$result->error}\n";
@@ -87,25 +87,38 @@ Error instance location: ''
 Error message: At most 5 characters are allowed, but there are 10.
 ```
 ### Formatting results
-In the following example, the results are formatted as [Basic Output Structure](https://json-schema.org/draft/2020-12/json-schema-core#name-basic).
+In the following example, the results are formatted as [Basic Output Structure](https://json-schema.org/draft/2020-12/json-schema-core#name-basic). In addition, only the [Flag Output Structure](https://json-schema.org/draft/2020-12/json-schema-core#name-flag) is also currently supported.
 ```php
 $formattedResults = (new \Ropi\JsonSchemaEvaluator\Output\BasicOutput($valid, $results))->format();
 echo json_encode($formattedResults, JSON_PRETTY_PRINT);
 ```
 Output of above example: 
-```json 
+```json
 {
-    "valid": false,
-    "errors": [
-        {
-            "valid": false,
-            "keywordLocation": "\/maxLength",
-            "instanceLocation": "",
-            "keywordName": "maxLength",
-            "error": "At most 5 characters are allowed, but there are 10",
-            "errorMeta": null
-        }
-    ]
+  "valid": false,
+  "errors": [
+    {
+      "type": "annotation",
+      "valid": true,
+      "keywordLocation": "\/type",
+      "instanceLocation": "",
+      "keywordName": "type",
+      "error": "",
+      "errorMeta": null,
+      "annotation": [
+        "string"
+      ]
+    },
+    {
+      "type": "error",
+      "valid": false,
+      "keywordLocation": "\/maxLength",
+      "instanceLocation": "",
+      "keywordName": "maxLength",
+      "error": "At most 5 characters are allowed, but there are 10.",
+      "errorMeta": null
+    }
+  ]
 }
 ```
 ## Mutations
@@ -258,7 +271,7 @@ class Md5HashKeyword extends \Ropi\JsonSchemaEvaluator\Keyword\AbstractKeyword i
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if (md5($instance) !== $keywordValue) {
             $result->invalidate('MD5 hash of "' . $instance . '" does not match ' . $keywordValue);

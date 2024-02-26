@@ -118,7 +118,7 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
 
         $this->processedSchemaInstanceLocations[$schemaInstanceLocationHash] = true;
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $context->pushSchema(
             schema: $referencedSchema,
@@ -126,7 +126,9 @@ class RefKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
             schemaLocation: (string)$context->staticEvaluationContext->getSchemaLocationByUri($keywordValue)
         );
 
-        $result->valid = $context->draft->evaluate($context);
+        if (!$context->draft->evaluate($context)) {
+            $result->invalidate();
+        }
 
         $context->popSchema();
 

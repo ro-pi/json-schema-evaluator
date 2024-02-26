@@ -47,11 +47,11 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $evaluatedPropertyNames = [];
 
         foreach ($context->getResultsByKeywordName('properties') as $propertiesResult) {
-            $propertiesAnnotation = $propertiesResult->getAnnotation();
+            $propertiesAnnotation = $propertiesResult->getAnnotationValue();
             if (!is_array($propertiesAnnotation)) {
                 continue;
             }
@@ -62,7 +62,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
         }
 
         foreach ($context->getResultsByKeywordName('patternProperties') as $patternPropertiesResult) {
-            $patternPropertiesAnnotation = $patternPropertiesResult->getAnnotation();
+            $patternPropertiesAnnotation = $patternPropertiesResult->getAnnotationValue();
             if (!is_array($patternPropertiesAnnotation)) {
                 continue;
             }
@@ -89,7 +89,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -99,7 +99,7 @@ class AdditionalPropertiesKeyword extends AbstractKeyword implements StaticKeywo
             $additionalEvaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        $result->setAnnotation($additionalEvaluatedPropertyNames);
+        $result->setAnnotationValue($additionalEvaluatedPropertyNames);
 
         return $result;
     }

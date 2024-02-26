@@ -62,7 +62,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $evaluatedProperties = [];
 
@@ -96,7 +96,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -106,7 +106,7 @@ class PropertiesKeyword extends AbstractKeyword implements StaticKeywordInterfac
             $evaluatedProperties[$propertyName] = $propertyName;
         }
 
-        $result->setAnnotation($evaluatedProperties);
+        $result->setAnnotationValue($evaluatedProperties);
 
         return $result;
     }

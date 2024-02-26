@@ -54,7 +54,7 @@ REGEX;
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if ($context->draft->assertContentMediaTypeEncoding()) {
             /** @var resource $stream */
@@ -70,7 +70,7 @@ REGEX;
                     . $keywordValue
                     . '\' expected, but is \''
                     . $mimeType
-                    . '\'.',
+                    . '\'',
                     $mimeType
                 );
             }

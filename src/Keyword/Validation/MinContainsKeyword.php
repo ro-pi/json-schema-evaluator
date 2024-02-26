@@ -44,12 +44,12 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return null;
         }
 
-        $containsAnnotation = $context->getLastResultByKeywordName('contains')?->getAnnotation();
+        $containsAnnotation = $context->getLastResultByKeywordName('contains')?->getAnnotationValue();
         if ($containsAnnotation === null) {
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if ($keywordValue === 0) {
             return $result;
@@ -65,8 +65,8 @@ class MinContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $result->invalidate(
                 $keywordValue
                 . ' or more matching elements must be contained, but there are '
-                . $containsCount
-                . '.'
+                . $containsCount,
+                $containsCount
             );
         }
 

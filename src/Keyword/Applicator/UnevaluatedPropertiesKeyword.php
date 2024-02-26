@@ -55,13 +55,14 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $context->getResultsByKeywordName('unevaluatedProperties'),
         ];
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $evaluatedPropertyNames = [];
 
         foreach (get_object_vars($instance) as $propertyName => &$propertyValue) {
             foreach ($relevantResultGroups as $relevantResultGroup) {
                 foreach ($relevantResultGroup as $relevantResult) {
-                    $relevantResultAnnotation = $relevantResult->getAnnotation();
+                    /** @var RuntimeEvaluationResult $relevantResult */
+                    $relevantResultAnnotation = $relevantResult->getAnnotationValue();
                     if (is_array($relevantResultAnnotation) && isset($relevantResultAnnotation[$propertyName])) {
                         continue 3;
                     }
@@ -78,7 +79,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -88,7 +89,7 @@ class UnevaluatedPropertiesKeyword extends AbstractKeyword implements StaticKeyw
             $evaluatedPropertyNames[$propertyName] = $propertyName;
         }
 
-        $result->setAnnotation($evaluatedPropertyNames);
+        $result->setAnnotationValue($evaluatedPropertyNames);
 
         return $result;
     }

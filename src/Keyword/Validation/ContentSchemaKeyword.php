@@ -53,7 +53,7 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if ($context->draft->evaluateMutations()) {
             if ($this->shouldParseInstance($contentMediaType)) {
@@ -69,14 +69,16 @@ class ContentSchemaKeyword extends AbstractKeyword implements StaticKeywordInter
                 restore_error_handler();
 
                 if ($instance === null) {
-                    $result->invalidate('Parsing of JSON failed.', $parseError);
+                    $result->invalidate('Parsing of JSON failed', $parseError);
                 }
             }
 
             $context->pushSchema($keywordValue);
             $context->pushInstance($instance);
 
-            $result->valid = $context->draft->evaluate($context);
+            if (!$context->draft->evaluate($context)) {
+                $result->invalidate();
+            }
 
             $context->popInstance();
             $context->popSchema();

@@ -17,10 +17,10 @@ class ConstKeyword extends AbstractKeyword implements RuntimeKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if (!$context->draft->valuesAreEqual($context->getCurrentInstance(), $keywordValue)) {
-            $result->invalidate('Value not allowed.');
+            $result->invalidate('Value not allowed');
         }
 
         return $result;

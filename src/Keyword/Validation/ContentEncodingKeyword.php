@@ -54,7 +54,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if ($context->draft->evaluateMutations()) {
             /** @var callable $decodingCallable */
@@ -75,7 +75,7 @@ class ContentEncodingKeyword extends AbstractKeyword implements StaticKeywordInt
                 $instance = $decoded;
             } else {
                 $result->invalidate(
-                    $keywordValue . ' decoding failed.',
+                    $keywordValue . ' decoding failed',
                     $decodingError
                 );
             }

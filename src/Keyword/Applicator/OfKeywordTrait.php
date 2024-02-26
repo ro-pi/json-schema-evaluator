@@ -59,7 +59,7 @@ trait OfKeywordTrait
                 $numMatches++;
             }
 
-            $context->adoptResultsFromContext($intermediateContext);
+            $context->adoptResultsFromContextAsAnnotations($intermediateContext);
         }
 
         return $numMatches;

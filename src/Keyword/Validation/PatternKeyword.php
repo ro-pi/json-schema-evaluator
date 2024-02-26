@@ -43,7 +43,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, 
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $numMatches = preg_match('{' . $keywordValue . '}u', $instance);
 
         if ($numMatches === 0) {
@@ -51,7 +51,7 @@ class PatternKeyword extends AbstractKeyword implements StaticKeywordInterface, 
                 $instance
                 . ' does not match pattern \''
                 . $keywordValue
-                . '\'.'
+                . '\''
             );
         }
 

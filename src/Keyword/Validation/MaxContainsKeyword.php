@@ -43,12 +43,12 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return null;
         }
 
-        $containsAnnotation = $context->getLastResultByKeywordName('contains')?->getAnnotation();
+        $containsAnnotation = $context->getLastResultByKeywordName('contains')?->getAnnotationValue();
         if ($containsAnnotation === null) {
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if (is_array($containsAnnotation)) {
             $containsCount = count($containsAnnotation);
@@ -61,8 +61,8 @@ class MaxContainsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 'At most '
                 . $keywordValue
                 . ' matched elements must be contained, but there are '
-                . $containsCount
-                . '.'
+                . $containsCount,
+                $containsCount
             );
         }
 

@@ -47,12 +47,12 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             return null;
         }
 
-        $prefixItemsAnnotation = $context->getLastResultByKeywordName('prefixItems')?->getAnnotation();
+        $prefixItemsAnnotation = $context->getLastResultByKeywordName('prefixItems')?->getAnnotationValue();
         if ($prefixItemsAnnotation === true) {
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $startIndex = is_int($prefixItemsAnnotation) ? $prefixItemsAnnotation : -1;
 
@@ -67,7 +67,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -75,7 +75,7 @@ class ItemsKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
             }
         }
 
-        $result->setAnnotation(true);
+        $result->setAnnotationValue(true);
 
         return $result;
     }

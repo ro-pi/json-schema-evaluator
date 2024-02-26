@@ -38,7 +38,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
     {
         /** @var list<mixed> $keywordValue */
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         foreach ($keywordValue as $enumElement) {
             if ($context->draft->valuesAreEqual($context->getCurrentInstance(), $enumElement)) {
@@ -46,7 +46,7 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             }
         }
 
-        $result->invalidate('Value not allowed.');
+        $result->invalidate('Value not allowed');
         return $result;
     }
 }

@@ -43,7 +43,7 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         if (!$keywordValue) {
             return $result;
@@ -57,10 +57,10 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
                 foreach ($complexItems as $complexItem) {
                     if ($context->draft->valuesAreEqual($instanceValue, $complexItem)) {
                         $context->pushInstance($instanceValue, (string)$instanceKey);
-                        $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
+                        $context->createResultForKeyword($this, $keywordValue)->invalidate('Element \'' . $instanceKey . '\' is not unique');
                         $context->popInstance();
 
-                        $result->valid = false;
+                        $result->invalidate();
 
                         if ($context->draft->shortCircuit()) {
                             break 2;
@@ -76,10 +76,10 @@ class UniqueItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $scalarKey = gettype($instanceValue) . '-' . $instanceValue;
             if (isset($scalarItems[$scalarKey])) {
                 $context->pushInstance($instanceValue, (string)$instanceKey);
-                $context->createResultForKeyword($this)->invalidate('Item \'' . $instanceKey . '\' is not unique.');
+                $context->createResultForKeyword($this, $keywordValue)->invalidate('Element \'' . $instanceKey . '\' is not unique');
                 $context->popInstance();
 
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;

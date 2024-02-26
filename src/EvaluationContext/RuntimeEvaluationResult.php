@@ -7,56 +7,42 @@ use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 
 class RuntimeEvaluationResult
 {
+    public const TYPE_ERROR = 'error';
+    public const TYPE_ANNOTATION = 'annotation';
+
+    public string $type = self::TYPE_ANNOTATION;
     public bool $valid = true;
     public ?string $error = null;
     public mixed $errorMeta = null;
-    private mixed $annotation = null;
-    public ?bool $suppressAnnotation = false;
-    private ?bool $evaluationResult = null;
+    private mixed $annotationValue = null;
 
     public function __construct(
         public readonly int $number,
         public readonly KeywordInterface $keyword,
+        public readonly mixed $keywordValue,
         public readonly string $keywordLocation,
         public readonly string $instanceLocation,
         public readonly ?string $absoluteKeywordLocation
     ) {}
 
-    public function setEvaluationResult(bool $evaluationResult): void
+    public function setAnnotationValue(mixed $annotationValue): void
     {
-        $this->evaluationResult = $evaluationResult;
+        $this->annotationValue = $annotationValue;
     }
 
-    public function getEvaluationResult(): bool
+    public function getAnnotationValue(): mixed
     {
-        if ($this->evaluationResult === null) {
-            return $this->valid;
-        }
-
-        return $this->evaluationResult;
+        return $this->annotationValue;
     }
 
-    public function setAnnotation(mixed $annotation): void
+    public function hasAnnotationValue(): bool
     {
-        $this->annotation = $annotation;
+        return $this->getAnnotationValue() !== null;
     }
 
-    public function getAnnotation(bool $force = false): mixed
+    public function invalidate(?string $error = null, mixed $errorMeta = null): void
     {
-        if (!$force && $this->suppressAnnotation) {
-            return null;
-        }
-
-        return $this->annotation;
-    }
-
-    public function hasAnnotation(bool $force = false): bool
-    {
-        return $this->getAnnotation($force) !== null;
-    }
-
-    public function invalidate(string $error, mixed $errorMeta = null): void
-    {
+        $this->type = self::TYPE_ERROR;
         $this->error = $error;
         $this->errorMeta = $errorMeta;
         $this->valid = false;

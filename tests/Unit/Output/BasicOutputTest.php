@@ -12,21 +12,36 @@ class BasicOutputTest extends TestCase
 {
     public function testValid(): void
     {
-        $results = [new RuntimeEvaluationResult(123, new UnknownKeyword(1, 'test'), 'keyword', 'instance', 'absolute')];
+        $results = [new RuntimeEvaluationResult(123, new UnknownKeyword(1, 'test'), 'testValue', 'keyword', 'instance', 'absolute')];
         $basicOutput = new BasicOutput(true, $results);
 
         $this->assertTrue($basicOutput->getValid());
         $this->assertEquals($results, $basicOutput->getResults());
 
         $this->assertJsonStringEqualsJsonString(
-            '{"valid":true}',
+            '{
+                "valid": true,
+                "annotations": [
+                    {
+                        "type": "annotation",
+                        "valid": true,
+                        "keywordLocation": "keyword",
+                        "absoluteKeywordLocation": "absolute",
+                        "instanceLocation": "instance",
+                        "keywordName": "test",
+                        "error": "",
+                        "errorMeta": null,
+                        "annotation": "testValue"
+                    }
+                ]
+            }',
             (string)json_encode($basicOutput->format())
         );
     }
 
     public function testInvalid(): void
     {
-        $result = new RuntimeEvaluationResult(123, new UnknownKeyword(1, 'test'), 'keyword', 'instance', 'absolute');
+        $result = new RuntimeEvaluationResult(123, new UnknownKeyword(1, 'test'), 'testValue', 'keyword', 'instance', 'absolute');
         $result->invalidate('testError', 'testErrorMeta');
 
         $results = [$result];
@@ -37,16 +52,17 @@ class BasicOutputTest extends TestCase
 
         $this->assertJsonStringEqualsJsonString(
             '{
-                "valid":false,
-                "errors":[
+                "valid": false,
+                "errors": [
                     {
-                    "valid":false,
-                    "keywordLocation":"keyword",
-                    "absoluteKeywordLocation":"absolute",
-                    "instanceLocation":"instance",
-                    "keywordName":"test",
-                    "error":"testError",
-                    "errorMeta":"testErrorMeta"
+                        "type": "error",
+                        "valid": false,
+                        "keywordLocation": "keyword",
+                        "absoluteKeywordLocation": "absolute",
+                        "instanceLocation": "instance",
+                        "keywordName": "test",
+                        "error": "testError",
+                        "errorMeta": "testErrorMeta"
                     }
                 ]
             }',

@@ -42,7 +42,7 @@ class NotKeyword extends AbstractKeyword implements StaticKeywordInterface, Runt
     {
         /** @var \stdClass|bool $keywordValue */
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $intermediateSchema = clone $context;
         $intermediateSchema->pushSchema($keywordValue);

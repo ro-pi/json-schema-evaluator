@@ -72,6 +72,6 @@ class SchemaKeyword extends AbstractKeyword implements StaticKeywordInterface, R
             );
         }
 
-        return $context->createResultForKeyword($this);
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 }

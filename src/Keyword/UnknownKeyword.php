@@ -18,10 +18,7 @@ class UnknownKeyword extends AbstractKeyword implements RuntimeKeywordInterface
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        $result = $context->createResultForKeyword($this);
-        $result->setAnnotation($keywordValue);
-
-        return $result;
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 
     public function getName(): string

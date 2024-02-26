@@ -78,7 +78,7 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
 
         $instanceType = $this->detectType($context->getCurrentInstance(), $context);
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         foreach ($keywordValue as $type) {
             if ($instanceType === $type) {
@@ -94,8 +94,8 @@ class TypeKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
             'Type '
             . $this->stringArrayToHumanReadableList($keywordValue)
             . ' expected, but is '
-            . $instanceType
-            . '.'
+            . $instanceType,
+            $instanceType
         );
 
         return $result;

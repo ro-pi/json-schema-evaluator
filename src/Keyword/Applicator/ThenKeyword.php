@@ -43,14 +43,16 @@ class ThenKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
         /** @var \stdClass|bool $keywordValue */
 
         $ifResult = $context->getLastResultByKeywordLocation($context->getCurrentKeywordLocation(-1) . '/if');
-        if (!$ifResult || !$ifResult->getEvaluationResult()) {
+        if (!$ifResult || !$ifResult->valid) {
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $context->pushSchema($keywordValue);
 
-        $result->valid = $context->draft->evaluate($context);
+        if (!$context->draft->evaluate($context)) {
+            $result->invalidate();
+        }
 
         $context->popSchema();
 

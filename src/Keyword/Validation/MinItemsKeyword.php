@@ -44,16 +44,16 @@ class MinItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $instanceCount = count($instance);
 
         if ($instanceCount < $keywordValue) {
             $result->invalidate(
                 'At least '
                 . $keywordValue
-                . ' items are required, but there are only '
-                . $instanceCount
-                . '.'
+                . ' elements are required, but there are only '
+                . $instanceCount,
+                $instanceCount
             );
         }
 

@@ -63,7 +63,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $dependentSchema) {
             /** @var \stdClass|bool $dependentSchema */
@@ -93,7 +93,7 @@ class DependentSchemasKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;

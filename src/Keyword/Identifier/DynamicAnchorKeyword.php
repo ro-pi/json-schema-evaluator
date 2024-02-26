@@ -23,6 +23,6 @@ class DynamicAnchorKeyword extends AnchorKeyword
 
     public function evaluate(mixed $keywordValue, RuntimeEvaluationContext $context): ?RuntimeEvaluationResult
     {
-        return $context->createResultForKeyword($this);
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 }

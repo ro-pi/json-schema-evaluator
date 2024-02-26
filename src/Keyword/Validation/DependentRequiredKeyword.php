@@ -75,7 +75,7 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         foreach (get_object_vars($keywordValue) as $dependencyPropertyName => $requiredProperties) {
             /** @var list<string> $requiredProperties */
@@ -88,15 +88,15 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
                 if (!property_exists($instance, $requiredProperty)) {
                     $context->pushSchema(keywordLocationFragment: (string)$requiredPropertyKey);
 
-                    $context->createResultForKeyword($this)->invalidate(
+                    $context->createResultForKeyword($this, $keywordValue)->invalidate(
                         'Dependent required property \''
                         . $requiredProperty
-                        . '\' is missing.'
+                        . '\' is missing'
                     );
 
                     $context->popSchema();
 
-                    $result->valid = false;
+                    $result->invalidate();
 
                     if ($context->draft->shortCircuit()) {
                         break 2;

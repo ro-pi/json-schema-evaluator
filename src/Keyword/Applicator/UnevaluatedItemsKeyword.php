@@ -49,21 +49,21 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
 
         $itemsResults = $context->getResultsByKeywordName('items');
         foreach ($itemsResults as $itemsResult) {
-            if ($itemsResult->getAnnotation() === true) {
+            if ($itemsResult->getAnnotationValue() === true) {
                 return null;
             }
         }
 
         $containsResults = $context->getResultsByKeywordName('contains');
         foreach ($containsResults as $containsResult) {
-            if ($containsResult->getAnnotation() === true) {
+            if ($containsResult->getAnnotationValue() === true) {
                 return null;
             }
         }
 
         $unevaluatedItemsResults = $context->getResultsByKeywordName('unevaluatedItems');
         foreach ($unevaluatedItemsResults as $unevaluatedItemsResult) {
-            if ($unevaluatedItemsResult->getAnnotation() === true) {
+            if ($unevaluatedItemsResult->getAnnotationValue() === true) {
                 return null;
             }
         }
@@ -72,7 +72,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
 
         $prefixItemsResults = $context->getResultsByKeywordName('prefixItems');
         foreach ($prefixItemsResults as $prefixItemsResult) {
-            $annotation = $prefixItemsResult->getAnnotation();
+            $annotation = $prefixItemsResult->getAnnotationValue();
             if ($annotation === true) {
                 return null;
             }
@@ -82,11 +82,11 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             }
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         for ($instanceIndex = ++$startIndex; $instanceIndex < count($instance); $instanceIndex++) {
             foreach ($containsResults as $containsResult) {
-                $containsAnnotation = $containsResult->getAnnotation();
+                $containsAnnotation = $containsResult->getAnnotationValue();
                 if (is_array($containsAnnotation) && isset($containsAnnotation[$instanceIndex])) {
                     continue 2;
                 }
@@ -102,7 +102,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -110,7 +110,7 @@ class UnevaluatedItemsKeyword extends AbstractKeyword implements StaticKeywordIn
             }
         }
 
-        $result->setAnnotation(true);
+        $result->setAnnotationValue(true);
 
         return $result;
     }

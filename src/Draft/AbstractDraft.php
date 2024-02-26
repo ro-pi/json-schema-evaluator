@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 use Ropi\JsonSchemaEvaluator\Draft\Exception\UnsupportedVocabularyException;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationContext;
+use Ropi\JsonSchemaEvaluator\EvaluationContext\RuntimeEvaluationResult;
 use Ropi\JsonSchemaEvaluator\EvaluationContext\StaticEvaluationContext;
 use Ropi\JsonSchemaEvaluator\Keyword\KeywordInterface;
 use Ropi\JsonSchemaEvaluator\Keyword\MutationKeywordInterface;
@@ -216,7 +217,9 @@ abstract class AbstractDraft implements DraftInterface
             if ($schema === false) {
                 $lastResult = $context->getLastResult();
                 if ($lastResult) {
-                    $context->createResultForKeyword($lastResult->keyword)->invalidate('Not allowed');
+                    $context
+                        ->createResultForKeyword($lastResult->keyword, $lastResult->keywordValue)
+                        ->invalidate('Not allowed');
                 }
             }
 
@@ -240,7 +243,7 @@ abstract class AbstractDraft implements DraftInterface
             $context->pushSchema(keywordLocationFragment: $name);
 
             $evaluationResult = $keyword->evaluate($schema->{$name}, $context);
-            if ($evaluationResult && !$evaluationResult->valid) {
+            if ($evaluationResult && $evaluationResult->type === RuntimeEvaluationResult::TYPE_ERROR) {
                 $valid = false;
             }
 
@@ -253,7 +256,7 @@ abstract class AbstractDraft implements DraftInterface
 
         if (!$valid) {
             // Annotations are not retained for failing schemas
-            $context->suppressAnnotations($lastResultNumber);
+            $context->discardAnnotationValues($lastResultNumber);
         }
 
         return $valid;

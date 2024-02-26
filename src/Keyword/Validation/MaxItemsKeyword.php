@@ -43,16 +43,16 @@ class MaxItemsKeyword extends AbstractKeyword implements StaticKeywordInterface,
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $instanceCount = count($instance);
 
         if ($instanceCount > $keywordValue) {
             $result->invalidate(
                 'At most '
                 . $keywordValue
-                . ' items are allowed, but there are '
-                . $instanceCount
-                . '.'
+                . ' elements are allowed, but there are '
+                . $instanceCount,
+                $instanceCount
             );
         }
 

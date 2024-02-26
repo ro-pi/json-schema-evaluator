@@ -80,7 +80,47 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
                 $results
             );
 
-            $this->assertExpectedResult($valid, $results, $testCollection, $test);
+            $this->assertTestResult($valid, $results, $testCollection, $test);
+
+            if ($valid) {
+                foreach ($results as $result) {
+                    $this->assertEquals(
+                        RuntimeEvaluationResult::TYPE_ANNOTATION,
+                        $result->type,
+                        'Valid evaluation result must only contain annotations'
+                        . PHP_EOL
+                        . 'Test Collection: '
+                        . $testCollection->description
+                        . PHP_EOL
+                        . 'Test Case: '
+                        . $test->description
+                        . PHP_EOL
+                        . 'Results: ' . json_encode($results, JSON_PRETTY_PRINT)
+                    );
+                }
+            } elseif ($results) {
+                $hasError = false;
+
+                foreach ($results as $result) {
+                    if ($result->type === RuntimeEvaluationResult::TYPE_ERROR) {
+                        $hasError = true;
+                        break;
+                    }
+                }
+
+                $this->assertTrue(
+                    $hasError,
+                    'Invalid evaluation result must contain at least one error'
+                    . PHP_EOL
+                    . 'Test Collection: '
+                    . $testCollection->description
+                    . PHP_EOL
+                    . 'Test Case: '
+                    . $test->description
+                    . PHP_EOL
+                    . 'Results: ' . json_encode($results, JSON_PRETTY_PRINT)
+                );
+            }
 
             if (property_exists($test, 'mutatedData')) {
                 $this->assertJsonStringEqualsJsonString(
@@ -101,7 +141,7 @@ abstract class AbstractJsonSchemaTestSuite extends TestCase
     /**
      * @param RuntimeEvaluationResult[] $results
      */
-    protected function assertExpectedResult(bool $valid, array $results, \stdClass $testCollection, \stdClass $test): void
+    protected function assertTestResult(bool $valid, array $results, \stdClass $testCollection, \stdClass $test): void
     {
         $this->assertEquals(
             $test->valid,

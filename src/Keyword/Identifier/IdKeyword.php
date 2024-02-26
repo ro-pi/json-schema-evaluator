@@ -76,6 +76,6 @@ class IdKeyword extends AbstractKeyword implements StaticKeywordInterface, Runti
 
         $context->setCurrentBaseUri($keywordValue);
 
-        return $context->createResultForKeyword($this);
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 }

@@ -33,7 +33,7 @@ class AnyOfKeyword extends AbstractKeyword implements StaticKeywordInterface, Ru
     {
         /** @var list<\stdClass|bool> $keywordValue */
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $numMatches = $this->evaluateOf($keywordValue, $context);
 
         if (!$numMatches) {

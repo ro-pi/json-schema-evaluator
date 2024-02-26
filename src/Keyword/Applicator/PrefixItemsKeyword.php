@@ -60,7 +60,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $instanceKeys = array_keys($instance);
         $prefixItemsKey = null;
@@ -81,7 +81,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             $context->popSchema();
 
             if (!$valid) {
-                $result->valid = false;
+                $result->invalidate();
 
                 if ($context->draft->shortCircuit()) {
                     break;
@@ -89,7 +89,7 @@ class PrefixItemsKeyword extends AbstractKeyword implements StaticKeywordInterfa
             }
         }
 
-        $result->setAnnotation(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
+        $result->setAnnotationValue(($prefixItemsKey === count($instance) - 1) ?: $prefixItemsKey);
 
         return $result;
     }

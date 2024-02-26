@@ -32,15 +32,19 @@ class BasicOutput extends AbstractOutput
         $formattedResult->valid = $this->getValid();
 
         foreach ($this->results as $result) {
-            if ($result->error) {
-                $outputUnit = $this->createOutputUnit($result);
-                $outputUnit->error = $result->error;
-                $outputUnit->errorMeta = $result->errorMeta;
-                $formattedResult->errors[] = $outputUnit;
+            $outputUnit = $this->createOutputUnit($result);
+
+            $outputUnit->error = (string)$result->error;
+            $outputUnit->errorMeta = $result->errorMeta;
+
+            if ($result->type === RuntimeEvaluationResult::TYPE_ANNOTATION) {
+                $outputUnit->annotation = $result->hasAnnotationValue() ? $result->getAnnotationValue() : $result->keywordValue;
             }
 
-            if ($result->hasAnnotation()) {
-                $formattedResult->annotations[] = $this->createOutputUnit($result);
+            if ($this->getValid()) {
+                $formattedResult->annotations[] = $outputUnit;
+            } else {
+                $formattedResult->errors[] = $outputUnit;
             }
         }
 
@@ -50,6 +54,7 @@ class BasicOutput extends AbstractOutput
     private function createOutputUnit(RuntimeEvaluationResult $result): \stdClass
     {
         $outputUnit = new \stdClass();
+        $outputUnit->type = $result->type;
         $outputUnit->valid = $result->valid;
         $outputUnit->keywordLocation = $result->keywordLocation;
 

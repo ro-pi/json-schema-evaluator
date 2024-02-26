@@ -80,11 +80,12 @@ class RuntimeEvaluationContext
         return $this->instanceStack[$this->instanceStackPointer]['instance'];
     }
 
-    public function createResultForKeyword(KeywordInterface $keyword): RuntimeEvaluationResult
+    public function createResultForKeyword(KeywordInterface $keyword, mixed $keywordValue): RuntimeEvaluationResult
     {
         $result = new RuntimeEvaluationResult(
             ++$this->lastResultNumber,
             $keyword,
+            $keywordValue,
             $this->schemaStack[$this->schemaStackPointer]['keywordLocation'],
             $this->instanceStack[$this->instanceStackPointer]['instanceLocation'],
             $this->getCurrentAbsoluteKeywordLocation()
@@ -158,18 +159,19 @@ class RuntimeEvaluationContext
         return $this->results;
     }
 
-    public function adoptResultsFromContext(RuntimeEvaluationContext $context): void
+    public function adoptResultsFromContextAsAnnotations(RuntimeEvaluationContext $context): void
     {
         foreach ($context->getResults() as $result) {
+            $result->type = RuntimeEvaluationResult::TYPE_ANNOTATION;
             $this->results[] = $result;
         }
     }
 
-    public function suppressAnnotations(?int $after = null): void
+    public function discardAnnotationValues(?int $after = null): void
     {
         foreach ($this->results as $result) {
             if ($result->number > $after) {
-                $result->suppressAnnotation = true;
+                $result->setAnnotationValue(null);
             }
         }
     }

@@ -98,7 +98,7 @@ REGEX;
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $valid = match ($keywordValue) {
             'email' => $this->evaluateEmail($instance),
@@ -123,13 +123,10 @@ REGEX;
             default => true
         };
 
-        $result->setAnnotation($valid);
-
         if ($context->draft->assertFormat() && !$valid) {
             $result->invalidate(
                 'Value is not a valid '
                 . $keywordValue
-                . '.'
             );
         }
 

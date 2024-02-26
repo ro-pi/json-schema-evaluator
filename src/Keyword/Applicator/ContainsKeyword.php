@@ -48,32 +48,36 @@ class ContainsKeyword extends AbstractKeyword implements StaticKeywordInterface,
         }
 
         $currentSchema = $context->getCurrentSchema();
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
 
         $matchedIndexes = [];
 
+        $intermediateContext = clone $context;
+
         foreach ($instance as $instanceIndex => &$instanceValue) {
-            $context->pushSchema($keywordValue);
-            $context->pushInstance($instanceValue, (string)$instanceIndex);
+            $intermediateContext->pushSchema($keywordValue);
+            $intermediateContext->pushInstance($instanceValue, (string)$instanceIndex);
 
-            $valid = $context->draft->evaluate($context);
+            $valid = $context->draft->evaluate($intermediateContext);
 
-            $context->popInstance();
-            $context->popSchema();
+            $intermediateContext->popInstance();
+            $intermediateContext->popSchema();
 
             if ($valid) {
                 $matchedIndexes[$instanceIndex] = $instanceIndex;
             }
         }
 
+        $context->adoptResultsFromContextAsAnnotations($intermediateContext);
+
         if ($matchedIndexes) {
             ksort($matchedIndexes);
         } elseif (!isset($currentSchema->minContains) || $currentSchema->minContains > 0) {
-            $result->invalidate('No item matches schema');
+            $result->invalidate('No element matches schema');
             return $result;
         }
 
-        $result->setAnnotation((count($matchedIndexes) === count($instance)) ?: $matchedIndexes);
+        $result->setAnnotationValue((count($matchedIndexes) === count($instance)) ?: $matchedIndexes);
 
         return $result;
     }

@@ -22,6 +22,6 @@ class DefaultKeyword extends AbstractKeyword implements MutationKeywordInterface
             $instance = $keywordValue;
         }
 
-        return $context->createResultForKeyword($this);
+        return $context->createResultForKeyword($this, $keywordValue);
     }
 }

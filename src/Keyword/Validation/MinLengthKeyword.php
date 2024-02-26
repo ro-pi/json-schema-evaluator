@@ -44,7 +44,7 @@ class MinLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
             return null;
         }
 
-        $result = $context->createResultForKeyword($this);
+        $result = $context->createResultForKeyword($this, $keywordValue);
         $instanceLength = mb_strlen($instance, 'UTF-8');
 
         if ($instanceLength < $keywordValue) {
@@ -52,8 +52,8 @@ class MinLengthKeyword extends AbstractKeyword implements StaticKeywordInterface
                 'At least '
                 . $keywordValue
                 . ' characters are required, but there are only '
-                . $instanceLength
-                . '.'
+                . $instanceLength,
+                $instanceLength
             );
         }
 
