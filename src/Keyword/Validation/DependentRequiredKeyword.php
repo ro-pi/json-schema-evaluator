@@ -91,7 +91,8 @@ class DependentRequiredKeyword extends AbstractKeyword implements StaticKeywordI
                     $context->createResultForKeyword($this, $keywordValue)->invalidate(
                         'Dependent required property \''
                         . $requiredProperty
-                        . '\' is missing'
+                        . '\' is missing',
+                        $requiredProperty
                     );
 
                     $context->popSchema();

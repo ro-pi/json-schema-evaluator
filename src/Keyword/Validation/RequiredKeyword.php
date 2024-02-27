@@ -67,7 +67,8 @@ class RequiredKeyword extends AbstractKeyword implements StaticKeywordInterface,
                 $context->createResultForKeyword($this, $keywordValue)->invalidate(
                     'Required property \''
                     . $requiredProperty
-                    . '\' is missing'
+                    . '\' is missing',
+                    $requiredProperty
                 );
 
                 $context->popSchema();
