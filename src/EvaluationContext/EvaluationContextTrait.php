@@ -22,7 +22,7 @@ trait EvaluationContextTrait
 
     public function pushSchema(
         \stdClass|bool|null $schema = null,
-        string $keywordLocationFragment = null,
+        ?string $keywordLocationFragment = null,
         ?string $baseUri = null,
         string $schemaLocation = ''
     ): void {
@@ -36,7 +36,7 @@ trait EvaluationContextTrait
             $schemaKeywordLocation = $schemaLocation;
         }
 
-        if ($keywordLocationFragment) {
+        if (is_string($keywordLocationFragment) && strlen($keywordLocationFragment)) {
             $schemaKeywordLocation .= '/' . $keywordLocationFragment;
             $keywordLocation = $currentStackEntry['keywordLocation'] . '/' . $keywordLocationFragment;
         } else {
@@ -126,7 +126,7 @@ trait EvaluationContextTrait
         $currentStackEntry = $this->schemaStack[$this->schemaStackPointer];
 
         $baseUri = $currentStackEntry['baseUri'];
-        if (!$baseUri) {
+        if (!is_string($baseUri) || !strlen($baseUri)) {
             return null;
         }
 

@@ -44,12 +44,12 @@ class RuntimeEvaluationContext
         $this->draft = $staticEvaluationContext->config->defaultDraft;
     }
 
-    public function pushInstance(mixed &$instance, string $instanceLocationFragment = null): void
+    public function pushInstance(mixed &$instance, ?string $instanceLocationFragment = null): void
     {
-        if ($instanceLocationFragment === null) {
-            $instanceLocation = $this->getCurrentInstanceLocation();
-        } else {
+        if (is_string($instanceLocationFragment) && strlen($instanceLocationFragment)) {
             $instanceLocation = $this->getCurrentInstanceLocation() . '/' . $instanceLocationFragment;
+        } else {
+            $instanceLocation = $this->getCurrentInstanceLocation();
         }
 
         $this->instanceStack[++$this->instanceStackPointer] = [
