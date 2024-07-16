@@ -14,7 +14,11 @@ class StaticKeywordAnalysisException extends JsonSchemaEvaluatorException
         private readonly StaticKeywordInterface $keyword,
         private readonly StaticEvaluationContext $context
     ) {
-        parent::__construct(sprintf($message, $this->keyword->getName()));
+        parent::__construct(
+            sprintf($message, $this->keyword->getName())
+            . ' at location '
+            . $context->getCurrentSchemaKeywordLocation()
+        );
     }
 
     public function getContext(): StaticEvaluationContext
