@@ -25,9 +25,9 @@ class EnumKeyword extends AbstractKeyword implements StaticKeywordInterface, Run
      */
     public function evaluateStatic(mixed &$keywordValue, StaticEvaluationContext $context): void
     {
-        if (!is_array($keywordValue) || !$keywordValue) {
+        if (!is_array($keywordValue)) {
             throw new InvalidKeywordValueException(
-                'The value of \'%s\' must be a non-empty array.',
+                'The value of \'%s\' must be an array.',
                 $this,
                 $context
             );

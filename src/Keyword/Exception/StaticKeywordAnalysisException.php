@@ -9,16 +9,20 @@ use Ropi\JsonSchemaEvaluator\Keyword\StaticKeywordInterface;
 
 class StaticKeywordAnalysisException extends JsonSchemaEvaluatorException
 {
+    private readonly string $keywordLocation;
+
     public function __construct(
         string $message,
         private readonly StaticKeywordInterface $keyword,
         private readonly StaticEvaluationContext $context
     ) {
-        parent::__construct(
-            sprintf($message, $this->keyword->getName())
-            . ' at location '
-            . $context->getCurrentSchemaKeywordLocation()
-        );
+        parent::__construct(sprintf($message, $this->keyword->getName()));
+        $this->keywordLocation = $context->getCurrentSchemaKeywordLocation();
+    }
+
+    public function getKeywordLocation(): string
+    {
+        return $this->keywordLocation;
     }
 
     public function getContext(): StaticEvaluationContext

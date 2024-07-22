@@ -22,5 +22,6 @@ class StaticKeywordAnalysisExceptionTest extends TestCase
         $this->assertEquals('test123', $exception->getMessage());
         $this->assertEquals($keyword, $exception->getKeyword());
         $this->assertEquals($staticContext, $exception->getContext());
+        $this->assertEquals('', $exception->getKeywordLocation());
     }
 }
